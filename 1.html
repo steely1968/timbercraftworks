@@ -31,7 +31,6 @@ padding: 25px 15px;
 
 header h1 {
 font-size: clamp(24px, 5vw, 34px);
-letter-spacing: 1px;
 }
 
 main {
@@ -46,7 +45,7 @@ flex: 1;
 background: white;
 padding: 25px;
 border-radius: 10px;
-box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+box-shadow: 0 3px 12px rgba(0,0,0,.08);
 }
 
 h2 {
@@ -101,10 +100,6 @@ margin-bottom: 25px;
 line-height: 1.8;
 }
 
-.summary strong {
-color: #111;
-}
-
 .table-wrapper {
 width: 100%;
 overflow-x: auto;
@@ -114,7 +109,7 @@ margin-top: 15px;
 table {
 width: 100%;
 border-collapse: collapse;
-min-width: 430px;
+min-width: 400px;
 }
 
 th, td {
@@ -131,8 +126,6 @@ color: white;
 tr:nth-child(even) {
 background: #f5f5f5;
 }
-
-/* DIAGRAM */
 
 .diagram-section {
 margin-top: 30px;
@@ -154,11 +147,10 @@ margin-bottom: 15px;
 
 .diagram-container {
 width: 100%;
-overflow: hidden;
 background: white;
 border: 1px solid #ddd;
 border-radius: 6px;
-padding: 12px 5px;
+padding: 10px;
 }
 
 #joistDiagram {
@@ -204,7 +196,7 @@ margin-top: 30px;
 font-size: 14px;
 }
 
-@media (max-width: 500px) {
+@media(max-width:500px) {
 main {
 margin: 18px auto;
 padding: 0 10px;
@@ -239,18 +231,23 @@ font-size: 13px;
 <h2>Joist Spacing Calculator</h2>
 
 <div class="field">
-<label for="floorLength">Total Floor Length (mm)</label>
-<input type="number" id="floorLength" min="1" step="1" placeholder="Enter floor length">
+<label for="floorLength">Overall Frame Length (mm)</label>
+<input type="number" id="floorLength" min="1" placeholder="Enter overall length">
 </div>
 
 <div class="field">
-<label for="joistThickness">Joist Thickness (mm)</label>
-<input type="number" id="joistThickness" min="1" step="1" placeholder="Enter joist thickness">
+<label for="floorWidth">Overall Frame Width (mm)</label>
+<input type="number" id="floorWidth" min="1" placeholder="Enter overall width">
 </div>
 
 <div class="field">
-<label for="numberOfJoists">Number of Joists (including both outer rails)</label>
-<input type="number" id="numberOfJoists" min="2" step="1" placeholder="Enter number of joists">
+<label for="joistThickness">Timber Thickness (mm)</label>
+<input type="number" id="joistThickness" min="1" placeholder="Enter timber thickness">
+</div>
+
+<div class="field">
+<label for="numberOfJoists">Number of Cross Joists (including end joists)</label>
+<input type="number" id="numberOfJoists" min="2" step="1" placeholder="Enter number of cross joists">
 </div>
 
 <button onclick="calculateJoists()">Calculate Joist Positions</button>
@@ -261,7 +258,7 @@ font-size: 13px;
 
 <div class="summary" id="summary"></div>
 
-<h3>Joist Position Table</h3>
+<h3>Cross Joist Position Table</h3>
 
 <div class="table-wrapper">
 <table>
@@ -279,40 +276,35 @@ font-size: 13px;
 
 <div class="diagram-section">
 
-<h3>Scaled Joist Layout</h3>
+<h3>Scaled Frame Layout</h3>
 
-<p>
-Overhead view showing the position and actual thickness
-of every timber member.
-</p>
+<p>Overhead view of the complete timber frame.</p>
 
 <div class="diagram-container">
 <svg id="joistDiagram"
 xmlns="http://www.w3.org/2000/svg"
 role="img"
-aria-label="Scaled overhead joist layout">
+aria-label="Scaled overhead timber frame diagram">
 </svg>
 </div>
 
 <div class="diagram-key">
 <div class="key-item">
 <span class="key-colour"></span>
-Timber joists and side rails
+Timber
 </div>
 </div>
 
 <div class="diagram-note">
-All timber members are drawn to the same thickness.
-The diagram scales proportionally to the entered
-floor length and joist measurements.
+All timber members are drawn using the same thickness measurement.
+The two long side rails run continuously along the frame.
+The cross joists connect the inside faces of the side rails.
+The diagram scales automatically to the entered measurements.
 </div>
 
 </div>
-
 </div>
-
 </div>
-
 </main>
 
 <footer>
@@ -323,76 +315,68 @@ Timber Craft Works
 
 function calculateJoists() {
 
-const floorLength = Number(
-document.getElementById("floorLength").value
-);
-
-const joistThickness = Number(
-document.getElementById("joistThickness").value
-);
-
-const numberOfJoists = Number(
-document.getElementById("numberOfJoists").value
-);
+const length = Number(document.getElementById("floorLength").value);
+const width = Number(document.getElementById("floorWidth").value);
+const thickness = Number(document.getElementById("joistThickness").value);
+const count = Number(document.getElementById("numberOfJoists").value);
 
 if (
-!Number.isFinite(floorLength) ||
-!Number.isFinite(joistThickness) ||
-!Number.isInteger(numberOfJoists) ||
-floorLength <= 0 ||
-joistThickness <= 0 ||
-numberOfJoists < 2
+!Number.isFinite(length) ||
+!Number.isFinite(width) ||
+!Number.isFinite(thickness) ||
+!Number.isInteger(count) ||
+length <= 0 ||
+width <= 0 ||
+thickness <= 0 ||
+count < 2
 ) {
-alert("Please enter valid measurements and at least two joists.");
+alert("Please enter valid measurements and at least two cross joists.");
 return;
 }
 
-const totalTimber = numberOfJoists * joistThickness;
-
-if (totalTimber > floorLength) {
-alert("The total timber thickness cannot exceed the floor length.");
+if (width <= thickness * 2 || length < thickness * count) {
+alert("The frame dimensions are too small for the timber thickness and number of joists.");
 return;
 }
 
-// Calculate the clear gap between every timber member.
+// Cross joists fit between the two continuous side rails.
 
-const clearGap =
-(floorLength - totalTimber) / (numberOfJoists - 1);
+const crossJoistLength = width - (thickness * 2);
+
+// Cross joists include both end joists.
+
+const clearGap = (length - thickness * count) / (count - 1);
 
 const positions = [];
 
 let currentPosition = 0;
 
-for (let i = 0; i < numberOfJoists; i++) {
+for (let i = 0; i < count; i++) {
 
 const start = currentPosition;
-
-const finish = start + joistThickness;
+const finish = start + thickness;
 
 positions.push({
 number: i + 1,
 start: start,
 finish: finish,
-gap: i === numberOfJoists - 1 ? 0 : clearGap
+gap: i === count - 1 ? 0 : clearGap
 });
 
 currentPosition = finish + clearGap;
 }
 
-// Results summary.
-
 document.getElementById("summary").innerHTML = `
-<strong>Floor length:</strong> ${floorLength.toFixed(2)} mm<br>
-<strong>Joist thickness:</strong> ${joistThickness.toFixed(2)} mm<br>
-<strong>Number of joists:</strong> ${numberOfJoists}<br>
-<strong>Total timber thickness:</strong> ${totalTimber.toFixed(2)} mm<br>
-<strong>Clear gap between joists:</strong> ${clearGap.toFixed(2)} mm
+<strong>Overall frame length:</strong> ${length.toFixed(2)} mm<br>
+<strong>Overall frame width:</strong> ${width.toFixed(2)} mm<br>
+<strong>Timber thickness:</strong> ${thickness.toFixed(2)} mm<br>
+<strong>Number of cross joists:</strong> ${count}<br>
+<strong>Side rail length:</strong> ${length.toFixed(2)} mm<br>
+<strong>Cross joist length:</strong> ${crossJoistLength.toFixed(2)} mm<br>
+<strong>Clear gap between cross joists:</strong> ${clearGap.toFixed(2)} mm
 `;
 
-// Results table.
-
 const table = document.getElementById("joistTable");
-
 table.innerHTML = "";
 
 positions.forEach(joist => {
@@ -409,181 +393,231 @@ row.innerHTML = `
 table.appendChild(row);
 });
 
-// Draw the scaled diagram.
-
-drawJoistDiagram(
-floorLength,
-joistThickness,
-positions
-);
+drawJoistDiagram(length, width, thickness, positions);
 
 document.getElementById("results").style.display = "block";
-
 }
 
-function drawJoistDiagram(
-floorLength,
-joistThickness,
-positions
-) {
+function drawJoistDiagram(length, width, thickness, positions) {
 
 const svg = document.getElementById("joistDiagram");
 
-// SVG drawing dimensions.
-
 const svgWidth = 700;
-const marginLeft = 35;
-const marginRight = 35;
-const top = 55;
+const svgHeight = 480;
 
-const drawingWidth = svgWidth - marginLeft - marginRight;
+// Drawing margins.
 
-// One scale for all measurements.
+const left = 105;
+const right = 35;
+const top = 90;
+const bottom = 90;
 
-const scale = drawingWidth / floorLength;
+const availableWidth = svgWidth - left - right;
+const availableHeight = svgHeight - top - bottom;
 
-// THE IMPORTANT PART:
-// Every timber uses exactly the same width calculation.
-// No separate width is assigned to either outer rail.
+// One uniform scale for both dimensions.
 
-const timberWidth = joistThickness * scale;
+const scale = Math.min(
+availableWidth / length,
+availableHeight / width
+);
 
-const timberHeight = 190;
+const drawingLength = length * scale;
+const drawingWidth = width * scale;
 
-const svgHeight = 310;
+// ALL timber uses this exact same thickness.
+
+const timber = thickness * scale;
+
+const x = left + (availableWidth - drawingLength) / 2;
+const y = top + (availableHeight - drawingWidth) / 2;
+
+const colour = "#bd8950";
+const outline = "#80572d";
 
 let drawing = "";
 
-// Background.
+// Frame background.
 
 drawing += `
 <rect
-x="${marginLeft}"
-y="${top}"
-width="${drawingWidth}"
-height="${timberHeight}"
+x="${x}"
+y="${y}"
+width="${drawingLength}"
+height="${drawingWidth}"
 fill="#fafafa"
 stroke="#777"
 stroke-width="1"
 />
 `;
 
-// Draw every timber member using the same width.
-
-positions.forEach((joist, index) => {
-
-const x = marginLeft + joist.start * scale;
+// LEFT LONG SIDE RAIL.
+// Full frame length.
+// Same thickness as every cross joist.
 
 drawing += `
 <rect
 x="${x}"
-y="${top}"
-width="${timberWidth}"
-height="${timberHeight}"
-fill="#bd8950"
-stroke="#80572d"
+y="${y}"
+width="${drawingLength}"
+height="${timber}"
+fill="${colour}"
+stroke="${outline}"
 stroke-width="1"
 />
 `;
 
-// Timber number.
+// RIGHT LONG SIDE RAIL.
+// Full frame length.
+// Exactly the same thickness.
 
-if (timberWidth > 17) {
+drawing += `
+<rect
+x="${x}"
+y="${y + drawingWidth - timber}"
+width="${drawingLength}"
+height="${timber}"
+fill="${colour}"
+stroke="${outline}"
+stroke-width="1"
+/>
+`;
+
+// INTERNAL CROSS JOISTS.
+// Run BETWEEN the two long side rails.
+// Same thickness as the side rails.
+
+positions.forEach((joist, index) => {
+
+const joistX = x + (joist.start * scale);
+
+drawing += `
+<rect
+x="${joistX}"
+y="${y + timber}"
+width="${timber}"
+height="${drawingWidth - (timber * 2)}"
+fill="${colour}"
+stroke="${outline}"
+stroke-width="1"
+/>
+`;
+
+if (timber > 16) {
 
 drawing += `
 <text
-x="${x + timberWidth / 2}"
-y="${top + timberHeight / 2}"
+x="${joistX + timber / 2}"
+y="${y + drawingWidth / 2}"
 text-anchor="middle"
 dominant-baseline="middle"
-font-size="12"
+font-size="11"
 fill="#382514"
->${joist.number}</text>
+>${index + 1}</text>
 `;
 }
 
 });
 
-// Overall floor length dimension.
+// OVERALL LENGTH DIMENSION.
 
 drawing += `
 <line
-x1="${marginLeft}"
-y1="32"
-x2="${marginLeft + drawingWidth}"
-y2="32"
+x1="${x}"
+y1="${y - 35}"
+x2="${x + drawingLength}"
+y2="${y - 35}"
 stroke="#222"
 stroke-width="1.5"
 />
 
 <line
-x1="${marginLeft}"
-y1="26"
-x2="${marginLeft}"
-y2="38"
+x1="${x}"
+y1="${y - 42}"
+x2="${x}"
+y2="${y - 28}"
 stroke="#222"
 stroke-width="1.5"
 />
 
 <line
-x1="${marginLeft + drawingWidth}"
-y1="26"
-x2="${marginLeft + drawingWidth}"
-y2="38"
+x1="${x + drawingLength}"
+y1="${y - 42}"
+x2="${x + drawingLength}"
+y2="${y - 28}"
 stroke="#222"
 stroke-width="1.5"
 />
 
 <text
-x="${svgWidth / 2}"
-y="20"
+x="${x + drawingLength / 2}"
+y="${y - 48}"
 text-anchor="middle"
 font-size="14"
 font-weight="bold"
 fill="#222"
->${floorLength} mm - Overall Length</text>
+>${length} mm</text>
 `;
 
-// Timber thickness dimension.
+// OVERALL WIDTH DIMENSION.
+
+drawing += `
+<line
+x1="${x - 35}"
+y1="${y}"
+x2="${x - 35}"
+y2="${y + drawingWidth}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x - 42}"
+y1="${y}"
+x2="${x - 28}"
+y2="${y}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x - 42}"
+y1="${y + drawingWidth}"
+x2="${x - 28}"
+y2="${y + drawingWidth}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<text
+x="${x - 48}"
+y="${y + drawingWidth / 2}"
+text-anchor="middle"
+dominant-baseline="middle"
+font-size="13"
+font-weight="bold"
+fill="#222"
+transform="rotate(-90 ${x - 48} ${y + drawingWidth / 2})"
+>${width} mm</text>
+`;
+
+// Timber thickness label.
 
 drawing += `
 <text
 x="${svgWidth / 2}"
-y="${top + timberHeight + 27}"
+y="${svgHeight - 24}"
 text-anchor="middle"
 font-size="12"
 fill="#444"
->Each timber: ${joistThickness} mm thick</text>
+>All timber: ${thickness} mm thick</text>
 `;
 
-// Gap dimension.
+svg.setAttribute("viewBox", `0 0 ${svgWidth} ${svgHeight}`);
 
-const gap = positions.length > 1
-? positions[0].gap
-: 0;
-
-drawing += `
-<text
-x="${svgWidth / 2}"
-y="${top + timberHeight + 48}"
-text-anchor="middle"
-font-size="12"
-fill="#444"
->Clear gap: ${gap.toFixed(2)} mm</text>
-`;
-
-svg.setAttribute(
-"viewBox",
-`0 0 ${svgWidth} ${svgHeight}`
-);
-
-svg.setAttribute(
-"preserveAspectRatio",
-"xMidYMid meet"
-);
+svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
 svg.innerHTML = drawing;
-
 }
 
 </script>
