@@ -33,7 +33,7 @@ flex-direction: column;
 /* HEADER */
 header {
 width: 100%;
-background-color: #000000;
+background: #000000;
 color: #ffffff;
 text-align: center;
 padding: 30px 15px;
@@ -44,7 +44,6 @@ color: #ffffff;
 font-size: clamp(28px, 5vw, 46px);
 font-weight: bold;
 letter-spacing: 2px;
-margin: 0;
 }
 
 header p {
@@ -53,7 +52,7 @@ font-size: 16px;
 margin-top: 8px;
 }
 
-/* MAIN CONTENT */
+/* MAIN */
 main {
 width: 100%;
 max-width: 1200px;
@@ -92,7 +91,7 @@ text-decoration: underline;
 
 /* BUTTONS */
 button {
-background-color: #000000;
+background: #000000;
 color: #ffffff;
 border: none;
 padding: 12px 24px;
@@ -102,7 +101,7 @@ font-size: 16px;
 }
 
 button:hover {
-background-color: #333333;
+background: #333333;
 }
 
 /* SECTIONS */
@@ -113,7 +112,7 @@ margin-bottom: 35px;
 /* FOOTER */
 footer {
 width: 100%;
-background-color: #000000;
+background: #000000;
 color: #ffffff;
 text-align: center;
 padding: 25px 15px;
@@ -126,40 +125,14 @@ color: #ffffff;
 font-size: 14px;
 }
 
-/* MOBILE RESPONSIVE */
-@media (max-width: 600px) {
-
-header {
-padding: 24px 12px;
-}
-
-header h1 {
-letter-spacing: 1px;
-}
-
-main {
-padding: 25px 15px;
-}
-
-section {
-margin-bottom: 25px;
-}
-
-button {
-width: 100%;
-}
-
-}
-
-/* JOIST CALCULATOR */
-
+/* CALCULATOR */
 .joist-calculator {
 max-width: 800px;
 margin: 0 auto;
 padding: 25px;
 border: 1px solid #dddddd;
 border-radius: 8px;
-background-color: #ffffff;
+background: #ffffff;
 }
 
 .joist-calculator h2 {
@@ -211,20 +184,19 @@ margin-top: 30px;
 }
 
 .joist-summary {
-background-color: #f2f2f2;
+background: #f2f2f2;
 border-radius: 5px;
 padding: 15px;
 margin-bottom: 20px;
 }
 
 /* DIAGRAM */
-
 .joist-diagram-container {
 margin: 25px 0;
 padding: 20px 12px;
 border: 1px solid #dddddd;
 border-radius: 8px;
-background-color: #fafafa;
+background: #fafafa;
 }
 
 .joist-diagram-container h3 {
@@ -251,8 +223,7 @@ min-width: 280px;
 position: relative;
 }
 
-/* TIMBER LAYOUT */
-
+/* DIAGRAM TIMBERS */
 .joist-diagram {
 width: 100%;
 height: 105px;
@@ -271,6 +242,7 @@ border-left: 1px solid #74451f;
 border-right: 1px solid #74451f;
 position: relative;
 flex-shrink: 0;
+min-width: 0;
 }
 
 .diagram-joist::after,
@@ -286,10 +258,12 @@ rgba(80,40,10,0.12) 10px
 );
 }
 
+/* GAPS */
 .diagram-gap {
 background: #ffffff;
 position: relative;
 flex-shrink: 0;
+min-width: 0;
 display: flex;
 align-items: center;
 justify-content: center;
@@ -304,8 +278,7 @@ white-space: nowrap;
 font-weight: bold;
 }
 
-/* DIMENSIONS */
-
+/* DIMENSION LINE */
 .dimension-line {
 position: relative;
 height: 35px;
@@ -342,7 +315,6 @@ transform: translateY(-13px);
 }
 
 /* LEGEND */
-
 .diagram-legend {
 display: flex;
 justify-content: center;
@@ -380,7 +352,6 @@ color: #555555;
 }
 
 /* TABLE */
-
 .joist-table-wrapper {
 width: 100%;
 overflow-x: auto;
@@ -393,7 +364,7 @@ min-width: 450px;
 }
 
 .joist-results th {
-background-color: #000000;
+background: #000000;
 color: #ffffff;
 padding: 12px;
 text-align: left;
@@ -405,10 +376,31 @@ border-bottom: 1px solid #dddddd;
 }
 
 .joist-results tr:nth-child(even) {
-background-color: #f7f7f7;
+background: #f7f7f7;
 }
 
+/* MOBILE */
 @media (max-width: 600px) {
+
+header {
+padding: 24px 12px;
+}
+
+header h1 {
+letter-spacing: 1px;
+}
+
+main {
+padding: 25px 15px;
+}
+
+section {
+margin-bottom: 25px;
+}
+
+button {
+width: 100%;
+}
 
 .joist-calculator {
 padding: 20px 15px;
@@ -425,7 +417,6 @@ height: 85px;
 .joist-diagram-container {
 padding: 15px 8px;
 }
-
 }
 
 </style>
@@ -452,11 +443,7 @@ All measurements are in millimetres (mm).
 </p>
 
 <div class="joist-input-group">
-
-<label for="floorLength">
-Floor Length (mm)
-</label>
-
+<label for="floorLength">Floor Length (mm)</label>
 <input
 type="number"
 id="floorLength"
@@ -464,15 +451,10 @@ min="1"
 step="1"
 placeholder="e.g. 4000"
 >
-
 </div>
 
 <div class="joist-input-group">
-
-<label for="joistThickness">
-Joist Thickness (mm)
-</label>
-
+<label for="joistThickness">Joist Thickness (mm)</label>
 <input
 type="number"
 id="joistThickness"
@@ -480,15 +462,10 @@ min="1"
 step="1"
 placeholder="e.g. 50"
 >
-
 </div>
 
 <div class="joist-input-group">
-
-<label for="numberOfJoists">
-Number of Joists
-</label>
-
+<label for="numberOfJoists">Number of Joists</label>
 <input
 type="number"
 id="numberOfJoists"
@@ -496,7 +473,6 @@ min="2"
 step="1"
 placeholder="e.g. 10"
 >
-
 </div>
 
 <button
@@ -568,17 +544,14 @@ class="diagram-position-info"
 <table>
 
 <thead>
-
 <tr>
 <th>Joist</th>
 <th>Starting Position (mm)</th>
 <th>Ending Position (mm)</th>
 </tr>
-
 </thead>
 
-<tbody id="joistResultsTable">
-</tbody>
+<tbody id="joistResultsTable"></tbody>
 
 </table>
 
@@ -600,26 +573,22 @@ class="diagram-position-info"
 
 function calculateJoists() {
 
-const floorLength =
-parseFloat(document.getElementById("floorLength").value);
+const floorLength = parseFloat(
+document.getElementById("floorLength").value
+);
 
-const joistThickness =
-parseFloat(document.getElementById("joistThickness").value);
+const joistThickness = parseFloat(
+document.getElementById("joistThickness").value
+);
 
-const numberOfJoists =
-Number(document.getElementById("numberOfJoists").value);
+const numberOfJoists = Number(
+document.getElementById("numberOfJoists").value
+);
 
-const error =
-document.getElementById("joistError");
-
-const results =
-document.getElementById("joistResults");
-
-const summary =
-document.getElementById("joistSummary");
-
-const table =
-document.getElementById("joistResultsTable");
+const error = document.getElementById("joistError");
+const results = document.getElementById("joistResults");
+const summary = document.getElementById("joistSummary");
+const table = document.getElementById("joistResultsTable");
 
 error.textContent = "";
 results.style.display = "none";
@@ -630,12 +599,8 @@ if (
 !Number.isFinite(joistThickness) ||
 !Number.isInteger(numberOfJoists)
 ) {
-
-error.textContent =
-"Please enter all three values.";
-
+error.textContent = "Please enter all three values.";
 return;
-
 }
 
 if (
@@ -643,12 +608,9 @@ floorLength <= 0 ||
 joistThickness <= 0 ||
 numberOfJoists < 2
 ) {
-
 error.textContent =
 "Please enter valid values. You need at least 2 joists.";
-
 return;
-
 }
 
 const totalJoistThickness =
@@ -658,21 +620,14 @@ const totalGap =
 floorLength - totalJoistThickness;
 
 if (totalGap < 0) {
-
 error.textContent =
 "The joists are too thick for the floor length.";
-
 return;
-
 }
 
-const numberOfGaps =
-numberOfJoists - 1;
+const numberOfGaps = numberOfJoists - 1;
 
-const clearGap =
-totalGap / numberOfGaps;
-
-const positions = [];
+const clearGap = totalGap / numberOfGaps;
 
 for (let i = 0; i < numberOfJoists; i++) {
 
@@ -682,13 +637,7 @@ i * (joistThickness + clearGap);
 const endingPosition =
 startingPosition + joistThickness;
 
-positions.push({
-start: startingPosition,
-end: endingPosition
-});
-
-const row =
-document.createElement("tr");
+const row = document.createElement("tr");
 
 row.innerHTML = `
 <td>Joist ${i + 1}</td>
@@ -697,7 +646,6 @@ row.innerHTML = `
 `;
 
 table.appendChild(row);
-
 }
 
 summary.innerHTML = `
@@ -725,7 +673,7 @@ results.style.display = "block";
 
 }
 
-/* ADAPTIVE DIAGRAM WITH SIDE RAILS */
+/* ADAPTIVE DIAGRAM */
 
 function drawJoistDiagram(
 floorLength,
@@ -746,134 +694,110 @@ document.getElementById("diagramPositionInfo");
 diagram.innerHTML = "";
 
 /*
-Side rails are visual additions only.
-They have the same thickness as the joists.
-The original calculator measurements and
-calculations are not changed.
+All timber sections have exactly the same width.
 
-The available floor length is divided into:
-left side rail + internal joists + right side rail.
-The diagram proportions are scaled to the floor length.
+Both side rails and every internal joist use
+the same thickness percentage.
+
+The original calculator gap calculation
+remains completely unchanged.
+
+Side rails are visual additions only.
 */
 
-const totalTimbers = numberOfJoists + 2;
+const timberWidth =
+(joistThickness / floorLength) * 100;
 
-const totalGaps = totalTimbers - 1;
+const gapWidth =
+(clearGap / floorLength) * 100;
 
-const totalTimberWidth =
-totalTimbers * joistThickness;
+function addTimber(type, label) {
 
-const diagramGap =
-(floorLength - totalTimberWidth) / totalGaps;
+const timber = document.createElement("div");
 
-/* LEFT SIDE RAIL */
+timber.className = type;
 
-const leftRail = document.createElement("div");
+timber.style.flex =
+"0 0 " + timberWidth + "%";
 
-leftRail.className = "diagram-side-rail";
+timber.style.width =
+timberWidth + "%";
 
-leftRail.style.width =
-(joistThickness / floorLength * 100) + "%";
-
-leftRail.title =
-"Left side rail: " +
+timber.title =
+label + ": " +
 formatMillimetres(joistThickness) + " mm";
 
-diagram.appendChild(leftRail);
+diagram.appendChild(timber);
+}
 
-/* INTERNAL JOISTS AND GAPS */
-
-for (let i = 0; i < numberOfJoists; i++) {
+function addGap() {
 
 const gap = document.createElement("div");
 
 gap.className = "diagram-gap";
 
+gap.style.flex =
+"0 0 " + gapWidth + "%";
+
 gap.style.width =
-(diagramGap / floorLength * 100) + "%";
+gapWidth + "%";
 
-const gapLabel = document.createElement("span");
+const label = document.createElement("span");
 
-gapLabel.textContent =
-formatMillimetres(diagramGap) + " mm";
+label.textContent =
+formatMillimetres(clearGap) + " mm";
 
-gap.appendChild(gapLabel);
+gap.appendChild(label);
 
 gap.title =
 "Clear gap: " +
-formatMillimetres(diagramGap) + " mm";
+formatMillimetres(clearGap) + " mm";
 
 diagram.appendChild(gap);
+}
 
-const joist = document.createElement("div");
+// LEFT SIDE RAIL
+addTimber(
+"diagram-side-rail",
+"Left side rail"
+);
 
-joist.className = "diagram-joist";
+// INTERNAL JOISTS AND GAPS
+for (let i = 0; i < numberOfJoists; i++) {
 
-joist.style.width =
-(joistThickness / floorLength * 100) + "%";
+addGap();
 
-joist.title =
-"Joist " + (i + 1) +
-": " + formatMillimetres(joistThickness) + " mm";
-
-diagram.appendChild(joist);
+addTimber(
+"diagram-joist",
+"Joist " + (i + 1)
+);
 
 }
 
-/* RIGHT SIDE RAIL */
+// RIGHT SIDE GAP AND RAIL
+addGap();
 
-const rightGap = document.createElement("div");
+addTimber(
+"diagram-side-rail",
+"Right side rail"
+);
 
-rightGap.className = "diagram-gap";
-
-rightGap.style.width =
-(diagramGap / floorLength * 100) + "%";
-
-const rightGapLabel = document.createElement("span");
-
-rightGapLabel.textContent =
-formatMillimetres(diagramGap) + " mm";
-
-rightGap.appendChild(rightGapLabel);
-
-rightGap.title =
-"Clear gap: " +
-formatMillimetres(diagramGap) + " mm";
-
-diagram.appendChild(rightGap);
-
-const rightRail = document.createElement("div");
-
-rightRail.className = "diagram-side-rail";
-
-rightRail.style.width =
-(joistThickness / floorLength * 100) + "%";
-
-rightRail.title =
-"Right side rail: " +
-formatMillimetres(joistThickness) + " mm";
-
-diagram.appendChild(rightRail);
-
-/* DIMENSIONS */
-
+// FLOOR LENGTH LABEL
 floorLabel.textContent =
 "Total Floor Length: " +
 formatMillimetres(floorLength) + " mm";
 
+// DIAGRAM INFORMATION
 positionInfo.textContent =
-"Side rails: " +
+"Side rails and joists: " +
 formatMillimetres(joistThickness) +
-" mm | Joists: " +
-numberOfJoists +
-" | Joist thickness: " +
-formatMillimetres(joistThickness) +
-" mm | Diagram gaps: " +
-formatMillimetres(diagramGap) + " mm";
+" mm thick | Clear gaps: " +
+formatMillimetres(clearGap) +
+" mm";
 
 }
 
-/* FORMATTING */
+/* MEASUREMENT FORMATTING */
 
 function formatMillimetres(number) {
 
@@ -888,4 +812,3 @@ maximumFractionDigits: 2
 
 </body>
 </html>
-
