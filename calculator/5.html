@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#111111">
+
 <title>Timber Craft Works - Shed Front Wall Calculator</title>
 
 <style>
+
 * {
 margin: 0;
 padding: 0;
@@ -15,76 +16,93 @@ box-sizing: border-box;
 
 body {
 font-family: Arial, Helvetica, sans-serif;
-background: #f3f3f3;
-color: #222;
-min-height: 100vh;
-display: flex;
-flex-direction: column;
+background: #f2f2f2;
+color: #111;
+line-height: 1.5;
 }
 
 header {
-background: #111;
-color: white;
+background: #000;
+color: #fff;
 text-align: center;
-padding: 25px 15px;
+padding: 30px 15px;
 }
 
 header h1 {
-font-size: clamp(24px, 5vw, 34px);
+font-size: clamp(28px, 5vw, 46px);
+font-weight: bold;
+letter-spacing: 2px;
 }
 
-main {
+header p {
+font-size: 16px;
+margin-top: 8px;
+}
+
+.container {
 width: 100%;
-max-width: 850px;
+max-width: 1150px;
 margin: 30px auto;
 padding: 0 15px;
-flex: 1;
 }
 
 .calculator {
-background: white;
+background: #fff;
 padding: 25px;
 border-radius: 10px;
-box-shadow: 0 3px 12px rgba(0,0,0,.08);
+box-shadow: 0 3px 12px rgba(0,0,0,0.12);
 }
 
 h2 {
 margin-bottom: 20px;
-font-size: 23px;
+font-size: 26px;
 }
 
 h3 {
-font-size: 19px;
-margin-bottom: 12px;
+margin: 28px 0 15px;
+font-size: 21px;
 }
 
-.field {
-margin-bottom: 18px;
+.input-grid {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 16px;
 }
 
-label {
-display: block;
+.input-group {
+display: flex;
+flex-direction: column;
+}
+
+.input-group label {
 font-weight: bold;
-margin-bottom: 7px;
+margin-bottom: 6px;
 }
 
-input, select {
+.input-group input,
+.input-group select {
 width: 100%;
-padding: 13px;
-border: 1px solid #ccc;
-border-radius: 5px;
-font-size: 17px;
-background: white;
+padding: 12px;
+border: 1px solid #aaa;
+border-radius: 6px;
+font-size: 16px;
+}
+
+.section {
+border-top: 2px solid #ddd;
+margin-top: 28px;
+padding-top: 22px;
 }
 
 button {
 width: 100%;
+margin-top: 24px;
 padding: 15px;
-background: #111;
-color: white;
-border: none;
-border-radius: 5px;
-font-size: 17px;
+border: 0;
+border-radius: 6px;
+background: #000;
+color: #fff;
+font-size: 18px;
 font-weight: bold;
 cursor: pointer;
 }
@@ -93,1265 +111,2617 @@ button:hover {
 background: #333;
 }
 
-.section-heading {
-margin-top: 28px;
-margin-bottom: 15px;
-padding-bottom: 9px;
-border-bottom: 2px solid #ddd;
-}
-
-.optional-section {
-background: #f5f5f5;
-padding: 18px;
-border-radius: 7px;
-margin-top: 22px;
-}
-
-.optional-section h3 {
-margin-bottom: 16px;
-}
-
-.hidden {
-display: none;
-}
-
 .results {
+margin-top: 25px;
 display: none;
-margin-top: 30px;
 }
 
-.summary {
-background: #f1f1f1;
-padding: 18px;
-border-radius: 7px;
-margin-bottom: 25px;
-line-height: 1.8;
+.result-box {
+background: #f7f7f7;
+border-left: 5px solid #000;
+padding: 15px;
+margin-bottom: 15px;
 }
 
-.table-wrapper {
+.result-box strong {
+display: block;
+margin-bottom: 4px;
+}
+
+.table-wrap {
 width: 100%;
 overflow-x: auto;
-margin-top: 15px;
 }
 
 table {
 width: 100%;
 border-collapse: collapse;
-min-width: 400px;
+margin-top: 15px;
+min-width: 600px;
 }
 
-th, td {
-padding: 12px 10px;
-border: 1px solid #ddd;
-text-align: center;
+th,
+td {
+border: 1px solid #ccc;
+padding: 10px;
+text-align: left;
 }
 
 th {
-background: #111;
-color: white;
+background: #000;
+color: #fff;
 }
 
-tr:nth-child(even) {
-background: #f5f5f5;
-}
-
-.diagram-section {
-margin-top: 30px;
-padding: 20px 12px;
-background: #f5f5f5;
-border-radius: 8px;
-}
-
-.diagram-section p {
-font-size: 13px;
-color: #555;
-margin-bottom: 15px;
-}
-
-.diagram-container {
+.diagram-wrap {
 width: 100%;
-background: white;
+overflow-x: auto;
+background: #fafafa;
 border: 1px solid #ddd;
-border-radius: 6px;
-padding: 10px;
+border-radius: 8px;
+padding: 15px;
 }
 
-#wallDiagram {
+svg {
 display: block;
 width: 100%;
+min-width: 800px;
 height: auto;
 }
 
-.diagram-key {
+.legend {
 display: flex;
 flex-wrap: wrap;
 gap: 15px;
 margin-top: 15px;
-font-size: 13px;
-}
-
-.key-item {
-display: flex;
-align-items: center;
-gap: 7px;
-}
-
-.key-colour {
-width: 17px;
-height: 17px;
-border: 1px solid #80572d;
-}
-
-.key-timber {
-background: #bd8950;
-}
-
-.key-opening {
-background: #e8e8e8;
-border-color: #777;
-}
-
-.diagram-note,
-.cutting-note {
-margin-top: 12px;
-font-size: 12px;
-color: #666;
-line-height: 1.5;
-}
-
-.cutting-list {
-margin-top: 30px;
-padding: 20px 12px;
-background: #f5f5f5;
-border-radius: 8px;
-}
-
-.cutting-list p {
-font-size: 13px;
-color: #555;
-margin-bottom: 15px;
-}
-
-.cutting-list table {
-min-width: 500px;
-}
-
-.cutting-list th:first-child {
-width: 15%;
-}
-
-.cutting-list th:nth-child(2) {
-width: 35%;
-}
-
-.cutting-list th:nth-child(3) {
-width: 25%;
-}
-
-.cutting-list th:nth-child(4) {
-width: 25%;
-}
-
-footer {
-background: #111;
-color: white;
-text-align: center;
-padding: 22px 12px;
-margin-top: 30px;
 font-size: 14px;
 }
 
-@media(max-width:500px) {
-main {
-margin: 18px auto;
-padding: 0 10px;
+.legend-item {
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+.legend-box {
+width: 18px;
+height: 18px;
+border: 1px solid #777;
+}
+
+.note {
+background: #eee;
+padding: 14px;
+border-radius: 6px;
+margin-top: 15px;
+font-size: 14px;
+}
+
+footer {
+background: #000;
+color: #fff;
+text-align: center;
+padding: 25px 15px;
+margin-top: 40px;
+}
+
+@media (max-width: 700px) {
+
+.input-grid {
+grid-template-columns: 1fr;
 }
 
 .calculator {
-padding: 18px 14px;
+padding: 18px;
 }
 
-.optional-section {
-padding: 14px;
+header {
+padding: 25px 12px;
 }
 
-.diagram-section,
-.cutting-list {
-padding: 15px 8px;
+table {
+font-size: 14px;
+}
 }
 
-th, td {
-padding: 10px 7px;
-font-size: 13px;
-}
-}
 </style>
 </head>
 
 <body>
 
 <header>
+
 <h1>Timber Craft Works</h1>
+
+<p>Shed Front Wall Calculator</p>
+
 </header>
 
-<main>
+<div class="container">
+
 <div class="calculator">
 
-<h2>Shed Front Wall Calculator</h2>
+<h2>Front Wall Calculator</h2>
 
-<div class="section-heading">
-<h3>Front Wall Measurements</h3>
+<div class="input-grid">
+
+<div class="input-group">
+<label for="wallLength">
+Overall Front Wall Length (mm)
+</label>
+
+<input
+type="number"
+id="wallLength"
+value="3000"
+min="1"
+>
 </div>
 
-<div class="field">
-<label for="wallLength">Overall Front Wall Length (mm)</label>
-<input type="number" id="wallLength" min="1" placeholder="Enter overall wall length">
+<div class="input-group">
+<label for="wallHeight">
+Overall Front Wall Height (mm)
+</label>
+
+<input
+type="number"
+id="wallHeight"
+value="2100"
+min="1"
+>
 </div>
 
-<div class="field">
-<label for="wallHeight">Overall Front Wall Height (mm)</label>
-<input type="number" id="wallHeight" min="1" placeholder="Enter overall wall height">
+<div class="input-group">
+<label for="timberThickness">
+Timber Thickness (mm)
+</label>
+
+<input
+type="number"
+id="timberThickness"
+value="50"
+min="1"
+>
 </div>
 
-<div class="field">
-<label for="timberThickness">Timber Thickness (mm)</label>
-<input type="number" id="timberThickness" min="1" placeholder="Enter timber thickness">
+<div class="input-group">
+<label for="studCount">
+Main Wall Studs (including end studs)
+</label>
+
+<input
+type="number"
+id="studCount"
+value="7"
+min="2"
+>
 </div>
 
-<div class="field">
-<label for="studCount">Number of Main Wall Studs (including the two end studs)</label>
-<input type="number" id="studCount" min="2" step="1" placeholder="Enter number of main wall studs">
 </div>
 
-<div class="section-heading">
-<h3>Door Opening</h3>
-</div>
+<div class="section">
 
-<div class="field">
-<label for="doorType">Door Type</label>
+<h3>Door</h3>
+
+<div class="input-grid">
+
+<div class="input-group">
+<label for="doorType">
+Door Type
+</label>
+
 <select id="doorType">
-<option value="Single Door">Single Door</option>
-<option value="Double Door">Double Door</option>
+
+<option value="single">
+Single Door
+</option>
+
+<option value="double">
+Double Door
+</option>
+
 </select>
 </div>
 
-<div class="field">
-<label for="doorWidth">Clear Door Opening Width (mm)</label>
-<input type="number" id="doorWidth" min="1" placeholder="Enter door opening width">
+<div class="input-group">
+<label for="doorWidth">
+Clear Door Opening Width (mm)
+</label>
+
+<input
+type="number"
+id="doorWidth"
+value="900"
+min="1"
+>
 </div>
 
-<div class="field">
-<label for="doorHeight">Clear Door Opening Height (mm)</label>
-<input type="number" id="doorHeight" min="1" placeholder="Enter door opening height">
+<div class="input-group">
+<label for="doorHeight">
+Clear Door Opening Height (mm)
+</label>
+
+<input
+type="number"
+id="doorHeight"
+value="1900"
+min="1"
+>
 </div>
 
-<div class="field">
-<label for="doorPosition">Distance from Wall Side to Door Frame (mm)</label>
-<input type="number" id="doorPosition" min="0" placeholder="Enter distance to door">
-</div>
+<div class="input-group">
+<label for="doorPosition">
+Door Position
+</label>
 
-<div class="field">
-<label for="doorSide">Measure Door Position From</label>
-<select id="doorSide">
-<option value="left">Left Side</option>
-<option value="right">Right Side</option>
+<select id="doorPosition">
+
+<option value="left">
+Measured from Left
+</option>
+
+<option value="right">
+Measured from Right
+</option>
+
 </select>
 </div>
 
-<div class="optional-section">
+<div class="input-group">
+<label for="doorOffset">
+Door Position (mm)
+</label>
 
-<h3>Optional Window Opening</h3>
+<input
+type="number"
+id="doorOffset"
+value="300"
+min="0"
+>
+</div>
 
-<div class="field">
-<label for="windowEnabled">Include a Window?</label>
-<select id="windowEnabled" onchange="toggleWindow()">
-<option value="no">No Window</option>
-<option value="yes">Yes - Include Window</option>
+</div>
+
+</div>
+
+<div class="section">
+
+<h3>Window</h3>
+
+<div class="input-grid">
+
+<div class="input-group">
+<label for="windowEnabled">
+Window
+</label>
+
+<select id="windowEnabled">
+
+<option value="yes">
+Include Window
+</option>
+
+<option value="no">
+No Window
+</option>
+
 </select>
 </div>
 
-<div id="windowFields" class="hidden">
+<div class="input-group">
+<label for="windowWidth">
+Clear Window Width (mm)
+</label>
 
-<div class="field">
-<label for="windowWidth">Clear Window Opening Width (mm)</label>
-<input type="number" id="windowWidth" min="1" placeholder="Enter window width">
+<input
+type="number"
+id="windowWidth"
+value="600"
+min="1"
+>
 </div>
 
-<div class="field">
-<label for="windowHeight">Clear Window Opening Height (mm)</label>
-<input type="number" id="windowHeight" min="1" placeholder="Enter window height">
+<div class="input-group">
+<label for="windowHeight">
+Clear Window Height (mm)
+</label>
+
+<input
+type="number"
+id="windowHeight"
+value="600"
+min="1"
+>
 </div>
 
-<div class="field">
-<label for="windowSill">Window Sill Height Above Bottom Plate (mm)</label>
-<input type="number" id="windowSill" min="0" placeholder="Enter sill height">
+<div class="input-group">
+<label for="windowSill">
+Window Sill Height Above Bottom Rail (mm)
+</label>
+
+<input
+type="number"
+id="windowSill"
+value="900"
+min="0"
+>
 </div>
 
-<div class="field">
-<label for="windowPosition">Distance from Wall Side to Window Frame (mm)</label>
-<input type="number" id="windowPosition" min="0" placeholder="Enter distance to window">
-</div>
+<div class="input-group">
+<label for="windowPosition">
+Window Position
+</label>
 
-<div class="field">
-<label for="windowSide">Measure Window Position From</label>
-<select id="windowSide">
-<option value="left">Left Side</option>
-<option value="right">Right Side</option>
+<select id="windowPosition">
+
+<option value="left">
+Measured from Left
+</option>
+
+<option value="right">
+Measured from Right
+</option>
+
 </select>
 </div>
 
-</div>
-</div>
+<div class="input-group">
+<label for="windowOffset">
+Window Position (mm)
+</label>
 
-<br>
-
-<button onclick="calculateWall()">Calculate Front Wall</button>
-
-<div class="results" id="results">
-
-<h2 style="margin-top:25px;">Calculation Results</h2>
-
-<div class="summary" id="summary"></div>
-
-<h3>Main Wall Stud Positions</h3>
-
-<p style="font-size:13px;color:#555;margin-top:5px;">
-Main studs are distributed through the available solid wall sections. Door and window frame studs are additional.
-</p>
-
-<div class="table-wrapper">
-<table>
-<thead>
-<tr>
-<th>Stud</th>
-<th>Start (mm)</th>
-<th>Finish (mm)</th>
-<th>Clear Gap (mm)</th>
-</tr>
-</thead>
-<tbody id="studTable"></tbody>
-</table>
+<input
+type="number"
+id="windowOffset"
+value="1700"
+min="0"
+>
 </div>
 
-<h3 style="margin-top:25px;">Opening Frame Positions</h3>
-
-<div class="table-wrapper">
-<table>
-<thead>
-<tr>
-<th>Opening</th>
-<th>Frame Member</th>
-<th>Start (mm)</th>
-<th>Finish (mm)</th>
-</tr>
-</thead>
-<tbody id="openingTable"></tbody>
-</table>
 </div>
 
-<div class="diagram-section">
+</div>
 
-<h3>Scaled Front Wall Diagram</h3>
+<button onclick="calculateWall()">
+Calculate Front Wall
+</button>
 
-<p>Front elevation showing the wall studs, door opening, optional window and timber framing.</p>
+<div id="results" class="results">
 
-<div class="diagram-container">
-<svg id="wallDiagram"
-xmlns="http://www.w3.org/2000/svg"
-role="img"
-aria-label="Scaled shed front wall frame diagram">
+<h3>Wall Calculation</h3>
+
+<div id="summary"></div>
+
+<h3>Front Wall & Floor Joist Diagram</h3>
+
+<div class="diagram-wrap">
+
+<svg
+id="wallDiagram"
+viewBox="0 0 1200 900"
+preserveAspectRatio="xMidYMid meet">
 </svg>
+
+<div class="legend">
+
+<div class="legend-item">
+<div
+class="legend-box"
+style="background:#555;">
+</div>
+Main Timber
 </div>
 
-<div class="diagram-key">
-<div class="key-item">
-<span class="key-colour key-timber"></span>
-Timber
+<div class="legend-item">
+<div
+class="legend-box"
+style="background:#999;">
 </div>
-<div class="key-item">
-<span class="key-colour key-opening"></span>
-Door and window openings
-</div>
+Door / Window Frame
 </div>
 
-<div class="diagram-note">
-The diagram scales automatically to the entered wall dimensions. Door and window openings are kept clear of ordinary full-height studs. The opening frame studs, headers and window sill are shown separately.
+<div class="legend-item">
+<div
+class="legend-box"
+style="background:#d6d6d6;">
+</div>
+Inside Infill
+</div>
+
+<div class="legend-item">
+<div
+class="legend-box"
+style="background:#f4f4f4;">
+</div>
+Opening
 </div>
 
 </div>
 
-<div class="cutting-list">
+</div>
 
-<h3>Front Wall Cutting List</h3>
+<h3>Cutting List</h3>
 
-<p>Timber required for the front wall frame using the measurements entered above.</p>
+<div class="table-wrap">
 
-<div class="table-wrapper">
-<table>
+<table id="cuttingList">
+
 <thead>
+
 <tr>
-<th>Qty</th>
-<th>Timber</th>
-<th>Cut Length</th>
-<th>Thickness</th>
+
+<th>
+Item
+</th>
+
+<th>
+Quantity
+</th>
+
+<th>
+Length (mm)
+</th>
+
+<th>
+Timber Thickness (mm)
+</th>
+
 </tr>
+
 </thead>
-<tbody id="cuttingTable"></tbody>
+
+<tbody></tbody>
+
 </table>
-</div>
-
-<div class="cutting-note">
-The top plate runs the full wall length. The bottom plate is interrupted at the door opening. Door and window headers and the window sill are included in the cutting list. All measurements are in millimetres.
-</div>
 
 </div>
 
+<div class="note">
+
+<strong>Construction layout:</strong>
+
+The bottom rail runs continuously across the complete front wall.
+The door opening sits on top of the bottom rail.
+
+Door and window infills are positioned behind the front frame,
+on the inside of the wall.
+
+The floor joists run front-to-back and the spaces between them
+continue fully across the floor width.
+
 </div>
+
 </div>
-</main>
+
+</div>
+
+</div>
 
 <footer>
-Timber Craft Works
+
+<p>
+&copy; Timber Craft Works
+</p>
+
 </footer>
 
 <script>
 
-function toggleWindow() {
-const enabled = document.getElementById("windowEnabled").value === "yes";
-document.getElementById("windowFields").classList.toggle("hidden", !enabled);
-}
-
-function numberValue(id) {
-return Number(document.getElementById(id).value);
-}
-
-function format(value) {
-return Number(value).toFixed(2);
-}
-
 function calculateWall() {
 
-const length = numberValue("wallLength");
-const height = numberValue("wallHeight");
-const thickness = numberValue("timberThickness");
-const count = numberValue("studCount");
+const length =
+Number(document.getElementById("wallLength").value);
 
-const doorType = document.getElementById("doorType").value;
-const doorWidth = numberValue("doorWidth");
-const doorHeight = numberValue("doorHeight");
-const doorDistance = numberValue("doorPosition");
-const doorSide = document.getElementById("doorSide").value;
+const height =
+Number(document.getElementById("wallHeight").value);
 
-const hasWindow = document.getElementById("windowEnabled").value === "yes";
+const timber =
+Number(document.getElementById("timberThickness").value);
+
+const studCount =
+Number(document.getElementById("studCount").value);
+
+const doorWidth =
+Number(document.getElementById("doorWidth").value);
+
+const doorHeight =
+Number(document.getElementById("doorHeight").value);
+
+const doorOffset =
+Number(document.getElementById("doorOffset").value);
+
+const doorPosition =
+document.getElementById("doorPosition").value;
+
+const windowEnabled =
+document.getElementById("windowEnabled").value === "yes";
+
+const windowWidth =
+Number(document.getElementById("windowWidth").value);
+
+const windowHeight =
+Number(document.getElementById("windowHeight").value);
+
+const windowSill =
+Number(document.getElementById("windowSill").value);
+
+const windowOffset =
+Number(document.getElementById("windowOffset").value);
+
+const windowPosition =
+document.getElementById("windowPosition").value;
+
 
 if (
-!Number.isFinite(length) ||
-!Number.isFinite(height) ||
-!Number.isFinite(thickness) ||
-!Number.isInteger(count) ||
 length <= 0 ||
 height <= 0 ||
-thickness <= 0 ||
-count < 2 ||
-!Number.isFinite(doorWidth) ||
-!Number.isFinite(doorHeight) ||
-!Number.isFinite(doorDistance) ||
+timber <= 0 ||
+studCount < 2
+) {
+
+alert(
+"Please enter valid wall dimensions and stud numbers."
+);
+
+return;
+}
+
+
+if (
 doorWidth <= 0 ||
 doorHeight <= 0 ||
-doorDistance < 0
+doorWidth + timber * 2 >= length
 ) {
-alert("Please enter valid wall, timber and door measurements.");
+
+alert(
+"Please check the door dimensions."
+);
+
 return;
 }
 
-if (height <= thickness * 2 || length <= thickness * 2) {
-alert("The wall dimensions are too small for the timber thickness.");
-return;
-}
-
-if (doorHeight + thickness * 2 > height) {
-alert("The door opening is too high for the wall.");
-return;
-}
-
-// Door position is measured to the outside edge
-// of the first door frame stud.
-
-let doorStart = doorDistance;
-
-if (doorSide === "right") {
-doorStart = length - doorDistance - doorWidth - thickness * 2;
-}
-
-const doorFinish = doorStart + doorWidth + thickness * 2;
 
 if (
-doorStart < thickness ||
-doorFinish > length - thickness
+doorHeight > height - timber
 ) {
-alert("The door opening and its frame must fit between the two end studs.");
+
+alert(
+"The door height is too large for the wall."
+);
+
 return;
 }
 
-const openings = [{
-type: "Door",
-start: doorStart,
-finish: doorFinish,
-clearWidth: doorWidth,
-clearHeight: doorHeight
-}];
-
-let windowStart = 0;
-let windowFinish = 0;
-let windowWidth = 0;
-let windowHeight = 0;
-let windowSill = 0;
-
-if (hasWindow) {
-
-windowWidth = numberValue("windowWidth");
-windowHeight = numberValue("windowHeight");
-windowSill = numberValue("windowSill");
-
-const windowDistance = numberValue("windowPosition");
-const windowSide = document.getElementById("windowSide").value;
 
 if (
-!Number.isFinite(windowWidth) ||
-!Number.isFinite(windowHeight) ||
-!Number.isFinite(windowSill) ||
-!Number.isFinite(windowDistance) ||
+windowEnabled &&
+(
 windowWidth <= 0 ||
 windowHeight <= 0 ||
 windowSill < 0 ||
-windowDistance < 0
+windowWidth + timber * 2 >= length ||
+windowSill + windowHeight > height - timber
+)
 ) {
-alert("Please enter valid window measurements.");
-return;
-}
 
-if (windowSill + windowHeight + thickness * 2 > height) {
-alert("The window opening is too high for the wall.");
-return;
-}
-
-windowStart = windowDistance;
-
-if (windowSide === "right") {
-windowStart = length - windowDistance - windowWidth - thickness * 2;
-}
-
-windowFinish = windowStart + windowWidth + thickness * 2;
-
-if (
-windowStart < thickness ||
-windowFinish > length - thickness
-) {
-alert("The window opening and its frame must fit between the two end studs.");
-return;
-}
-
-if (
-windowStart < doorFinish &&
-windowFinish > doorStart
-) {
-alert("The door and window frames overlap. Please change their positions.");
-return;
-}
-
-openings.push({
-type: "Window",
-start: windowStart,
-finish: windowFinish,
-clearWidth: windowWidth,
-clearHeight: windowHeight
-});
-}
-
-// Fixed vertical members:
-// two outer end studs and two jamb studs per opening.
-
-const fixedStuds = [
-{start: 0, name: "Left End Stud"},
-{start: length - thickness, name: "Right End Stud"}
-];
-
-openings.forEach(opening => {
-fixedStuds.push({
-start: opening.start,
-name: opening.type + " Left Frame Stud"
-});
-
-fixedStuds.push({
-start: opening.start + opening.clearWidth + thickness,
-name: opening.type + " Right Frame Stud"
-});
-});
-
-fixedStuds.sort((a, b) => a.start - b.start);
-
-// Check that fixed studs do not overlap.
-
-for (let i = 1; i < fixedStuds.length; i++) {
-if (fixedStuds[i].start < fixedStuds[i - 1].start + thickness - 0.001) {
-alert("The opening frames are too close together or overlap. Please adjust their positions.");
-return;
-}
-}
-
-// Create the clear wall sections between fixed studs.
-
-const intervals = [];
-
-for (let i = 0; i < fixedStuds.length - 1; i++) {
-
-const start = fixedStuds[i].start + thickness;
-const finish = fixedStuds[i + 1].start;
-
-if (finish > start) {
-intervals.push({
-start: start,
-finish: finish,
-length: finish - start,
-count: 0
-});
-}
-}
-
-const ordinaryCount = count - 2;
-
-// Distribute ordinary studs proportionally across
-// the available solid wall sections.
-
-const totalAvailable = intervals.reduce((sum, item) => sum + item.length, 0);
-
-if (ordinaryCount > 0 && totalAvailable <= 0) {
-alert("There is no remaining wall space for the requested main studs.");
-return;
-}
-
-if (ordinaryCount > 0) {
-
-let allocated = 0;
-
-intervals.forEach(interval => {
-const exact = ordinaryCount * interval.length / totalAvailable;
-interval.count = Math.floor(exact);
-interval.remainder = exact - interval.count;
-allocated += interval.count;
-});
-
-while (allocated < ordinaryCount) {
-
-let bestIndex = 0;
-
-for (let i = 1; i < intervals.length; i++) {
-if (intervals[i].remainder > intervals[bestIndex].remainder) {
-bestIndex = i;
-}
-}
-
-intervals[bestIndex].count++;
-intervals[bestIndex].remainder = -1;
-allocated++;
-}
-}
-
-// Calculate each section's stud positions.
-// Timber thickness is included in the clear-gap calculation.
-
-const ordinaryStuds = [];
-
-intervals.forEach((interval, intervalIndex) => {
-
-const sectionCount = interval.count;
-
-if (sectionCount === 0) return;
-
-const clearGap = (
-interval.length - thickness * sectionCount
-) / (sectionCount + 1);
-
-if (clearGap < -0.001) {
-throw new Error("There is not enough space for the requested number of studs.");
-}
-
-for (let i = 0; i < sectionCount; i++) {
-
-const start = interval.start + clearGap + i * (thickness + clearGap);
-
-ordinaryStuds.push({
-start: start,
-finish: start + thickness,
-gap: clearGap,
-section: intervalIndex
-});
-}
-});
-
-ordinaryStuds.sort((a, b) => a.start - b.start);
-
-// Build complete vertical stud list.
-
-const allVerticalStuds = [];
-
-fixedStuds.forEach(stud => {
-allVerticalStuds.push({
-start: stud.start,
-finish: stud.start + thickness,
-name: stud.name,
-type: "frame"
-});
-});
-
-ordinaryStuds.forEach((stud, index) => {
-allVerticalStuds.push({
-start: stud.start,
-finish: stud.finish,
-name: "Main Stud " + (index + 1),
-type: "main"
-});
-});
-
-allVerticalStuds.sort((a, b) => a.start - b.start);
-
-// Check opening vertical positions and frame members.
-
-const bottomPlateTop = height - thickness;
-const verticalStudLength = height - thickness * 2;
-
-if (doorHeight > height - thickness * 2) {
-alert("The door opening is too high for the available wall height.");
-return;
-}
-
-// Prepare results summary.
-
-let summaryHTML = `
-<strong>Overall front wall length:</strong> ${format(length)} mm<br>
-<strong>Overall front wall height:</strong> ${format(height)} mm<br>
-<strong>Timber thickness:</strong> ${format(thickness)} mm<br>
-<strong>Main wall studs requested:</strong> ${count}<br>
-<strong>Ordinary main studs:</strong> ${ordinaryStuds.length}<br>
-<strong>Additional end and opening frame studs:</strong> ${fixedStuds.length}<br>
-<strong>Vertical stud cut length:</strong> ${format(verticalStudLength)} mm<br>
-<strong>Top plate length:</strong> ${format(length)} mm<br>
-<strong>Door type:</strong> ${doorType}<br>
-<strong>Door clear opening:</strong> ${format(doorWidth)} mm wide × ${format(doorHeight)} mm high
-`;
-
-if (hasWindow) {
-summaryHTML += `
-<br><strong>Window clear opening:</strong> ${format(windowWidth)} mm wide × ${format(windowHeight)} mm high
-<br><strong>Window sill height:</strong> ${format(windowSill)} mm
-`;
-}
-
-document.getElementById("summary").innerHTML = summaryHTML;
-
-// Main stud position table.
-
-const studTable = document.getElementById("studTable");
-studTable.innerHTML = "";
-
-ordinaryStuds.forEach((stud, index) => {
-
-const row = document.createElement("tr");
-
-row.innerHTML = `
-<td>${index + 1}</td>
-<td>${format(stud.start)}</td>
-<td>${format(stud.finish)}</td>
-<td>${format(stud.gap)}</td>
-`;
-
-studTable.appendChild(row);
-});
-
-if (ordinaryStuds.length === 0) {
-studTable.innerHTML = `<tr><td colspan="4">No additional main studs required.</td></tr>`;
-}
-
-// Opening frame position table.
-
-const openingTable = document.getElementById("openingTable");
-openingTable.innerHTML = "";
-
-openings.forEach(opening => {
-
-const leftStud = opening.start;
-const rightStud = opening.start + opening.clearWidth + thickness;
-
-const members = [
-{
-name: opening.type + " Left Frame Stud",
-start: leftStud,
-finish: leftStud + thickness
-},
-{
-name: opening.type + " Right Frame Stud",
-start: rightStud,
-finish: rightStud + thickness
-},
-{
-name: opening.type + " Header",
-start: opening.start,
-finish: opening.finish
-}
-];
-
-if (opening.type === "Window") {
-members.push({
-name: "Window Sill",
-start: opening.start,
-finish: opening.finish
-});
-}
-
-members.forEach(member => {
-const row = document.createElement("tr");
-
-row.innerHTML = `
-<td>${opening.type}</td>
-<td>${member.name}</td>
-<td>${format(member.start)}</td>
-<td>${format(member.finish)}</td>
-`;
-
-openingTable.appendChild(row);
-});
-});
-
-// CUTTING LIST.
-
-const cuttingRows = [];
-
-function addCut(name, qty, cutLength, cutThickness) {
-if (qty <= 0) return;
-
-cuttingRows.push({
-name: name,
-qty: qty,
-length: cutLength,
-thickness: cutThickness
-});
-}
-
-addCut("Top Plate", 1, length, thickness);
-
-// Bottom plate is removed only across the clear door opening.
-
-const doorInnerStart = doorStart + thickness;
-const doorInnerFinish = doorInnerStart + doorWidth;
-
-if (doorInnerStart > 0) {
-addCut("Bottom Plate - Left Section", 1, doorInnerStart, thickness);
-}
-
-if (length - doorInnerFinish > 0) {
-addCut("Bottom Plate - Right Section", 1, length - doorInnerFinish, thickness);
-}
-
-// End studs.
-
-addCut("Outer End Studs", 2, verticalStudLength, thickness);
-
-// Ordinary main wall studs.
-
-addCut("Main Wall Studs", ordinaryStuds.length, verticalStudLength, thickness);
-
-// Door frame.
-
-addCut("Door Frame Studs", 2, verticalStudLength, thickness);
-addCut("Door Header", 1, doorWidth + thickness * 2, thickness);
-
-// Window frame.
-
-if (hasWindow) {
-
-addCut("Window Frame Studs", 2, verticalStudLength, thickness);
-addCut("Window Header", 1, windowWidth + thickness * 2, thickness);
-addCut("Window Sill", 1, windowWidth + thickness * 2, thickness);
-
-}
-
-const cuttingTable = document.getElementById("cuttingTable");
-cuttingTable.innerHTML = "";
-
-cuttingRows.forEach(item => {
-
-const row = document.createElement("tr");
-
-row.innerHTML = `
-<td>${item.qty}</td>
-<td>${item.name}</td>
-<td>${format(item.length)} mm</td>
-<td>${format(item.thickness)} mm</td>
-`;
-
-cuttingTable.appendChild(row);
-});
-
-// Draw diagram.
-
-drawWallDiagram({
-length,
-height,
-thickness,
-openings,
-fixedStuds,
-ordinaryStuds,
-doorStart,
-doorWidth,
-doorHeight,
-windowStart,
-windowWidth,
-windowHeight,
-windowSill,
-hasWindow
-});
-
-document.getElementById("results").style.display = "block";
-
-document.getElementById("results").scrollIntoView({
-behavior: "smooth",
-block: "start"
-});
-
-}
-
-function drawWallDiagram(data) {
-
-const svg = document.getElementById("wallDiagram");
-
-const {
-length,
-height,
-thickness,
-openings,
-fixedStuds,
-ordinaryStuds,
-doorStart,
-doorWidth,
-doorHeight,
-windowStart,
-windowWidth,
-windowHeight,
-windowSill,
-hasWindow
-} = data;
-
-const svgWidth = 760;
-const svgHeight = 570;
-
-const left = 100;
-const right = 45;
-const top = 90;
-const bottom = 100;
-
-const availableWidth = svgWidth - left - right;
-const availableHeight = svgHeight - top - bottom;
-
-const scale = Math.min(
-availableWidth / length,
-availableHeight / height
+alert(
+"Please check the window dimensions."
 );
 
-const drawingLength = length * scale;
-const drawingHeight = height * scale;
-const timber = thickness * scale;
+return;
+}
 
-const x = left + (availableWidth - drawingLength) / 2;
-const y = top + (availableHeight - drawingHeight) / 2;
 
-const colour = "#bd8950";
-const outline = "#80572d";
+/*
+* CONTINUOUS BOTTOM RAIL
+*
+* The complete front wall has one continuous
+* bottom rail.
+*
+* The door sits ON TOP of this rail.
+*/
+const bottomRailTop =
+height - timber;
 
-let drawing = "";
 
-function rect(rx, ry, rw, rh, fill = colour) {
-drawing += `
-<rect
-x="${rx}"
-y="${ry}"
-width="${Math.max(0, rw)}"
-height="${Math.max(0, rh)}"
-fill="${fill}"
-stroke="${outline}"
-stroke-width="1"
-/>
+/*
+* DOOR
+*
+* Door position is to the outside edge
+* of the first door frame stud.
+*/
+let doorStart;
+
+if (doorPosition === "left") {
+
+doorStart =
+doorOffset;
+
+} else {
+
+doorStart =
+length -
+doorOffset -
+(doorWidth + timber * 2);
+}
+
+
+const doorFrameWidth =
+doorWidth + timber * 2;
+
+const doorClearStart =
+doorStart + timber;
+
+const doorClearFinish =
+doorClearStart + doorWidth;
+
+const doorFinish =
+doorStart + doorFrameWidth;
+
+
+if (
+doorStart < 0 ||
+doorFinish > length
+) {
+
+alert(
+"The door position is outside the wall."
+);
+
+return;
+}
+
+
+/*
+* WINDOW
+*/
+let windowStart = 0;
+let windowFinish = 0;
+
+if (windowEnabled) {
+
+const windowFrameWidth =
+windowWidth + timber * 2;
+
+
+if (windowPosition === "left") {
+
+windowStart =
+windowOffset;
+
+} else {
+
+windowStart =
+length -
+windowOffset -
+windowFrameWidth;
+}
+
+
+windowFinish =
+windowStart +
+windowFrameWidth;
+
+
+if (
+windowStart < 0 ||
+windowFinish > length
+) {
+
+alert(
+"The window position is outside the wall."
+);
+
+return;
+}
+}
+
+
+/*
+* FIXED VERTICAL STUDS
+*/
+const fixedStuds = [];
+
+
+// LEFT END STUD
+fixedStuds.push({
+start: 0,
+end: timber,
+type: "Outer"
+});
+
+
+// RIGHT END STUD
+fixedStuds.push({
+start: length - timber,
+end: length,
+type: "Outer"
+});
+
+
+// LEFT DOOR STUD
+fixedStuds.push({
+start: doorStart,
+end: doorStart + timber,
+type: "Door"
+});
+
+
+// RIGHT DOOR STUD
+fixedStuds.push({
+start: doorClearFinish,
+end: doorFinish,
+type: "Door"
+});
+
+
+/*
+* WINDOW FRAME STUDS
+*/
+if (windowEnabled) {
+
+fixedStuds.push({
+
+start: windowStart,
+
+end:
+windowStart + timber,
+
+type: "Window"
+
+});
+
+
+fixedStuds.push({
+
+start:
+windowStart +
+timber +
+windowWidth,
+
+end:
+windowFinish,
+
+type: "Window"
+
+});
+}
+
+
+fixedStuds.sort(
+(a, b) => a.start - b.start
+);
+
+
+/*
+* CHECK OVERLAPPING FIXED STUDS
+*/
+for (
+let i = 0;
+i < fixedStuds.length - 1;
+i++
+) {
+
+if (
+fixedStuds[i].end >
+fixedStuds[i + 1].start
+) {
+
+alert(
+"The door/window positions overlap. Please adjust them."
+);
+
+return;
+}
+}
+
+
+/*
+* MAIN WALL STUDS
+*
+* The number entered includes the
+* two outside end studs.
+*/
+const mainStudsNeeded =
+studCount - 2;
+
+
+/*
+* FIND SOLID WALL GAPS
+*/
+const solidIntervals = [];
+
+
+for (
+let i = 0;
+i < fixedStuds.length - 1;
+i++
+) {
+
+const gapStart =
+fixedStuds[i].end;
+
+const gapEnd =
+fixedStuds[i + 1].start;
+
+
+if (
+gapEnd > gapStart
+) {
+
+solidIntervals.push({
+
+start: gapStart,
+end: gapEnd
+
+});
+}
+}
+
+
+/*
+* MAIN STUD DISTRIBUTION
+*/
+const mainStuds = [];
+
+const totalAvailableLength =
+solidIntervals.reduce(
+
+(sum, interval) =>
+sum +
+(
+interval.end -
+interval.start
+),
+
+0
+);
+
+
+if (
+mainStudsNeeded > 0 &&
+totalAvailableLength > 0
+) {
+
+let remainingStuds =
+mainStudsNeeded;
+
+
+for (
+let i = 0;
+i < solidIntervals.length;
+i++
+) {
+
+const interval =
+solidIntervals[i];
+
+
+if (
+remainingStuds <= 0
+) {
+
+break;
+}
+
+
+const intervalsRemaining =
+solidIntervals.length - i;
+
+
+let studsHere;
+
+
+if (
+i ===
+solidIntervals.length - 1
+) {
+
+studsHere =
+remainingStuds;
+
+} else {
+
+studsHere =
+Math.round(
+
+mainStudsNeeded *
+(
+(
+interval.end -
+interval.start
+) /
+totalAvailableLength
+)
+);
+
+
+if (
+studsHere >
+remainingStuds
+) {
+
+studsHere =
+remainingStuds;
+}
+}
+
+
+if (
+studsHere > 0
+) {
+
+const clearGap =
+(
+(
+interval.end -
+interval.start
+) -
+timber * studsHere
+) /
+(studsHere + 1);
+
+
+for (
+let j = 0;
+j < studsHere;
+j++
+) {
+
+const studStart =
+interval.start +
+clearGap +
+j *
+(
+timber +
+clearGap
+);
+
+
+mainStuds.push({
+
+start:
+studStart,
+
+end:
+studStart +
+timber
+
+});
+}
+
+
+remainingStuds -=
+studsHere;
+}
+}
+}
+
+
+/*
+* VERTICAL STUD LENGTH
+*
+* Continuous top and bottom rails.
+*/
+const verticalStudLength =
+height -
+timber * 2;
+
+
+/*
+* CUTTING LIST
+*/
+const cuts = [];
+
+
+function addCut(
+name,
+quantity,
+cutLength,
+thickness
+) {
+
+cuts.push({
+
+name: name,
+
+quantity: quantity,
+
+length:
+Math.round(
+cutLength
+),
+
+thickness:
+Math.round(
+thickness
+)
+
+});
+}
+
+
+/*
+* CONTINUOUS BOTTOM RAIL
+*/
+addCut(
+"Bottom Rail",
+1,
+length,
+timber
+);
+
+
+/*
+* CONTINUOUS TOP RAIL
+*/
+addCut(
+"Top Rail",
+1,
+length,
+timber
+);
+
+
+/*
+* OUTER END STUDS
+*/
+addCut(
+"Outer End Studs",
+2,
+verticalStudLength,
+timber
+);
+
+
+/*
+* MAIN WALL STUDS
+*/
+if (
+mainStuds.length > 0
+) {
+
+addCut(
+"Main Wall Studs",
+mainStuds.length,
+verticalStudLength,
+timber
+);
+}
+
+
+/*
+* DOOR VERTICAL STUDS
+*/
+addCut(
+"Door Vertical Frame Studs",
+2,
+verticalStudLength,
+timber
+);
+
+
+/*
+* DOOR TOP INFILL
+*
+* It fits between the two vertical
+* door frame studs.
+*/
+addCut(
+"Door Top Infill",
+1,
+doorWidth,
+timber
+);
+
+
+/*
+* WINDOW
+*/
+if (
+windowEnabled
+) {
+
+addCut(
+"Window Vertical Frame Studs",
+2,
+verticalStudLength,
+timber
+);
+
+
+addCut(
+"Window Bottom Infill",
+1,
+windowWidth,
+timber
+);
+
+
+addCut(
+"Window Top Infill",
+1,
+windowWidth,
+timber
+);
+}
+
+
+/*
+* SUMMARY
+*/
+let summaryHTML = "";
+
+
+summaryHTML += `
+<div class="result-box">
+<strong>Wall Size</strong>
+${length} mm × ${height} mm
+</div>
+`;
+
+
+summaryHTML += `
+<div class="result-box">
+<strong>Bottom Rail</strong>
+Continuous full wall length:
+${length} mm
+</div>
+`;
+
+
+summaryHTML += `
+<div class="result-box">
+<strong>Door</strong>
+Clear opening:
+${doorWidth} mm × ${doorHeight} mm
+</div>
+`;
+
+
+if (
+windowEnabled
+) {
+
+summaryHTML += `
+<div class="result-box">
+<strong>Window</strong>
+Clear opening:
+${windowWidth} mm × ${windowHeight} mm
+</div>
 `;
 }
 
-function text(tx, ty, value, size = 12, weight = "normal", anchor = "middle") {
-drawing += `
-<text
-x="${tx}"
-y="${ty}"
-text-anchor="${anchor}"
-font-size="${size}"
-font-weight="${weight}"
-fill="#222"
->${value}</text>
+
+document.getElementById(
+"summary"
+).innerHTML =
+summaryHTML;
+
+
+/*
+* CUTTING LIST TABLE
+*/
+const tbody =
+document.querySelector(
+"#cuttingList tbody"
+);
+
+
+tbody.innerHTML = "";
+
+
+cuts.forEach(
+cut => {
+
+const row =
+document.createElement(
+"tr"
+);
+
+
+row.innerHTML = `
+
+<td>
+${cut.name}
+</td>
+
+<td>
+${cut.quantity}
+</td>
+
+<td>
+${cut.length}
+</td>
+
+<td>
+${cut.thickness}
+</td>
+
 `;
+
+
+tbody.appendChild(
+row
+);
+}
+);
+
+
+/*
+* DRAW BOTH DIAGRAMS
+*/
+drawDiagram(
+
+length,
+height,
+timber,
+
+doorStart,
+doorWidth,
+doorHeight,
+
+windowEnabled,
+windowStart,
+windowWidth,
+windowHeight,
+windowSill,
+
+mainStuds,
+fixedStuds
+
+);
+
+
+document.getElementById(
+"results"
+).style.display =
+"block";
 }
 
-// Wall background.
 
-rect(x, y, drawingLength, drawingHeight, "#fafafa");
+/* =========================================================
+DIAGRAM
+========================================================= */
 
-// Top plate.
+function drawDiagram(
 
-rect(x, y, drawingLength, timber);
+length,
+height,
+timber,
 
-// Bottom plate, split around the door opening.
+doorStart,
+doorWidth,
+doorHeight,
 
-const doorInnerStart = doorStart + thickness;
-const doorInnerFinish = doorInnerStart + doorWidth;
+windowEnabled,
+windowStart,
+windowWidth,
+windowHeight,
+windowSill,
+
+mainStuds,
+fixedStuds
+
+) {
+
+const svg =
+document.getElementById(
+"wallDiagram"
+);
+
+
+svg.innerHTML = "";
+
+
+const svgWidth = 1200;
+const svgHeight = 900;
+
+
+/*
+* FRONT ELEVATION AREA
+*/
+const wallX = 120;
+const wallY = 80;
+
+const wallWidth = 960;
+const wallHeight = 440;
+
+
+const scaleX =
+wallWidth / length;
+
+const scaleY =
+wallHeight / height;
+
+const scale =
+Math.min(
+scaleX,
+scaleY
+);
+
+
+const drawingWidth =
+length * scale;
+
+const drawingHeight =
+height * scale;
+
+
+const x =
+wallX +
+(
+wallWidth -
+drawingWidth
+) / 2;
+
+
+const y =
+wallY +
+(
+wallHeight -
+drawingHeight
+) / 2;
+
+
+const timberPx =
+timber * scale;
+
+
+const mainColour =
+"#555";
+
+const frameColour =
+"#999";
+
+const insideInfillColour =
+"#d6d6d6";
+
+const openingColour =
+"#f4f4f4";
+
+
+function rect(
+rx,
+ry,
+rw,
+rh,
+fill,
+stroke = "#111",
+strokeWidth = 1
+) {
+
+const el =
+document.createElementNS(
+"http://www.w3.org/2000/svg",
+"rect"
+);
+
+
+el.setAttribute(
+"x",
+rx
+);
+
+el.setAttribute(
+"y",
+ry
+);
+
+el.setAttribute(
+"width",
+rw
+);
+
+el.setAttribute(
+"height",
+rh
+);
+
+el.setAttribute(
+"fill",
+fill
+);
+
+el.setAttribute(
+"stroke",
+stroke
+);
+
+el.setAttribute(
+"stroke-width",
+strokeWidth
+);
+
+
+svg.appendChild(
+el
+);
+
+
+return el;
+}
+
+
+function line(
+x1,
+y1,
+x2,
+y2,
+stroke = "#111",
+width = 1,
+dash = ""
+) {
+
+const el =
+document.createElementNS(
+"http://www.w3.org/2000/svg",
+"line"
+);
+
+
+el.setAttribute(
+"x1",
+x1
+);
+
+el.setAttribute(
+"y1",
+y1
+);
+
+el.setAttribute(
+"x2",
+x2
+);
+
+el.setAttribute(
+"y2",
+y2
+);
+
+el.setAttribute(
+"stroke",
+stroke
+);
+
+el.setAttribute(
+"stroke-width",
+width
+);
+
+
+if (dash) {
+
+el.setAttribute(
+"stroke-dasharray",
+dash
+);
+}
+
+
+svg.appendChild(
+el
+);
+}
+
+
+function text(
+tx,
+ty,
+value,
+size = 16,
+anchor = "middle",
+weight = "normal"
+) {
+
+const el =
+document.createElementNS(
+"http://www.w3.org/2000/svg",
+"text"
+);
+
+
+el.setAttribute(
+"x",
+tx
+);
+
+el.setAttribute(
+"y",
+ty
+);
+
+el.setAttribute(
+"font-size",
+size
+);
+
+el.setAttribute(
+"font-family",
+"Arial, Helvetica, sans-serif"
+);
+
+el.setAttribute(
+"text-anchor",
+anchor
+);
+
+el.setAttribute(
+"font-weight",
+weight
+);
+
+el.setAttribute(
+"fill",
+"#111"
+);
+
+
+el.textContent =
+value;
+
+
+svg.appendChild(
+el
+);
+}
+
+
+/*
+* FRONT WALL OUTLINE
+*/
+rect(
+x,
+y,
+drawingWidth,
+drawingHeight,
+"#fff",
+"#111",
+2
+);
+
+
+/*
+* TOP RAIL
+*/
+rect(
+x,
+y,
+drawingWidth,
+timberPx,
+mainColour
+);
+
+
+/*
+* CONTINUOUS BOTTOM RAIL
+*
+* FULL WIDTH.
+* NO GAP UNDER THE DOOR.
+*/
+const bottomRailY =
+y +
+drawingHeight -
+timberPx;
+
 
 rect(
 x,
-y + drawingHeight - timber,
-doorInnerStart * scale,
+bottomRailY,
+drawingWidth,
+timberPx,
+mainColour
+);
+
+
+/*
+* MAIN WALL STUDS
+*/
+mainStuds.forEach(
+stud => {
+
+rect(
+
+x +
+stud.start * scale,
+
+y +
+timberPx,
+
+timberPx,
+
+drawingHeight -
+timberPx * 2,
+
+mainColour
+
+);
+}
+);
+
+
+/*
+* FIXED FRAME STUDS
+*/
+fixedStuds.forEach(
+stud => {
+
+let fill =
+mainColour;
+
+
+if (
+stud.type === "Door" ||
+stud.type === "Window"
+) {
+
+fill =
+frameColour;
+}
+
+
+rect(
+
+x +
+stud.start * scale,
+
+y +
+timberPx,
+
+(
+stud.end -
+stud.start
+) * scale,
+
+drawingHeight -
+timberPx * 2,
+
+fill
+
+);
+}
+);
+
+
+/*
+* DOOR OPENING
+*
+* The opening stops at the TOP
+* of the continuous bottom rail.
+*/
+const doorOpeningBottom =
+bottomRailY;
+
+
+const doorOpeningTop =
+doorOpeningBottom -
+doorHeight * scale;
+
+
+const doorClearX =
+x +
+(
+doorStart +
 timber
-);
+) * scale;
+
 
 rect(
-x + doorInnerFinish * scale,
-y + drawingHeight - timber,
-(length - doorInnerFinish) * scale,
+
+doorClearX,
+
+doorOpeningTop,
+
+doorWidth * scale,
+
+doorHeight * scale,
+
+openingColour,
+
+"#111",
+1
+
+);
+
+
+/*
+* DOOR TOP INFILL
+*
+* THIS IS DRAWN BEHIND THE FRONT FRAME.
+*
+* The vertical door studs remain
+* in front of it.
+*/
+const doorInfillY =
+doorOpeningTop -
+timberPx;
+
+
+rect(
+
+doorClearX,
+
+doorInfillY,
+
+doorWidth * scale,
+
+timberPx,
+
+insideInfillColour,
+
+"#333",
+1
+
+);
+
+
+/*
+* SMALL OFFSET LINE ABOVE THE DOOR INFILL
+*
+* Gives the diagram a visible indication
+* that the infill is recessed/inside.
+*/
+line(
+
+doorClearX,
+doorInfillY,
+
+doorClearX +
+doorWidth * scale,
+
+doorInfillY,
+
+"#666",
+2,
+"5 4"
+
+);
+
+
+/*
+* WINDOW
+*/
+if (
+windowEnabled
+) {
+
+const windowBottom =
+bottomRailY -
+windowSill * scale;
+
+
+const windowTop =
+windowBottom -
+windowHeight * scale;
+
+
+const windowClearX =
+x +
+(
+windowStart +
 timber
-);
+) * scale;
 
-// Draw vertical studs.
-// Main studs and frame studs are kept separate in the calculation.
 
-fixedStuds.forEach(stud => {
+/*
+* CLEAR WINDOW OPENING
+*/
 rect(
-x + stud.start * scale,
-y + timber,
-timber,
-drawingHeight - timber * 2
-);
-});
 
-ordinaryStuds.forEach(stud => {
+windowClearX,
+
+windowTop,
+
+windowWidth * scale,
+
+windowHeight * scale,
+
+openingColour,
+
+"#111",
+1
+
+);
+
+
+/*
+* WINDOW BOTTOM INFILL
+*
+* Recessed behind the front
+* vertical frame studs.
+*/
 rect(
-x + stud.start * scale,
-y + timber,
-timber,
-drawingHeight - timber * 2
+
+windowClearX,
+
+windowBottom -
+timberPx,
+
+windowWidth * scale,
+
+timberPx,
+
+insideInfillColour,
+
+"#333",
+1
+
 );
-});
 
-// Door header.
 
-const doorHeaderY = y + drawingHeight - timber - (doorHeight + thickness) * scale;
-
+/*
+* WINDOW TOP INFILL
+*
+* Also recessed behind the
+* front vertical frame studs.
+*/
 rect(
-x + doorStart * scale,
-doorHeaderY,
-(doorWidth + thickness * 2) * scale,
-timber
+
+windowClearX,
+
+windowTop -
+timberPx,
+
+windowWidth * scale,
+
+timberPx,
+
+insideInfillColour,
+
+"#333",
+1
+
 );
 
-// Door opening area.
 
-const doorOpeningY = y + drawingHeight - timber - doorHeight * scale;
+/*
+* RECESSED INDICATION LINES
+*/
+line(
 
-drawing += `
-<rect
-x="${x + (doorStart + thickness) * scale}"
-y="${doorOpeningY}"
-width="${doorWidth * scale}"
-height="${doorHeight * scale}"
-fill="#e8e8e8"
-stroke="#777"
-stroke-width="1"
-/>
-`;
+windowClearX,
+
+windowTop -
+timberPx,
+
+windowClearX +
+windowWidth * scale,
+
+windowTop -
+timberPx,
+
+"#666",
+2,
+"5 4"
+
+);
+
+
+line(
+
+windowClearX,
+
+windowBottom -
+timberPx,
+
+windowClearX +
+windowWidth * scale,
+
+windowBottom -
+timberPx,
+
+"#666",
+2,
+"5 4"
+
+);
+}
+
+
+/*
+* FRONT WALL DIMENSION
+*/
+const dimensionY =
+y +
+drawingHeight +
+45;
+
+
+line(
+
+x,
+dimensionY,
+
+x +
+drawingWidth,
+dimensionY,
+
+"#111",
+2
+
+);
+
+
+line(
+x,
+dimensionY - 8,
+x,
+dimensionY + 8,
+"#111",
+2
+);
+
+
+line(
+
+x +
+drawingWidth,
+
+dimensionY - 8,
+
+x +
+drawingWidth,
+
+dimensionY + 8,
+
+"#111",
+2
+
+);
+
 
 text(
-x + (doorStart + thickness + doorWidth / 2) * scale,
-doorOpeningY + (doorHeight * scale / 2),
-"DOOR",
+
+x +
+drawingWidth / 2,
+
+dimensionY + 28,
+
+`${Math.round(length)} mm`,
+
+18,
+
+"middle",
+
+"bold"
+
+);
+
+
+/*
+* FRONT WALL HEIGHT
+*/
+const dimensionX =
+x - 35;
+
+
+line(
+
+dimensionX,
+y,
+
+dimensionX,
+y +
+drawingHeight,
+
+"#111",
+2
+
+);
+
+
+line(
+
+dimensionX - 8,
+y,
+
+dimensionX + 8,
+y,
+
+"#111",
+2
+
+);
+
+
+line(
+
+dimensionX - 8,
+y +
+drawingHeight,
+
+dimensionX + 8,
+y +
+drawingHeight,
+
+"#111",
+2
+
+);
+
+
+const heightText =
+document.createElementNS(
+
+"http://www.w3.org/2000/svg",
+
+"text"
+
+);
+
+
+heightText.setAttribute(
+"x",
+dimensionX - 15
+);
+
+heightText.setAttribute(
+"y",
+y +
+drawingHeight / 2
+);
+
+heightText.setAttribute(
+"font-size",
+"18"
+);
+
+heightText.setAttribute(
+"font-family",
+"Arial, Helvetica, sans-serif"
+);
+
+heightText.setAttribute(
+"text-anchor",
+"middle"
+);
+
+heightText.setAttribute(
+"font-weight",
+"bold"
+);
+
+heightText.setAttribute(
+
+"transform",
+
+`rotate(-90 ${
+dimensionX - 15
+} ${
+y +
+drawingHeight / 2
+})`
+
+);
+
+
+heightText.textContent =
+`${Math.round(height)} mm`;
+
+
+svg.appendChild(
+heightText
+);
+
+
+/*
+* FRONT WALL TITLE
+*/
+text(
+
+x +
+drawingWidth / 2,
+
+y - 25,
+
+"FRONT WALL",
+
+22,
+
+"middle",
+
+"bold"
+
+);
+
+
+/*
+* DOOR LABEL
+*/
+text(
+
+doorClearX +
+(
+doorWidth *
+scale / 2
+),
+
+doorOpeningTop +
+(
+doorHeight *
+scale / 2
+) + 5,
+
+`DOOR ${doorWidth} × ${doorHeight}`,
+
 13,
+
+"middle",
+
 "bold"
+
 );
 
-// Door width dimension.
+
+/*
+* WINDOW LABEL
+*/
+if (
+windowEnabled
+) {
+
+const windowBottom =
+bottomRailY -
+windowSill * scale;
+
+
+const windowTop =
+windowBottom -
+windowHeight * scale;
+
+
+const windowClearX =
+x +
+(
+windowStart +
+timber
+) * scale;
+
 
 text(
-x + (doorStart + thickness + doorWidth / 2) * scale,
-doorOpeningY + (doorHeight * scale / 2) + 19,
-doorWidth + " mm",
-11
-);
 
-// Window framing.
+windowClearX +
+(
+windowWidth *
+scale / 2
+),
 
-if (hasWindow) {
+windowTop +
+(
+windowHeight *
+scale / 2
+) + 5,
 
-const windowBottomFromTop = height - thickness - windowSill;
-const windowTopFromTop = windowBottomFromTop - windowHeight;
+`WINDOW ${windowWidth} × ${windowHeight}`,
 
-const windowBottomY = y + windowTopFromTop * scale;
-const windowTopY = y + windowTopFromTop * scale;
-
-// Window header sits above the clear window opening.
-
-const windowOpeningTop = y + windowTopFromTop * scale;
-const windowHeaderY = windowOpeningTop - timber;
-
-// Window sill sits below the clear window opening.
-
-const windowOpeningBottom = y + windowBottomFromTop * scale;
-
-rect(
-x + windowStart * scale,
-windowHeaderY,
-(windowWidth + thickness * 2) * scale,
-timber
-);
-
-rect(
-x + windowStart * scale,
-windowOpeningBottom,
-(windowWidth + thickness * 2) * scale,
-timber
-);
-
-// Window opening.
-
-drawing += `
-<rect
-x="${x + (windowStart + thickness) * scale}"
-y="${windowOpeningTop}"
-width="${windowWidth * scale}"
-height="${windowHeight * scale}"
-fill="#e8e8e8"
-stroke="#777"
-stroke-width="1"
-/>
-`;
-
-text(
-x + (windowStart + thickness + windowWidth / 2) * scale,
-windowOpeningTop + (windowHeight * scale / 2),
-"WINDOW",
 12,
+
+"middle",
+
 "bold"
+
+);
+}
+
+
+/*
+* INSIDE INFILL LABEL
+*/
+text(
+
+x +
+drawingWidth / 2,
+
+y +
+drawingHeight +
+80,
+
+"DOOR / WINDOW INFILLS RECESSED TO INSIDE",
+
+15,
+
+"middle",
+
+"bold"
+
 );
 
-text(
-x + (windowStart + thickness + windowWidth / 2) * scale,
-windowOpeningTop + (windowHeight * scale / 2) + 17,
-windowWidth + " mm",
-10
+
+/*
+* =====================================================
+* FLOOR PLAN
+* =====================================================
+*
+* This is deliberately shown below the front elevation
+* so the floor joist direction is clear.
+*
+* FRONT WALL IS AT THE TOP OF THE FLOOR PLAN.
+*
+* FLOOR JOISTS RUN FRONT TO BACK.
+*
+* THE GAPS BETWEEN THE JOISTS RUN FULLY ACROSS
+* THE FLOOR WIDTH.
+*/
+
+const planX = 160;
+const planY = 650;
+
+const planWidth = 880;
+const planDepth = 150;
+
+
+const planScaleX =
+planWidth / length;
+
+
+const planDrawingWidth =
+length *
+planScaleX;
+
+
+const planLeft =
+planX +
+(
+planWidth -
+planDrawingWidth
+) / 2;
+
+
+/*
+* FLOOR AREA
+*/
+rect(
+
+planLeft,
+planY,
+
+planDrawingWidth,
+planDepth,
+
+"#fff",
+
+"#111",
+2
+
 );
+
+
+/*
+* FRONT WALL POSITION
+*/
+rect(
+
+planLeft,
+planY,
+
+planDrawingWidth,
+timber * planScaleX,
+
+"#333"
+
+);
+
+
+/*
+* FLOOR JOIST DEPTH
+*
+* This is illustrative in the plan.
+* Joists run FRONT TO BACK.
+*/
+const joistCount =
+Math.max(
+2,
+Math.min(
+12,
+Math.round(
+length /
+400
+)
+)
+);
+
+
+/*
+* Joist spacing across the floor width.
+*
+* Each joist extends the COMPLETE
+* floor depth from front to back.
+*/
+const availableJoistWidth =
+length -
+timber * 2;
+
+
+const joistGap =
+(
+availableJoistWidth -
+timber *
+(
+joistCount - 2
+)
+) /
+(
+joistCount - 1
+);
+
+
+/*
+* DRAW FLOOR JOISTS
+*
+* They are vertical in this plan,
+* representing front-to-back direction.
+*/
+for (
+let i = 0;
+i < joistCount;
+i++
+) {
+
+let joistPosition;
+
+if (
+i === 0
+) {
+
+joistPosition =
+0;
+
+} else if (
+i ===
+joistCount - 1
+) {
+
+joistPosition =
+length -
+timber;
+
+} else {
+
+joistPosition =
+timber +
+(
+i -
+1
+) *
+(
+timber +
+joistGap
+) +
+joistGap;
 
 }
 
-// Overall wall length dimension.
 
-drawing += `
-<line
-x1="${x}"
-y1="${y - 35}"
-x2="${x + drawingLength}"
-y2="${y - 35}"
-stroke="#222"
-stroke-width="1.5"
-/>
+rect(
 
-<line
-x1="${x}"
-y1="${y - 42}"
-x2="${x}"
-y2="${y - 28}"
-stroke="#222"
-stroke-width="1.5"
-/>
+planLeft +
+joistPosition *
+planScaleX,
 
-<line
-x1="${x + drawingLength}"
-y1="${y - 42}"
-x2="${x + drawingLength}"
-y2="${y - 28}"
-stroke="#222"
-stroke-width="1.5"
-/>
-`;
+planY,
 
+timber *
+planScaleX,
+
+planDepth,
+
+"#555"
+
+);
+}
+
+
+/*
+* FRONT WALL LABEL
+*/
 text(
-x + drawingLength / 2,
-y - 48,
-length + " mm",
-14,
+
+planLeft +
+planDrawingWidth / 2,
+
+planY - 15,
+
+"FRONT WALL",
+
+17,
+
+"middle",
+
 "bold"
+
 );
 
-// Overall wall height dimension.
 
-drawing += `
-<line
-x1="${x - 35}"
-y1="${y}"
-x2="${x - 35}"
-y2="${y + drawingHeight}"
-stroke="#222"
-stroke-width="1.5"
-/>
+/*
+* FLOOR PLAN TITLE
+*/
+text(
 
-<line
-x1="${x - 42}"
-y1="${y}"
-x2="${x - 28}"
-y2="${y}"
-stroke="#222"
-stroke-width="1.5"
-/>
+planLeft +
+planDrawingWidth / 2,
 
-<line
-x1="${x - 42}"
-y1="${y + drawingHeight}"
-x2="${x - 28}"
-y2="${y + drawingHeight}"
-stroke="#222"
-stroke-width="1.5"
-/>
-`;
+planY +
+planDepth +
+32,
 
-drawing += `
-<text
-x="${x - 48}"
-y="${y + drawingHeight / 2}"
-text-anchor="middle"
-dominant-baseline="middle"
-font-size="13"
-font-weight="bold"
-fill="#222"
-transform="rotate(-90 ${x - 48} ${y + drawingHeight / 2})"
->${height} mm</text>
-`;
+"FLOOR JOISTS — RUN FRONT TO BACK",
 
-// Timber thickness note.
+18,
+
+"middle",
+
+"bold"
+
+);
+
+
+/*
+* SHOW THE GAPS CLEARLY.
+*
+* Arrows/lines are drawn across the full
+* floor width to make it obvious that the
+* spaces between the joists are continuous.
+*/
+for (
+let i = 0;
+i < joistCount - 1;
+i++
+) {
+
+let leftJoist;
+
+if (
+i === 0
+) {
+
+leftJoist =
+0;
+
+} else {
+
+leftJoist =
+timber +
+(
+i -
+1
+) *
+(
+timber +
+joistGap
+) +
+joistGap;
+}
+
+
+const rightJoist =
+(
+i ===
+joistCount - 2
+)
+?
+length - timber
+:
+timber +
+i *
+(
+timber +
+joistGap
+) +
+joistGap;
+
+
+const gapStart =
+leftJoist +
+timber;
+
+
+const gapEnd =
+rightJoist;
+
+
+if (
+gapEnd >
+gapStart
+) {
+
+line(
+
+planLeft +
+gapStart *
+planScaleX,
+
+planY +
+planDepth / 2,
+
+planLeft +
+gapEnd *
+planScaleX,
+
+planY +
+planDepth / 2,
+
+"#777",
+2,
+"6 5"
+
+);
+}
+}
+
+
+/*
+* FLOOR JOIST DIRECTION ARROW
+*/
+const arrowX =
+planLeft +
+planDrawingWidth +
+35;
+
+
+line(
+
+arrowX,
+planY +
+planDepth,
+
+arrowX,
+planY,
+
+"#111",
+3
+
+);
+
+
+line(
+
+arrowX,
+planY,
+
+arrowX - 7,
+planY + 14,
+
+"#111",
+3
+
+);
+
+
+line(
+
+arrowX,
+planY,
+
+arrowX + 7,
+planY + 14,
+
+"#111",
+3
+
+);
+
 
 text(
-svgWidth / 2,
-svgHeight - 35,
-"All timber: " + thickness + " mm thick",
-12
+
+arrowX + 45,
+
+planY +
+planDepth / 2,
+
+"JOISTS",
+
+14,
+
+"middle",
+
+"bold"
+
 );
-
-svg.setAttribute("viewBox", `0 0 ${svgWidth} ${svgHeight}`);
-svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-svg.innerHTML = drawing;
-
 }
 
 </script>
 
 </body>
 </html>
+
 
