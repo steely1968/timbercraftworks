@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#111111">
-<title>Timber Craft Works - Joist Calculator</title>
+<title>Timber Craft Works - Floor Joist Calculator</title>
 
 <style>
 * {
@@ -187,6 +187,57 @@ color: #666;
 line-height: 1.5;
 }
 
+/* CUTTING LIST */
+
+.cutting-list {
+margin-top: 30px;
+padding: 20px 12px;
+background: #f5f5f5;
+border-radius: 8px;
+}
+
+.cutting-list h3 {
+font-size: 19px;
+margin-bottom: 8px;
+}
+
+.cutting-list p {
+font-size: 13px;
+color: #555;
+margin-bottom: 15px;
+}
+
+.cutting-list .table-wrapper {
+margin-top: 0;
+}
+
+.cutting-list table {
+min-width: 500px;
+}
+
+.cutting-list th:first-child {
+width: 15%;
+}
+
+.cutting-list th:nth-child(2) {
+width: 35%;
+}
+
+.cutting-list th:nth-child(3) {
+width: 25%;
+}
+
+.cutting-list th:nth-child(4) {
+width: 25%;
+}
+
+.cutting-note {
+margin-top: 12px;
+font-size: 12px;
+color: #666;
+line-height: 1.5;
+}
+
 footer {
 background: #111;
 color: white;
@@ -210,6 +261,10 @@ padding: 18px 14px;
 padding: 15px 8px;
 }
 
+.cutting-list {
+padding: 15px 8px;
+}
+
 th, td {
 padding: 10px 7px;
 font-size: 13px;
@@ -228,16 +283,16 @@ font-size: 13px;
 
 <div class="calculator">
 
-<h2>Joist Spacing Calculator</h2>
+<h2>Floor Joist Spacing Calculator</h2>
 
 <div class="field">
-<label for="floorLength">Overall Frame Length (mm)</label>
-<input type="number" id="floorLength" min="1" placeholder="Enter overall length">
+<label for="floorLength">Overall Floor Length (mm)</label>
+<input type="number" id="floorLength" min="1" placeholder="Enter overall floor length">
 </div>
 
 <div class="field">
-<label for="floorWidth">Overall Frame Width (mm)</label>
-<input type="number" id="floorWidth" min="1" placeholder="Enter overall width">
+<label for="floorWidth">Overall Floor Width (mm)</label>
+<input type="number" id="floorWidth" min="1" placeholder="Enter overall floor width">
 </div>
 
 <div class="field">
@@ -246,11 +301,11 @@ font-size: 13px;
 </div>
 
 <div class="field">
-<label for="numberOfJoists">Number of Cross Joists (including end joists)</label>
-<input type="number" id="numberOfJoists" min="2" step="1" placeholder="Enter number of cross joists">
+<label for="numberOfJoists">Number of Floor Joists (including end joists)</label>
+<input type="number" id="numberOfJoists" min="2" step="1" placeholder="Enter number of floor joists">
 </div>
 
-<button onclick="calculateJoists()">Calculate Joist Positions</button>
+<button onclick="calculateJoists()">Calculate Floor Joist Positions</button>
 
 <div class="results" id="results">
 
@@ -258,7 +313,7 @@ font-size: 13px;
 
 <div class="summary" id="summary"></div>
 
-<h3>Cross Joist Position Table</h3>
+<h3>Floor Joist Position Table</h3>
 
 <div class="table-wrapper">
 <table>
@@ -276,15 +331,15 @@ font-size: 13px;
 
 <div class="diagram-section">
 
-<h3>Scaled Frame Layout</h3>
+<h3>Scaled Floor Joist Layout</h3>
 
-<p>Overhead view of the complete timber frame.</p>
+<p>Overhead view of the complete timber floor frame.</p>
 
 <div class="diagram-container">
 <svg id="joistDiagram"
 xmlns="http://www.w3.org/2000/svg"
 role="img"
-aria-label="Scaled overhead timber frame diagram">
+aria-label="Scaled overhead timber floor joist diagram">
 </svg>
 </div>
 
@@ -297,14 +352,51 @@ Timber
 
 <div class="diagram-note">
 All timber members are drawn using the same thickness measurement.
-The two long side rails run continuously along the frame.
-The cross joists connect the inside faces of the side rails.
+The two long side rails run continuously along the floor frame.
+The floor joists connect the inside faces of the side rails.
 The diagram scales automatically to the entered measurements.
 </div>
 
 </div>
+
+<!-- CUTTING LIST -->
+
+<div class="cutting-list">
+
+<h3>Cutting List</h3>
+
+<p>Timber required to build the floor frame from the measurements entered above.</p>
+
+<div class="table-wrapper">
+
+<table>
+<thead>
+<tr>
+<th>Qty</th>
+<th>Timber</th>
+<th>Cut Length</th>
+<th>Thickness</th>
+</tr>
+</thead>
+
+<tbody id="cuttingListTable">
+</tbody>
+
+</table>
+
+</div>
+
+<div class="cutting-note">
+Cut lengths are calculated automatically from the entered floor dimensions.
+The two side rails are the full floor length.
+The floor joists fit between the two side rails.
+</div>
+
+</div>
+
 </div>
 </div>
+
 </main>
 
 <footer>
@@ -330,20 +422,20 @@ width <= 0 ||
 thickness <= 0 ||
 count < 2
 ) {
-alert("Please enter valid measurements and at least two cross joists.");
+alert("Please enter valid measurements and at least two floor joists.");
 return;
 }
 
 if (width <= thickness * 2 || length < thickness * count) {
-alert("The frame dimensions are too small for the timber thickness and number of joists.");
+alert("The floor dimensions are too small for the timber thickness and number of floor joists.");
 return;
 }
 
-// Cross joists fit between the two continuous side rails.
+// Floor joists fit between the two continuous side rails.
 
 const crossJoistLength = width - (thickness * 2);
 
-// Cross joists include both end joists.
+// Floor joists include both end joists.
 
 const clearGap = (length - thickness * count) / (count - 1);
 
@@ -367,13 +459,13 @@ currentPosition = finish + clearGap;
 }
 
 document.getElementById("summary").innerHTML = `
-<strong>Overall frame length:</strong> ${length.toFixed(2)} mm<br>
-<strong>Overall frame width:</strong> ${width.toFixed(2)} mm<br>
+<strong>Overall floor length:</strong> ${length.toFixed(2)} mm<br>
+<strong>Overall floor width:</strong> ${width.toFixed(2)} mm<br>
 <strong>Timber thickness:</strong> ${thickness.toFixed(2)} mm<br>
-<strong>Number of cross joists:</strong> ${count}<br>
+<strong>Number of floor joists:</strong> ${count}<br>
 <strong>Side rail length:</strong> ${length.toFixed(2)} mm<br>
-<strong>Cross joist length:</strong> ${crossJoistLength.toFixed(2)} mm<br>
-<strong>Clear gap between cross joists:</strong> ${clearGap.toFixed(2)} mm
+<strong>Floor joist length:</strong> ${crossJoistLength.toFixed(2)} mm<br>
+<strong>Clear gap between floor joists:</strong> ${clearGap.toFixed(2)} mm
 `;
 
 const table = document.getElementById("joistTable");
@@ -392,6 +484,29 @@ row.innerHTML = `
 
 table.appendChild(row);
 });
+
+
+// CUTTING LIST
+
+const cuttingListTable = document.getElementById("cuttingListTable");
+
+cuttingListTable.innerHTML = `
+
+<tr>
+<td>2</td>
+<td>Side Rails</td>
+<td>${length.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+</tr>
+
+<tr>
+<td>${count}</td>
+<td>Floor Joists</td>
+<td>${crossJoistLength.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+</tr>
+
+`;
 
 drawJoistDiagram(length, width, thickness, positions);
 
@@ -452,8 +567,8 @@ stroke-width="1"
 `;
 
 // LEFT LONG SIDE RAIL.
-// Full frame length.
-// Same thickness as every cross joist.
+// Full floor length.
+// Same thickness as every floor joist.
 
 drawing += `
 <rect
@@ -468,7 +583,7 @@ stroke-width="1"
 `;
 
 // RIGHT LONG SIDE RAIL.
-// Full frame length.
+// Full floor length.
 // Exactly the same thickness.
 
 drawing += `
@@ -483,7 +598,7 @@ stroke-width="1"
 />
 `;
 
-// INTERNAL CROSS JOISTS.
+// INTERNAL FLOOR JOISTS.
 // Run BETWEEN the two long side rails.
 // Same thickness as the side rails.
 
@@ -519,7 +634,7 @@ fill="#382514"
 
 });
 
-// OVERALL LENGTH DIMENSION.
+// OVERALL FLOOR LENGTH DIMENSION.
 
 drawing += `
 <line
@@ -559,7 +674,7 @@ fill="#222"
 >${length} mm</text>
 `;
 
-// OVERALL WIDTH DIMENSION.
+// OVERALL FLOOR WIDTH DIMENSION.
 
 drawing += `
 <line
