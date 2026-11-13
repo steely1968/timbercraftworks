@@ -187,6 +187,57 @@ color: #666;
 line-height: 1.5;
 }
 
+/* CUTTING LIST */
+
+.cutting-list {
+margin-top: 30px;
+padding: 20px 12px;
+background: #f5f5f5;
+border-radius: 8px;
+}
+
+.cutting-list h3 {
+font-size: 19px;
+margin-bottom: 8px;
+}
+
+.cutting-list p {
+font-size: 13px;
+color: #555;
+margin-bottom: 15px;
+}
+
+.cutting-list .table-wrapper {
+margin-top: 0;
+}
+
+.cutting-list table {
+min-width: 500px;
+}
+
+.cutting-list th:first-child {
+width: 15%;
+}
+
+.cutting-list th:nth-child(2) {
+width: 35%;
+}
+
+.cutting-list th:nth-child(3) {
+width: 25%;
+}
+
+.cutting-list th:nth-child(4) {
+width: 25%;
+}
+
+.cutting-note {
+margin-top: 12px;
+font-size: 12px;
+color: #666;
+line-height: 1.5;
+}
+
 footer {
 background: #111;
 color: white;
@@ -207,6 +258,10 @@ padding: 18px 14px;
 }
 
 .diagram-section {
+padding: 15px 8px;
+}
+
+.cutting-list {
 padding: 15px 8px;
 }
 
@@ -303,8 +358,45 @@ The diagram scales automatically to the entered measurements.
 </div>
 
 </div>
+
+<!-- CUTTING LIST -->
+
+<div class="cutting-list">
+
+<h3>Cutting List</h3>
+
+<p>Timber required to build the shed back wall from the measurements entered above.</p>
+
+<div class="table-wrapper">
+
+<table>
+<thead>
+<tr>
+<th>Qty</th>
+<th>Timber</th>
+<th>Cut Length</th>
+<th>Thickness</th>
+</tr>
+</thead>
+
+<tbody id="cuttingListTable">
+</tbody>
+
+</table>
+
+</div>
+
+<div class="cutting-note">
+Cut lengths are calculated automatically from the entered wall dimensions.
+The two side rails are the full back wall length.
+The wall studs fit between the two side rails.
+</div>
+
+</div>
+
 </div>
 </div>
+
 </main>
 
 <footer>
@@ -392,6 +484,29 @@ row.innerHTML = `
 
 table.appendChild(row);
 });
+
+
+// CUTTING LIST
+
+const cuttingListTable = document.getElementById("cuttingListTable");
+
+cuttingListTable.innerHTML = `
+
+<tr>
+<td>2</td>
+<td>Side Rails</td>
+<td>${length.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+</tr>
+
+<tr>
+<td>${count}</td>
+<td>Wall Studs</td>
+<td>${crossJoistLength.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+</tr>
+
+`;
 
 drawJoistDiagram(length, width, thickness, positions);
 
@@ -624,3 +739,4 @@ svg.innerHTML = drawing;
 
 </body>
 </html>
+
