@@ -14,7 +14,6 @@ header h1{font-size:clamp(24px,5vw,34px)}
 main{width:100%;max-width:850px;margin:30px auto;padding:0 15px;flex:1}
 .calculator{background:white;padding:25px;border-radius:10px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
 h2{margin-bottom:20px;font-size:23px}
-h3{font-size:19px;margin-bottom:8px}
 .field{margin-bottom:18px}
 label{display:block;font-weight:bold;margin-bottom:7px}
 input{width:100%;padding:13px;border:1px solid #ccc;border-radius:5px;font-size:17px}
@@ -28,6 +27,7 @@ th,td{padding:12px 10px;border:1px solid #ddd;text-align:center}
 th{background:#111;color:white}
 tr:nth-child(even){background:#f5f5f5}
 .diagram-section,.cutting-list{margin-top:30px;padding:20px 12px;background:#f5f5f5;border-radius:8px}
+.diagram-section h3,.cutting-list h3{font-size:19px;margin-bottom:8px}
 .diagram-section p,.cutting-list p{font-size:13px;color:#555;margin-bottom:15px}
 .diagram-container{width:100%;background:white;border:1px solid #ddd;border-radius:6px;padding:10px}
 .diagram-container svg{display:block;width:100%;height:auto}
@@ -36,15 +36,21 @@ tr:nth-child(even){background:#f5f5f5}
 .key-colour{width:17px;height:17px;background:#bd8950;border:1px solid #80572d}
 .diagram-note,.cutting-note{margin-top:12px;font-size:12px;color:#666;line-height:1.5}
 .cutting-list table{min-width:550px}
-.new-calculator{margin-top:40px;padding-top:30px;border-top:3px solid #111}
+.section-divider{margin:40px 0;border:0;border-top:3px solid #111}
+.new-calculator{margin-top:35px;padding-top:25px;border-top:3px solid #111}
+.new-calculator h2{margin-bottom:10px}
 .new-calculator .intro{font-size:14px;line-height:1.6;color:#555;margin-bottom:25px}
+.new-calculator .results{margin-top:30px}
+.new-calculator .diagram-section{margin-top:25px}
+.new-calculator .cutting-list{margin-top:25px}
+footer{background:#111;color:white;text-align:center;padding:22px 12px;margin-top:30px;font-size:14px}
+
 @media(max-width:500px){
 main{margin:18px auto;padding:0 10px}
 .calculator{padding:18px 14px}
 .diagram-section,.cutting-list{padding:15px 8px}
 th,td{padding:10px 7px;font-size:13px}
 }
-footer{background:#111;color:white;text-align:center;padding:22px 12px;margin-top:30px;font-size:14px}
 </style>
 </head>
 
@@ -56,8 +62,6 @@ footer{background:#111;color:white;text-align:center;padding:22px 12px;margin-to
 
 <main>
 <div class="calculator">
-
-<!-- SIDE WALL CALCULATOR -->
 
 <h2>Pent Side Wall Calculator</h2>
 
@@ -157,28 +161,35 @@ Check actual joints and bearing details before cutting timber.
 </div>
 </div>
 
-
-<!-- SEPARATE ROOF JOIST CALCULATOR -->
+<!-- INDEPENDENT ROOF JOIST CALCULATOR -->
 
 <div class="new-calculator">
 
 <h2>Roof Joist Calculator</h2>
 
 <p class="intro">
-Roof joists run from front to back of the shed.
-They are evenly spaced across the overall shed length.
-Front and rear overhangs are added to the joist cut length.
-Matching timber infill pieces are fitted between the joists at the front and rear.
+Calculate the roof joist positions, front and rear overhangs, and the timber infill pieces between the joists. This calculator works independently of the side wall calculator.
+All measurements are in millimetres.
 </p>
 
 <div class="field">
-<label for="roofLength">Overall Shed Length (Side to Side) (mm)</label>
-<input type="number" id="roofLength" min="1" placeholder="Enter overall shed length">
+<label for="roofLength">Overall Roof Length Between Front and Rear Walls (mm)</label>
+<input type="number" id="roofLength" min="1" placeholder="Enter roof length">
 </div>
 
 <div class="field">
-<label for="roofWidth">Roof Width (Front to Back Between Walls) (mm)</label>
-<input type="number" id="roofWidth" min="1" placeholder="Enter roof width">
+<label for="roofWidth">Horizontal Roof Width / Run (mm)</label>
+<input type="number" id="roofWidth" min="1" placeholder="Enter horizontal roof width">
+</div>
+
+<div class="field">
+<label for="roofLowHeight">Low Side Roof Height (mm)</label>
+<input type="number" id="roofLowHeight" min="1" placeholder="Enter low side roof height">
+</div>
+
+<div class="field">
+<label for="roofHighHeight">High Side Roof Height (mm)</label>
+<input type="number" id="roofHighHeight" min="1" placeholder="Enter high side roof height">
 </div>
 
 <div class="field">
@@ -187,25 +198,25 @@ Matching timber infill pieces are fitted between the joists at the front and rea
 </div>
 
 <div class="field">
-<label for="roofJoistCount">Number of Roof Joists (including both outside joists)</label>
+<label for="roofJoistCount">Number of Roof Joists (including both end joists)</label>
 <input type="number" id="roofJoistCount" min="2" step="1" placeholder="Enter number of roof joists">
 </div>
 
 <div class="field">
 <label for="frontOverhang">Front Overhang (mm)</label>
-<input type="number" id="frontOverhang" min="0" value="0">
+<input type="number" id="frontOverhang" min="0" value="0" placeholder="Enter front overhang">
 </div>
 
 <div class="field">
 <label for="rearOverhang">Rear Overhang (mm)</label>
-<input type="number" id="rearOverhang" min="0" value="0">
+<input type="number" id="rearOverhang" min="0" value="0" placeholder="Enter rear overhang">
 </div>
 
 <button onclick="calculateRoof()">Calculate Roof Joists</button>
 
 <div class="results" id="roofResults">
 
-<h2 style="margin-top:25px;">Roof Joist Calculation Results</h2>
+<h2 style="margin-top:25px;">Roof Joist Results</h2>
 
 <div class="summary" id="roofSummary"></div>
 
@@ -226,35 +237,25 @@ Matching timber infill pieces are fitted between the joists at the front and rea
 </div>
 
 <div class="diagram-section">
-
 <h3>Scaled Roof Joist Layout</h3>
-
-<p>
-Plan view showing joists running front to back, evenly spaced across the shed length, with front and rear overhangs and infill timber.
-</p>
+<p>Plan view showing the roof joists, front and rear overhangs, and infill timber between joists.</p>
 
 <div class="diagram-container">
-<svg id="roofDiagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Roof joists running front to back"></svg>
+<svg id="roofDiagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Scaled roof joist layout"></svg>
 </div>
 
 <div class="diagram-key">
-<div class="key-item">
-<span class="key-colour"></span>
-Roof joists and infill timber
-</div>
+<div class="key-item"><span class="key-colour"></span>Roof joists and infill timber</div>
 </div>
 
 <div class="diagram-note">
-Each roof joist runs continuously from the front overhang to the rear overhang. The joists are spaced across the shed length. Infill pieces fit between adjacent joists at the front and rear.
+The joists are spaced evenly using the entered timber thickness. Their cut length is calculated using the horizontal roof width and the difference between the low and high roof heights, allowing for the roof slope. Infill timber is fitted between every pair of joists at both the front and rear. The diagram adapts to your measurements.
 </div>
-
 </div>
 
 <div class="cutting-list">
-
 <h3>Roof Joist Cutting List</h3>
-
-<p>Includes roof joists and all front and rear infill pieces.</p>
+<p>Includes all roof joists and the front and rear infill pieces.</p>
 
 <div class="table-wrapper">
 <table>
@@ -272,11 +273,12 @@ Each roof joist runs continuously from the front overhang to the rear overhang. 
 </div>
 
 <div class="cutting-note">
-Roof joists include both front and rear overhangs in their cut length.
-Front infill pieces are fitted between every pair of joists.
-Rear infill pieces are fitted between every pair of joists.
-All infill pieces use the same timber thickness as the roof joists.
-The infill cut length is the calculated clear gap between joists.
+Roof joists are cut to the calculated sloping length.
+The front and rear overhangs are included in the overall joist spacing layout.
+Infill pieces are cut to the clear gap between joists.
+Two infill pieces are allowed for every gap: one at the front and one at the rear.
+All infill timber uses the same thickness as the roof joists.
+</div>
 </div>
 
 </div>
@@ -292,44 +294,44 @@ Timber Craft Works
 
 // SIDE WALL CALCULATOR
 
-function calculateWall(){
+function calculateWall() {
 
-const length=Number(document.getElementById("wallLength").value);
-const low=Number(document.getElementById("lowHeight").value);
-const high=Number(document.getElementById("highHeight").value);
-const thickness=Number(document.getElementById("timberThickness").value);
-const count=Number(document.getElementById("numberOfStuds").value);
+const length = Number(document.getElementById("wallLength").value);
+const low = Number(document.getElementById("lowHeight").value);
+const high = Number(document.getElementById("highHeight").value);
+const thickness = Number(document.getElementById("timberThickness").value);
+const count = Number(document.getElementById("numberOfStuds").value);
 
-if(!Number.isFinite(length)||!Number.isFinite(low)||
-!Number.isFinite(high)||!Number.isFinite(thickness)||
-!Number.isInteger(count)||length<=0||low<=0||
-high<=0||thickness<=0||count<2){
+if (!Number.isFinite(length) || !Number.isFinite(low) ||
+!Number.isFinite(high) || !Number.isFinite(thickness) ||
+!Number.isInteger(count) || length <= 0 || low <= 0 ||
+high <= 0 || thickness <= 0 || count < 2) {
 alert("Please enter valid measurements and at least two wall studs.");
 return;
 }
 
-if(low<=thickness*2||high<=thickness*2||length<thickness*count){
+if (low <= thickness * 2 || high <= thickness * 2 ||
+length < thickness * count) {
 alert("The wall dimensions are too small for the timber thickness and number of studs.");
 return;
 }
 
-const rise=high-low;
-const angleRadians=Math.atan(rise/length);
-const angleDegrees=angleRadians*180/Math.PI;
-const slopeLength=Math.sqrt(length*length+rise*rise);
-const clearGap=(length-thickness*count)/(count-1);
-const topRailVerticalDepth=thickness/Math.cos(angleRadians);
+const rise = high - low;
+const angleRadians = Math.atan(rise / length);
+const angleDegrees = angleRadians * 180 / Math.PI;
+const slopeLength = Math.sqrt(length * length + rise * rise);
+const clearGap = (length - thickness * count) / (count - 1);
+const topRailVerticalDepth = thickness / Math.cos(angleRadians);
 
-const positions=[];
+const positions = [];
 
-for(let i=0;i<count;i++){
+for (let i = 0; i < count; i++) {
+const start = i * (thickness + clearGap);
+const centre = start + thickness / 2;
+const wallHeightAtCentre = low + rise * centre / length;
+const studLength = wallHeightAtCentre - thickness - topRailVerticalDepth;
 
-const start=i*(thickness+clearGap);
-const centre=start+thickness/2;
-const wallHeightAtCentre=low+(rise*centre/length);
-const studLength=wallHeightAtCentre-thickness-topRailVerticalDepth;
-
-if(studLength<=0){
+if (studLength <= 0) {
 alert("The wall is too short for the selected timber thickness.");
 return;
 }
@@ -339,11 +341,11 @@ number:i+1,
 start:start,
 centre:centre,
 length:studLength,
-gap:i===count-1?0:clearGap
+gap:i === count-1 ? 0 : clearGap
 });
 }
 
-document.getElementById("summary").innerHTML=`
+document.getElementById("summary").innerHTML = `
 <strong>Overall side wall length:</strong> ${length.toFixed(2)} mm<br>
 <strong>Low end wall height:</strong> ${low.toFixed(2)} mm<br>
 <strong>High end wall height:</strong> ${high.toFixed(2)} mm<br>
@@ -355,12 +357,12 @@ document.getElementById("summary").innerHTML=`
 <strong>Pent roof angle:</strong> ${Math.abs(angleDegrees).toFixed(2)} degrees
 `;
 
-const table=document.getElementById("studTable");
-table.innerHTML="";
+const table = document.getElementById("studTable");
+table.innerHTML = "";
 
-positions.forEach(stud=>{
-const row=document.createElement("tr");
-row.innerHTML=`
+positions.forEach(stud => {
+const row = document.createElement("tr");
+row.innerHTML = `
 <td>${stud.number}</td>
 <td>${stud.start.toFixed(2)}</td>
 <td>${stud.length.toFixed(2)}</td>
@@ -368,135 +370,62 @@ row.innerHTML=`
 table.appendChild(row);
 });
 
-let cuttingRows=`
-<tr>
-<td>2</td>
-<td>Bottom Rails</td>
-<td>${length.toFixed(2)} mm</td>
-<td>${thickness.toFixed(2)} mm</td>
-<td>90°</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Sloping Top Rails</td>
-<td>${slopeLength.toFixed(2)} mm</td>
-<td>${thickness.toFixed(2)} mm</td>
-<td>${Math.abs(angleDegrees).toFixed(2)}°</td>
-</tr>
+let cuttingRows = `
+<tr><td>2</td><td>Bottom Rails</td><td>${length.toFixed(2)} mm</td><td>${thickness.toFixed(2)} mm</td><td>90°</td></tr>
+<tr><td>2</td><td>Sloping Top Rails</td><td>${slopeLength.toFixed(2)} mm</td><td>${thickness.toFixed(2)} mm</td><td>${Math.abs(angleDegrees).toFixed(2)}°</td></tr>
 `;
 
-positions.forEach(stud=>{
-cuttingRows+=`
-<tr>
-<td>2</td>
-<td>Wall Stud ${stud.number}</td>
-<td>${stud.length.toFixed(2)} mm</td>
-<td>${thickness.toFixed(2)} mm</td>
-<td>${Math.abs(angleDegrees).toFixed(2)}° top</td>
-</tr>`;
+positions.forEach(stud => {
+cuttingRows += `
+<tr><td>2</td><td>Wall Stud ${stud.number}</td><td>${stud.length.toFixed(2)} mm</td><td>${thickness.toFixed(2)} mm</td><td>${Math.abs(angleDegrees).toFixed(2)}° top</td></tr>`;
 });
 
-document.getElementById("cuttingListTable").innerHTML=cuttingRows;
+document.getElementById("cuttingListTable").innerHTML = cuttingRows;
 
 drawWallDiagram(length,low,high,thickness,positions);
 
-document.getElementById("results").style.display="block";
+document.getElementById("results").style.display = "block";
 }
 
-
-function drawWallDiagram(length,low,high,thickness,positions){
+function drawWallDiagram(length,low,high,thickness,positions) {
 
 const svg=document.getElementById("wallDiagram");
-
-const W=700,H=480;
-const left=90,right=45,top=75,bottom=90;
-const aw=W-left-right;
-const ah=H-top-bottom;
+const W=700,H=480,left=90,right=65,top=75,bottom=90;
+const aw=W-left-right,ah=H-top-bottom;
 const rise=high-low;
 const angle=Math.atan(rise/length);
 const slopeDepth=thickness/Math.cos(angle);
-const maximumHeight=Math.max(low,high);
-
-const scale=Math.min(aw/length,ah/maximumHeight);
+const scale=Math.min(aw/length,ah/Math.max(low,high));
 const dw=length*scale;
-const dl=low*scale;
-const dh=high*scale;
 const timber=thickness*scale;
 const sd=slopeDepth*scale;
-
 const x=left+(aw-dw)/2;
 const baseY=top+ah;
-const colour="#bd8950";
-const outline="#80572d";
-
-const slopeAt=position=>low+rise*position/length;
-
+const tl=baseY-low*scale;
+const tr=baseY-high*scale;
+const colour="#bd8950",outline="#80572d";
 let d="";
 
-d+=`
-<rect x="${x}" y="${baseY-timber}"
-width="${dw}" height="${timber}"
-fill="${colour}" stroke="${outline}"/>
-`;
+d+=`<rect x="${x}" y="${baseY-timber}" width="${dw}" height="${timber}" fill="${colour}" stroke="${outline}"/>`;
 
-const tl=baseY-dl;
-const tr=baseY-dh;
-
-d+=`
-<polygon points="
-${x},${tl}
-${x+dw},${tr}
-${x+dw},${tr+sd}
-${x},${tl+sd}"
-fill="${colour}" stroke="${outline}"/>
-`;
+d+=`<polygon points="${x},${tl} ${x+dw},${tr} ${x+dw},${tr+sd} ${x},${tl+sd}" fill="${colour}" stroke="${outline}"/>`;
 
 positions.forEach((stud,i)=>{
-
 const sx=x+stud.start*scale;
-const topY=baseY-slopeAt(stud.centre)*scale+sd;
+const topY=baseY-(low+rise*stud.centre/length)*scale+sd;
 const bottomY=baseY-timber;
-
-d+=`
-<rect x="${sx}" y="${topY}"
-width="${timber}" height="${bottomY-topY}"
-fill="${colour}" stroke="${outline}"/>
-`;
-
-if(timber>16){
-d+=`
-<text x="${sx+timber/2}" y="${(topY+bottomY)/2}"
-text-anchor="middle" dominant-baseline="middle"
-font-size="11" fill="#382514">${i+1}</text>`;
-}
-
+d+=`<rect x="${sx}" y="${topY}" width="${timber}" height="${bottomY-topY}" fill="${colour}" stroke="${outline}"/>`;
+if(timber>16)d+=`<text x="${sx+timber/2}" y="${(topY+bottomY)/2}" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#382514">${i+1}</text>`;
 });
 
-d+=`
-<line x1="${x}" y1="${baseY+25}" x2="${x+dw}" y2="${baseY+25}" stroke="#222"/>
-<text x="${x+dw/2}" y="${baseY+45}" text-anchor="middle" font-size="14" font-weight="bold">${length} mm</text>
-`;
+d+=`<line x1="${x}" y1="${baseY+25}" x2="${x+dw}" y2="${baseY+25}" stroke="#222" stroke-width="1.5"/>
+<text x="${x+dw/2}" y="${baseY+45}" text-anchor="middle" font-size="14" font-weight="bold">${length} mm</text>`;
 
-d+=`
-<text x="${x-40}" y="${(baseY+tl)/2}" text-anchor="middle"
-font-size="12" transform="rotate(-90 ${x-40} ${(baseY+tl)/2})">${low} mm</text>
-`;
+d+=`<text x="${x-40}" y="${(baseY+tl)/2}" text-anchor="middle" font-size="12" transform="rotate(-90 ${x-40} ${(baseY+tl)/2})">${low} mm</text>`;
+d+=`<text x="${x+dw+42}" y="${(baseY+tr)/2}" text-anchor="middle" font-size="12" transform="rotate(-90 ${x+dw+42} ${(baseY+tr)/2})">${high} mm</text>`;
 
-d+=`
-<text x="${x+dw+40}" y="${(baseY+tr)/2}" text-anchor="middle"
-font-size="12" transform="rotate(-90 ${x+dw+40} ${(baseY+tr)/2})">${high} mm</text>
-`;
-
-d+=`
-<text x="${x+dw/2}" y="${Math.min(tl,tr)-18}"
-text-anchor="middle" font-size="13" font-weight="bold">
-${Math.abs(angle*180/Math.PI).toFixed(2)}° pent angle</text>
-`;
-
-d+=`
-<text x="${W/2}" y="${H-12}" text-anchor="middle"
-font-size="12" fill="#444">Side wall elevation - all measurements in mm</text>
-`;
+d+=`<text x="${x+dw/2}" y="${Math.min(tl,tr)-18}" text-anchor="middle" font-size="13" font-weight="bold">${Math.abs(angle*180/Math.PI).toFixed(2)}° pent angle</text>`;
+d+=`<text x="${W/2}" y="${H-12}" text-anchor="middle" font-size="12" fill="#444">Side wall elevation - all measurements in mm</text>`;
 
 svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
 svg.setAttribute("preserveAspectRatio","xMidYMid meet");
@@ -504,68 +433,76 @@ svg.innerHTML=d;
 }
 
 
-// ROOF JOIST CALCULATOR
-// JOISTS RUN FRONT TO BACK
+// INDEPENDENT ROOF JOIST CALCULATOR
 
-function calculateRoof(){
+function calculateRoof() {
 
 const length=Number(document.getElementById("roofLength").value);
 const width=Number(document.getElementById("roofWidth").value);
+const lowHeight=Number(document.getElementById("roofLowHeight").value);
+const highHeight=Number(document.getElementById("roofHighHeight").value);
 const thickness=Number(document.getElementById("roofThickness").value);
 const count=Number(document.getElementById("roofJoistCount").value);
 const front=Number(document.getElementById("frontOverhang").value);
 const rear=Number(document.getElementById("rearOverhang").value);
 
 if(!Number.isFinite(length)||!Number.isFinite(width)||
+!Number.isFinite(lowHeight)||!Number.isFinite(highHeight)||
 !Number.isFinite(thickness)||!Number.isFinite(front)||
 !Number.isFinite(rear)||!Number.isInteger(count)||
-length<=0||width<=0||thickness<=0||
-front<0||rear<0||count<2){
-
-alert("Please enter valid roof measurements, overhangs and at least two joists.");
+length<=0||width<=0||lowHeight<=0||highHeight<=0||
+thickness<=0||front<0||rear<0||count<2) {
+alert("Please enter valid roof measurements, roof heights, overhangs and at least two joists.");
 return;
 }
 
-// JOISTS ARE SPACED ACROSS SHED LENGTH.
-// OVERHANGS ARE ADDED TO FRONT-TO-BACK JOIST LENGTH.
+const totalLength=length+front+rear;
 
-if(length<thickness*count){
-alert("The shed length is too small for the number and thickness of roof joists.");
+if(totalLength < thickness*count) {
+alert("The overall roof length and overhangs are too small for the number and thickness of joists.");
 return;
 }
 
-const clearGap=(length-thickness*count)/(count-1);
+// Calculate the true sloping joist length.
 
-const joistLength=width+front+rear;
+const heightDifference=highHeight-lowHeight;
+const rise=Math.abs(heightDifference);
+const roofAngle=Math.atan(rise/width);
+const roofAngleDegrees=roofAngle*180/Math.PI;
+const slopingJoistLength=Math.sqrt(width*width+rise*rise);
 
+// Same spacing calculation used by the side wall calculator.
+
+const clearGap=(totalLength-(thickness*count))/(count-1);
 const positions=[];
 
-for(let i=0;i<count;i++){
-
-const start=i*(thickness+clearGap);
-
+for(let i=0;i<count;i++) {
+const start=-front+i*(thickness+clearGap);
 positions.push({
 number:i+1,
 start:start,
 gap:i===count-1?0:clearGap
 });
-
 }
 
-const infillCount=count-1;
-const totalInfill=infillCount*2;
+const totalInfill=(count-1)*2;
 
 document.getElementById("roofSummary").innerHTML=`
-<strong>Overall shed length:</strong> ${length.toFixed(2)} mm<br>
-<strong>Roof width between front and rear walls:</strong> ${width.toFixed(2)} mm<br>
+<strong>Roof length between walls:</strong> ${length.toFixed(2)} mm<br>
+<strong>Horizontal roof width:</strong> ${width.toFixed(2)} mm<br>
+<strong>Low side roof height:</strong> ${lowHeight.toFixed(2)} mm<br>
+<strong>High side roof height:</strong> ${highHeight.toFixed(2)} mm<br>
+<strong>Roof height difference:</strong> ${rise.toFixed(2)} mm<br>
+<strong>Calculated sloping roof joist length:</strong> ${slopingJoistLength.toFixed(2)} mm<br>
+<strong>Roof angle:</strong> ${roofAngleDegrees.toFixed(2)} degrees<br>
 <strong>Front overhang:</strong> ${front.toFixed(2)} mm<br>
 <strong>Rear overhang:</strong> ${rear.toFixed(2)} mm<br>
-<strong>Total roof joist cut length:</strong> ${joistLength.toFixed(2)} mm<br>
+<strong>Total roof length including overhangs:</strong> ${totalLength.toFixed(2)} mm<br>
 <strong>Roof timber thickness:</strong> ${thickness.toFixed(2)} mm<br>
 <strong>Number of roof joists:</strong> ${count}<br>
 <strong>Clear gap between joists:</strong> ${clearGap.toFixed(2)} mm<br>
-<strong>Front infill pieces:</strong> ${infillCount}<br>
-<strong>Rear infill pieces:</strong> ${infillCount}<br>
+<strong>Front infill pieces:</strong> ${count-1}<br>
+<strong>Rear infill pieces:</strong> ${count-1}<br>
 <strong>Total infill pieces:</strong> ${totalInfill}
 `;
 
@@ -573,18 +510,13 @@ const table=document.getElementById("roofJoistTable");
 table.innerHTML="";
 
 positions.forEach(p=>{
-
 const row=document.createElement("tr");
-
 row.innerHTML=`
 <td>${p.number}</td>
 <td>${p.start.toFixed(2)}</td>
-<td>${joistLength.toFixed(2)}</td>
-<td>${p.gap.toFixed(2)}</td>
-`;
-
+<td>${slopingJoistLength.toFixed(2)}</td>
+<td>${p.gap.toFixed(2)}</td>`;
 table.appendChild(row);
-
 });
 
 // ROOF CUTTING LIST
@@ -592,222 +524,145 @@ table.appendChild(row);
 let rows=`
 <tr>
 <td>${count}</td>
-<td>Front-to-Back Roof Joists</td>
-<td>${joistLength.toFixed(2)} mm</td>
+<td>Sloping Roof Joists</td>
+<td>${slopingJoistLength.toFixed(2)} mm</td>
 <td>${thickness.toFixed(2)} mm</td>
-<td>Front to rear</td>
+<td>Full roof span</td>
 </tr>
-
 <tr>
-<td>${infillCount}</td>
+<td>${count-1}</td>
 <td>Front Infill Timber</td>
 <td>${clearGap.toFixed(2)} mm</td>
 <td>${thickness.toFixed(2)} mm</td>
-<td>Front row</td>
+<td>Front</td>
 </tr>
-
 <tr>
-<td>${infillCount}</td>
+<td>${count-1}</td>
 <td>Rear Infill Timber</td>
 <td>${clearGap.toFixed(2)} mm</td>
 <td>${thickness.toFixed(2)} mm</td>
-<td>Rear row</td>
+<td>Rear</td>
 </tr>
 `;
 
 document.getElementById("roofCuttingTable").innerHTML=rows;
 
-drawRoofDiagram(length,width,thickness,front,rear,positions,clearGap);
+drawRoofDiagram(length,width,thickness,front,rear,positions,clearGap,slopingJoistLength,roofAngleDegrees);
 
 document.getElementById("roofResults").style.display="block";
-
 }
 
 
-// ROOF PLAN VIEW
-// VERTICAL TIMBERS RUN FRONT TO BACK.
-// JOISTS ARE SPACED HORIZONTALLY ACROSS THE SHED.
-
-function drawRoofDiagram(length,width,thickness,front,rear,positions,gap){
+function drawRoofDiagram(length,width,thickness,front,rear,positions,gap,slopingLength,angleDegrees) {
 
 const svg=document.getElementById("roofDiagram");
 
-const W=760,H=560;
-const left=100,right=35,top=90,bottom=100;
-
-const totalWidth=width+front+rear;
+const W=760,H=510;
+const left=95,right=35,top=75,bottom=95;
+const total=length+front+rear;
 
 const scale=Math.min(
-(W-left-right)/length,
-(H-top-bottom)/totalWidth
+(W-left-right)/total,
+(H-top-bottom)/width
 );
 
-const drawingLength=length*scale;
-const drawingWidth=totalWidth*scale;
+const drawingLength=total*scale;
+const drawingWidth=width*scale;
 const timber=thickness*scale;
 
 const x=left;
 const y=top;
-
-const frontWallY=y+front*scale;
-const rearWallY=frontWallY+width*scale;
+const endX=x+drawingLength;
+const frontWallX=x+front*scale;
+const rearWallX=frontWallX+length*scale;
 
 const colour="#bd8950";
 const outline="#80572d";
 
 let d="";
 
-// Main roof outline
+// Roof outline
 
-d+=`
-<rect x="${x}" y="${y}"
-width="${drawingLength}" height="${drawingWidth}"
-fill="#fafafa" stroke="#777" stroke-width="1.5"/>
-`;
+d+=`<rect x="${x}" y="${y}" width="${drawingLength}" height="${drawingWidth}" fill="#fafafa" stroke="#777" stroke-width="1.5"/>`;
 
-// Front wall reference line
+// Front and rear wall reference lines
 
-d+=`
-<line x1="${x-12}" y1="${frontWallY}"
-x2="${x+drawingLength+12}" y2="${frontWallY}"
-stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>
-`;
+d+=`<line x1="${frontWallX}" y1="${y-12}" x2="${frontWallX}" y2="${y+drawingWidth+12}" stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>`;
+d+=`<line x1="${rearWallX}" y1="${y-12}" x2="${rearWallX}" y2="${y+drawingWidth+12}" stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>`;
 
-// Rear wall reference line
-
-d+=`
-<line x1="${x-12}" y1="${rearWallY}"
-x2="${x+drawingLength+12}" y2="${rearWallY}"
-stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>
-`;
-
-// Roof joists running front to back
+// Roof joists
 
 positions.forEach((p,i)=>{
 
-const joistX=x+p.start*scale;
+const joistX=x+(p.start+front)*scale;
 
-d+=`
-<rect x="${joistX}" y="${y}"
-width="${timber}" height="${drawingWidth}"
-fill="${colour}" stroke="${outline}" stroke-width="1"/>
-`;
+d+=`<rect x="${joistX}" y="${y}" width="${timber}" height="${drawingWidth}" fill="${colour}" stroke="${outline}" stroke-width="1"/>`;
 
-if(timber>16){
-
-d+=`
-<text x="${joistX+timber/2}"
-y="${y+drawingWidth/2}"
-text-anchor="middle"
-dominant-baseline="middle"
-font-size="11" fill="#382514">${i+1}</text>
-`;
-
+if(timber>17) {
+d+=`<text x="${joistX+timber/2}" y="${y+drawingWidth/2}" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#382514">${i+1}</text>`;
 }
 
 });
 
-// Front and rear infill pieces between every joist
+// Front and rear infill blocks between every pair of joists
 
 for(let i=0;i<positions.length-1;i++){
 
-const blockX=x+(positions[i].start+thickness)*scale;
+const blockX=x+(positions[i].start+front+thickness)*scale;
 const blockWidth=gap*scale;
 
 // Front infill
 
-d+=`
-<rect x="${blockX}" y="${y}"
-width="${blockWidth}" height="${timber}"
-fill="${colour}" stroke="${outline}" stroke-width="1"/>
-`;
+d+=`<rect x="${blockX}" y="${y}" width="${blockWidth}" height="${timber}" fill="${colour}" stroke="${outline}" stroke-width="1"/>`;
 
 // Rear infill
 
-d+=`
-<rect x="${blockX}" y="${y+drawingWidth-timber}"
-width="${blockWidth}" height="${timber}"
-fill="${colour}" stroke="${outline}" stroke-width="1"/>
-`;
+d+=`<rect x="${blockX}" y="${y+drawingWidth-timber}" width="${blockWidth}" height="${timber}" fill="${colour}" stroke="${outline}" stroke-width="1"/>`;
 
 }
 
-// Wall labels
+// Wall reference labels
 
-d+=`
-<text x="${W/2}" y="${frontWallY-12}"
-text-anchor="middle" font-size="12" font-weight="bold">FRONT WALL</text>
-`;
+d+=`<text x="${frontWallX}" y="${y-25}" text-anchor="middle" font-size="12" font-weight="bold">Front wall</text>`;
+d+=`<text x="${rearWallX}" y="${y-25}" text-anchor="middle" font-size="12" font-weight="bold">Rear wall</text>`;
 
-d+=`
-<text x="${W/2}" y="${rearWallY+25}"
-text-anchor="middle" font-size="12" font-weight="bold">REAR WALL</text>
-`;
+// Overall length dimension
 
-// Shed length dimension
+const dimY=y+drawingWidth+35;
 
-const dimY=y+drawingWidth+48;
+d+=`<line x1="${x}" y1="${dimY}" x2="${endX}" y2="${dimY}" stroke="#222" stroke-width="1.5"/>
+<line x1="${x}" y1="${dimY-6}" x2="${x}" y2="${dimY+6}" stroke="#222"/>
+<line x1="${endX}" y1="${dimY-6}" x2="${endX}" y2="${dimY+6}" stroke="#222"/>
+<text x="${x+drawingLength/2}" y="${dimY+20}" text-anchor="middle" font-size="13" font-weight="bold">${total.toFixed(2)} mm overall</text>`;
 
-d+=`
-<line x1="${x}" y1="${dimY}"
-x2="${x+drawingLength}" y2="${dimY}"
-stroke="#222" stroke-width="1.5"/>
+// Front overhang dimension
 
-<line x1="${x}" y1="${dimY-6}"
-x2="${x}" y2="${dimY+6}" stroke="#222"/>
+d+=`<text x="${x+front*scale/2}" y="${y+drawingWidth+65}" text-anchor="middle" font-size="11">Front OH: ${front} mm</text>`;
 
-<line x1="${x+drawingLength}" y1="${dimY-6}"
-x2="${x+drawingLength}" y2="${dimY+6}" stroke="#222"/>
+// Rear overhang dimension
 
-<text x="${x+drawingLength/2}"
-y="${dimY+20}" text-anchor="middle"
-font-size="13" font-weight="bold">${length} mm shed length</text>
-`;
+d+=`<text x="${rearWallX+(rear*scale)/2}" y="${y+drawingWidth+65}" text-anchor="middle" font-size="11">Rear OH: ${rear} mm</text>`;
 
-// Front and rear overhang dimensions
+// Horizontal roof width dimension
 
-d+=`
-<text x="${x+drawingLength+12}"
-y="${y+front*scale/2}"
-font-size="11">Front OH ${front} mm</text>
-`;
+d+=`<text x="${x-20}" y="${y+drawingWidth/2}" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" transform="rotate(-90 ${x-20} ${y+drawingWidth/2})">${width} mm horizontal run</text>`;
 
-d+=`
-<text x="${x+drawingLength+12}"
-y="${rearWallY+(rear*scale)/2}"
-font-size="11">Rear OH ${rear} mm</text>
-`;
+// Actual sloping joist length and angle
 
-// Front-to-back overall joist dimension
+d+=`<text x="${W/2}" y="${H-35}" text-anchor="middle" font-size="13" font-weight="bold" fill="#222">Actual sloping joist cut length: ${slopingLength.toFixed(2)} mm</text>`;
 
-d+=`
-<text x="${x-30}"
-y="${y+drawingWidth/2}"
-text-anchor="middle"
-dominant-baseline="middle"
-font-size="12" font-weight="bold"
-transform="rotate(-90 ${x-30} ${y+drawingWidth/2})">
-${totalWidth.toFixed(2)} mm overall joist length
-</text>
-`;
-
-// Joist direction label
-
-d+=`
-<text x="${W/2}" y="${H-12}"
-text-anchor="middle" font-size="12" fill="#444">
-PLAN VIEW - JOISTS RUN FRONT TO BACK - ALL MEASUREMENTS IN mm
-</text>
-`;
+d+=`<text x="${W/2}" y="${H-12}" text-anchor="middle" font-size="12" fill="#444">Roof plan view - roof angle: ${angleDegrees.toFixed(2)}° - all measurements in mm</text>`;
 
 svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
 svg.setAttribute("preserveAspectRatio","xMidYMid meet");
 svg.innerHTML=d;
-
 }
 
 </script>
 
 </body>
 </html>
+
+
+
 
