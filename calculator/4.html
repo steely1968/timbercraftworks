@@ -168,28 +168,29 @@ Check actual joints and bearing details before cutting timber.
 <h2>Roof Joist Calculator</h2>
 
 <p class="intro">
-Calculate the roof joist positions, front and rear overhangs, and the timber infill pieces between the joists. This calculator works independently of the side wall calculator.
+Calculate roof joists running from front to back, including the roof pitch, front and rear overhangs, and the timber infill pieces between the joists.
+This calculator works independently of the side wall calculator.
 All measurements are in millimetres.
 </p>
 
 <div class="field">
-<label for="roofLength">Overall Roof Length Between Front and Rear Walls (mm)</label>
-<input type="number" id="roofLength" min="1" placeholder="Enter roof length">
+<label for="roofLength">Horizontal Roof Length - Front to Back Between Walls (mm)</label>
+<input type="number" id="roofLength" min="1" placeholder="Enter horizontal front to back length">
 </div>
 
 <div class="field">
-<label for="roofWidth">Horizontal Roof Width / Run (mm)</label>
-<input type="number" id="roofWidth" min="1" placeholder="Enter horizontal roof width">
+<label for="roofWidth">Overall Roof Width - Side to Side (mm)</label>
+<input type="number" id="roofWidth" min="1" placeholder="Enter overall roof width">
 </div>
 
 <div class="field">
-<label for="roofLowHeight">Low Side Roof Height (mm)</label>
-<input type="number" id="roofLowHeight" min="1" placeholder="Enter low side roof height">
+<label for="roofFrontHeight">Front Wall Roof Height (mm)</label>
+<input type="number" id="roofFrontHeight" min="1" placeholder="Enter front roof height">
 </div>
 
 <div class="field">
-<label for="roofHighHeight">High Side Roof Height (mm)</label>
-<input type="number" id="roofHighHeight" min="1" placeholder="Enter high side roof height">
+<label for="roofRearHeight">Rear Wall Roof Height (mm)</label>
+<input type="number" id="roofRearHeight" min="1" placeholder="Enter rear roof height">
 </div>
 
 <div class="field">
@@ -227,8 +228,8 @@ All measurements are in millimetres.
 <thead>
 <tr>
 <th>Joist</th>
-<th>Start Position (mm)</th>
-<th>Cut Length (mm)</th>
+<th>Position Across Width (mm)</th>
+<th>Sloping Cut Length (mm)</th>
 <th>Clear Gap (mm)</th>
 </tr>
 </thead>
@@ -238,10 +239,10 @@ All measurements are in millimetres.
 
 <div class="diagram-section">
 <h3>Scaled Roof Joist Layout</h3>
-<p>Plan view showing the roof joists, front and rear overhangs, and infill timber between joists.</p>
+<p>Plan view showing the joists running front to back, with front and rear infill timber between adjacent joists.</p>
 
 <div class="diagram-container">
-<svg id="roofDiagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Scaled roof joist layout"></svg>
+<svg id="roofDiagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Roof plan showing front to back joists"></svg>
 </div>
 
 <div class="diagram-key">
@@ -249,13 +250,13 @@ All measurements are in millimetres.
 </div>
 
 <div class="diagram-note">
-The joists are spaced evenly using the entered timber thickness. Their cut length is calculated using the horizontal roof width and the difference between the low and high roof heights, allowing for the roof slope. Infill timber is fitted between every pair of joists at both the front and rear. The diagram adapts to your measurements.
+The roof joists run from front to back. They are spaced evenly across the overall roof width. The roof pitch makes each joist longer than the horizontal front-to-back measurement. Front and rear overhangs are included in the sloping joist cut length. Infill timber is fitted between every pair of joists at the front and rear.
 </div>
 </div>
 
 <div class="cutting-list">
 <h3>Roof Joist Cutting List</h3>
-<p>Includes all roof joists and the front and rear infill pieces.</p>
+<p>Includes all front-to-back roof joists and the front and rear infill pieces.</p>
 
 <div class="table-wrapper">
 <table>
@@ -273,11 +274,12 @@ The joists are spaced evenly using the entered timber thickness. Their cut lengt
 </div>
 
 <div class="cutting-note">
-Roof joists are cut to the calculated sloping length.
-The front and rear overhangs are included in the overall joist spacing layout.
-Infill pieces are cut to the clear gap between joists.
+Roof joists are cut to the calculated sloping length, including the front and rear overhangs.
+Infill pieces are cut to the clear gap between adjacent joists.
 Two infill pieces are allowed for every gap: one at the front and one at the rear.
 All infill timber uses the same thickness as the roof joists.
+The calculated sloping length assumes the roof pitch continues at the same angle through both overhangs.
+Check actual bearing and joint details before cutting timber.
 </div>
 </div>
 
@@ -292,7 +294,7 @@ Timber Craft Works
 
 <script>
 
-// SIDE WALL CALCULATOR
+// SIDE WALL CALCULATOR - UNCHANGED
 
 function calculateWall() {
 
@@ -434,73 +436,97 @@ svg.innerHTML=d;
 
 
 // INDEPENDENT ROOF JOIST CALCULATOR
+// JOISTS RUN FRONT TO BACK.
+// JOISTS ARE SPACED ACROSS THE ROOF WIDTH.
 
 function calculateRoof() {
 
 const length=Number(document.getElementById("roofLength").value);
 const width=Number(document.getElementById("roofWidth").value);
-const lowHeight=Number(document.getElementById("roofLowHeight").value);
-const highHeight=Number(document.getElementById("roofHighHeight").value);
+const frontHeight=Number(document.getElementById("roofFrontHeight").value);
+const rearHeight=Number(document.getElementById("roofRearHeight").value);
 const thickness=Number(document.getElementById("roofThickness").value);
 const count=Number(document.getElementById("roofJoistCount").value);
 const front=Number(document.getElementById("frontOverhang").value);
 const rear=Number(document.getElementById("rearOverhang").value);
 
 if(!Number.isFinite(length)||!Number.isFinite(width)||
-!Number.isFinite(lowHeight)||!Number.isFinite(highHeight)||
+!Number.isFinite(frontHeight)||!Number.isFinite(rearHeight)||
 !Number.isFinite(thickness)||!Number.isFinite(front)||
 !Number.isFinite(rear)||!Number.isInteger(count)||
-length<=0||width<=0||lowHeight<=0||highHeight<=0||
+length<=0||width<=0||frontHeight<=0||rearHeight<=0||
 thickness<=0||front<0||rear<0||count<2) {
 alert("Please enter valid roof measurements, roof heights, overhangs and at least two joists.");
 return;
 }
 
-const totalLength=length+front+rear;
+// Joist positions are distributed across the roof width.
 
-if(totalLength < thickness*count) {
-alert("The overall roof length and overhangs are too small for the number and thickness of joists.");
+if(width < thickness*count) {
+alert("The roof width is too small for the selected number and thickness of joists.");
 return;
 }
 
-// Calculate the true sloping joist length.
+// Roof pitch is calculated from the front and rear wall heights.
 
-const heightDifference=highHeight-lowHeight;
+const heightDifference=rearHeight-frontHeight;
 const rise=Math.abs(heightDifference);
-const roofAngle=Math.atan(rise/width);
-const roofAngleDegrees=roofAngle*180/Math.PI;
-const slopingJoistLength=Math.sqrt(width*width+rise*rise);
+const roofAngleRadians=Math.atan(heightDifference/length);
+const roofAngleDegrees=Math.abs(roofAngleRadians*180/Math.PI);
 
-// Same spacing calculation used by the side wall calculator.
+// Extend the roof pitch through the front and rear overhangs.
 
-const clearGap=(totalLength-(thickness*count))/(count-1);
+const totalHorizontalLength=length+front+rear;
+const totalHeightDifference=heightDifference/length*totalHorizontalLength;
+
+const slopingJoistLength=Math.sqrt(
+totalHorizontalLength*totalHorizontalLength+
+totalHeightDifference*totalHeightDifference
+);
+
+// Spacing across the roof width.
+
+const clearGap=(width-(thickness*count))/(count-1);
+
 const positions=[];
 
 for(let i=0;i<count;i++) {
-const start=-front+i*(thickness+clearGap);
+const start=i*(thickness+clearGap);
+
 positions.push({
 number:i+1,
 start:start,
+centre:start+thickness/2,
 gap:i===count-1?0:clearGap
 });
 }
 
 const totalInfill=(count-1)*2;
 
+const frontSlopeOverhang=Math.sqrt(
+front*front+
+Math.pow((heightDifference/length)*front,2)
+);
+
+const rearSlopeOverhang=Math.sqrt(
+rear*rear+
+Math.pow((heightDifference/length)*rear,2)
+);
+
 document.getElementById("roofSummary").innerHTML=`
-<strong>Roof length between walls:</strong> ${length.toFixed(2)} mm<br>
-<strong>Horizontal roof width:</strong> ${width.toFixed(2)} mm<br>
-<strong>Low side roof height:</strong> ${lowHeight.toFixed(2)} mm<br>
-<strong>High side roof height:</strong> ${highHeight.toFixed(2)} mm<br>
+<strong>Horizontal roof length between walls:</strong> ${length.toFixed(2)} mm<br>
+<strong>Overall roof width:</strong> ${width.toFixed(2)} mm<br>
+<strong>Front wall roof height:</strong> ${frontHeight.toFixed(2)} mm<br>
+<strong>Rear wall roof height:</strong> ${rearHeight.toFixed(2)} mm<br>
 <strong>Roof height difference:</strong> ${rise.toFixed(2)} mm<br>
-<strong>Calculated sloping roof joist length:</strong> ${slopingJoistLength.toFixed(2)} mm<br>
-<strong>Roof angle:</strong> ${roofAngleDegrees.toFixed(2)} degrees<br>
-<strong>Front overhang:</strong> ${front.toFixed(2)} mm<br>
-<strong>Rear overhang:</strong> ${rear.toFixed(2)} mm<br>
-<strong>Total roof length including overhangs:</strong> ${totalLength.toFixed(2)} mm<br>
-<strong>Roof timber thickness:</strong> ${thickness.toFixed(2)} mm<br>
+<strong>Roof pitch angle:</strong> ${roofAngleDegrees.toFixed(2)} degrees<br>
+<strong>Front overhang:</strong> ${front.toFixed(2)} mm horizontal<br>
+<strong>Rear overhang:</strong> ${rear.toFixed(2)} mm horizontal<br>
+<strong>Total horizontal front-to-back length:</strong> ${totalHorizontalLength.toFixed(2)} mm<br>
+<strong>Calculated sloping joist cut length:</strong> ${slopingJoistLength.toFixed(2)} mm<br>
+<strong>Roof joist timber thickness:</strong> ${thickness.toFixed(2)} mm<br>
 <strong>Number of roof joists:</strong> ${count}<br>
-<strong>Clear gap between joists:</strong> ${clearGap.toFixed(2)} mm<br>
+<strong>Clear gap between joists across width:</strong> ${clearGap.toFixed(2)} mm<br>
 <strong>Front infill pieces:</strong> ${count-1}<br>
 <strong>Rear infill pieces:</strong> ${count-1}<br>
 <strong>Total infill pieces:</strong> ${totalInfill}
@@ -524,57 +550,68 @@ table.appendChild(row);
 let rows=`
 <tr>
 <td>${count}</td>
-<td>Sloping Roof Joists</td>
+<td>Front-to-Back Roof Joists</td>
 <td>${slopingJoistLength.toFixed(2)} mm</td>
 <td>${thickness.toFixed(2)} mm</td>
-<td>Full roof span</td>
+<td>Front to rear</td>
 </tr>
 <tr>
 <td>${count-1}</td>
 <td>Front Infill Timber</td>
 <td>${clearGap.toFixed(2)} mm</td>
 <td>${thickness.toFixed(2)} mm</td>
-<td>Front</td>
+<td>Front between joists</td>
 </tr>
 <tr>
 <td>${count-1}</td>
 <td>Rear Infill Timber</td>
 <td>${clearGap.toFixed(2)} mm</td>
 <td>${thickness.toFixed(2)} mm</td>
-<td>Rear</td>
+<td>Rear between joists</td>
 </tr>
 `;
 
 document.getElementById("roofCuttingTable").innerHTML=rows;
 
-drawRoofDiagram(length,width,thickness,front,rear,positions,clearGap,slopingJoistLength,roofAngleDegrees);
+drawRoofDiagram(
+length,width,thickness,front,rear,
+positions,clearGap,slopingJoistLength,
+roofAngleDegrees,frontHeight,rearHeight
+);
 
 document.getElementById("roofResults").style.display="block";
 }
 
 
-function drawRoofDiagram(length,width,thickness,front,rear,positions,gap,slopingLength,angleDegrees) {
+function drawRoofDiagram(
+length,width,thickness,front,rear,
+positions,gap,slopingLength,angleDegrees,
+frontHeight,rearHeight
+) {
 
 const svg=document.getElementById("roofDiagram");
 
-const W=760,H=510;
-const left=95,right=35,top=75,bottom=95;
-const total=length+front+rear;
+const W=760,H=570;
+const left=95,right=35,top=95,bottom=115;
+
+const totalFrontBack=length+front+rear;
 
 const scale=Math.min(
-(W-left-right)/total,
-(H-top-bottom)/width
+(W-left-right)/width,
+(H-top-bottom)/totalFrontBack
 );
 
-const drawingLength=total*scale;
 const drawingWidth=width*scale;
+const drawingLength=totalFrontBack*scale;
 const timber=thickness*scale;
 
 const x=left;
 const y=top;
-const endX=x+drawingLength;
-const frontWallX=x+front*scale;
-const rearWallX=frontWallX+length*scale;
+const endX=x+drawingWidth;
+const endY=y+drawingLength;
+
+const frontWallY=y+front*scale;
+const rearWallY=frontWallY+length*scale;
 
 const colour="#bd8950";
 const outline="#80572d";
@@ -583,32 +620,33 @@ let d="";
 
 // Roof outline
 
-d+=`<rect x="${x}" y="${y}" width="${drawingLength}" height="${drawingWidth}" fill="#fafafa" stroke="#777" stroke-width="1.5"/>`;
+d+=`<rect x="${x}" y="${y}" width="${drawingWidth}" height="${drawingLength}" fill="#fafafa" stroke="#777" stroke-width="1.5"/>`;
 
 // Front and rear wall reference lines
 
-d+=`<line x1="${frontWallX}" y1="${y-12}" x2="${frontWallX}" y2="${y+drawingWidth+12}" stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>`;
-d+=`<line x1="${rearWallX}" y1="${y-12}" x2="${rearWallX}" y2="${y+drawingWidth+12}" stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>`;
+d+=`<line x1="${x-12}" y1="${frontWallY}" x2="${endX+12}" y2="${frontWallY}" stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>`;
 
-// Roof joists
+d+=`<line x1="${x-12}" y1="${rearWallY}" x2="${endX+12}" y2="${rearWallY}" stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>`;
+
+// Roof joists - all run vertically from FRONT to BACK.
 
 positions.forEach((p,i)=>{
 
-const joistX=x+(p.start+front)*scale;
+const joistX=x+p.start*scale;
 
-d+=`<rect x="${joistX}" y="${y}" width="${timber}" height="${drawingWidth}" fill="${colour}" stroke="${outline}" stroke-width="1"/>`;
+d+=`<rect x="${joistX}" y="${y}" width="${timber}" height="${drawingLength}" fill="${colour}" stroke="${outline}" stroke-width="1"/>`;
 
 if(timber>17) {
-d+=`<text x="${joistX+timber/2}" y="${y+drawingWidth/2}" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#382514">${i+1}</text>`;
+d+=`<text x="${joistX+timber/2}" y="${y+drawingLength/2}" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#382514">${i+1}</text>`;
 }
 
 });
 
-// Front and rear infill blocks between every pair of joists
+// Front and rear infill blocks between every pair of joists.
 
 for(let i=0;i<positions.length-1;i++){
 
-const blockX=x+(positions[i].start+front+thickness)*scale;
+const blockX=x+(positions[i].start+thickness)*scale;
 const blockWidth=gap*scale;
 
 // Front infill
@@ -617,41 +655,46 @@ d+=`<rect x="${blockX}" y="${y}" width="${blockWidth}" height="${timber}" fill="
 
 // Rear infill
 
-d+=`<rect x="${blockX}" y="${y+drawingWidth-timber}" width="${blockWidth}" height="${timber}" fill="${colour}" stroke="${outline}" stroke-width="1"/>`;
+d+=`<rect x="${blockX}" y="${endY-timber}" width="${blockWidth}" height="${timber}" fill="${colour}" stroke="${outline}" stroke-width="1"/>`;
 
 }
 
-// Wall reference labels
+// Front and rear labels
 
-d+=`<text x="${frontWallX}" y="${y-25}" text-anchor="middle" font-size="12" font-weight="bold">Front wall</text>`;
-d+=`<text x="${rearWallX}" y="${y-25}" text-anchor="middle" font-size="12" font-weight="bold">Rear wall</text>`;
+d+=`<text x="${x+drawingWidth/2}" y="${y-17}" text-anchor="middle" font-size="13" font-weight="bold">FRONT</text>`;
 
-// Overall length dimension
+d+=`<text x="${x+drawingWidth/2}" y="${endY+20}" text-anchor="middle" font-size="13" font-weight="bold">REAR</text>`;
 
-const dimY=y+drawingWidth+35;
+// Joist direction label
 
-d+=`<line x1="${x}" y1="${dimY}" x2="${endX}" y2="${dimY}" stroke="#222" stroke-width="1.5"/>
-<line x1="${x}" y1="${dimY-6}" x2="${x}" y2="${dimY+6}" stroke="#222"/>
-<line x1="${endX}" y1="${dimY-6}" x2="${endX}" y2="${dimY+6}" stroke="#222"/>
-<text x="${x+drawingLength/2}" y="${dimY+20}" text-anchor="middle" font-size="13" font-weight="bold">${total.toFixed(2)} mm overall</text>`;
+d+=`<text x="${x+drawingWidth/2}" y="${y+drawingLength/2}" text-anchor="middle" font-size="13" font-weight="bold" fill="#382514" opacity="0.8">JOISTS RUN FRONT TO BACK</text>`;
 
-// Front overhang dimension
+// Width dimension across the joists
 
-d+=`<text x="${x+front*scale/2}" y="${y+drawingWidth+65}" text-anchor="middle" font-size="11">Front OH: ${front} mm</text>`;
+const widthDimY=endY+45;
 
-// Rear overhang dimension
+d+=`<line x1="${x}" y1="${widthDimY}" x2="${endX}" y2="${widthDimY}" stroke="#222" stroke-width="1.5"/>
+<line x1="${x}" y1="${widthDimY-6}" x2="${x}" y2="${widthDimY+6}" stroke="#222"/>
+<line x1="${endX}" y1="${widthDimY-6}" x2="${endX}" y2="${widthDimY+6}" stroke="#222"/>
+<text x="${x+drawingWidth/2}" y="${widthDimY+18}" text-anchor="middle" font-size="12" font-weight="bold">${width.toFixed(2)} mm overall width</text>`;
 
-d+=`<text x="${rearWallX+(rear*scale)/2}" y="${y+drawingWidth+65}" text-anchor="middle" font-size="11">Rear OH: ${rear} mm</text>`;
+// Front overhang label
 
-// Horizontal roof width dimension
+d+=`<text x="${x+drawingWidth+12}" y="${y+front*scale/2}" text-anchor="start" font-size="11">Front OH ${front} mm</text>`;
 
-d+=`<text x="${x-20}" y="${y+drawingWidth/2}" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" transform="rotate(-90 ${x-20} ${y+drawingWidth/2})">${width} mm horizontal run</text>`;
+// Rear overhang label
 
-// Actual sloping joist length and angle
+d+=`<text x="${x+drawingWidth+12}" y="${rearWallY+rear*scale/2}" text-anchor="start" font-size="11">Rear OH ${rear} mm</text>`;
 
-d+=`<text x="${W/2}" y="${H-35}" text-anchor="middle" font-size="13" font-weight="bold" fill="#222">Actual sloping joist cut length: ${slopingLength.toFixed(2)} mm</text>`;
+// Overall front-to-back horizontal length
 
-d+=`<text x="${W/2}" y="${H-12}" text-anchor="middle" font-size="12" fill="#444">Roof plan view - roof angle: ${angleDegrees.toFixed(2)}° - all measurements in mm</text>`;
+d+=`<text x="${x-18}" y="${y+drawingLength/2}" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" transform="rotate(-90 ${x-18} ${y+drawingLength/2})">${totalFrontBack.toFixed(2)} mm horizontal</text>`;
+
+// Sloping joist length and roof angle
+
+d+=`<text x="${W/2}" y="${H-35}" text-anchor="middle" font-size="13" font-weight="bold">Sloping joist cut length: ${slopingLength.toFixed(2)} mm</text>`;
+
+d+=`<text x="${W/2}" y="${H-13}" text-anchor="middle" font-size="12" fill="#444">Roof pitch: ${angleDegrees.toFixed(2)}° | Front height: ${frontHeight} mm | Rear height: ${rearHeight} mm</text>`;
 
 svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
 svg.setAttribute("preserveAspectRatio","xMidYMid meet");
@@ -662,6 +705,7 @@ svg.innerHTML=d;
 
 </body>
 </html>
+
 
 
 
