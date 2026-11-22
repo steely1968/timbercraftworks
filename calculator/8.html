@@ -347,6 +347,23 @@ font-size: 14px;
 <h3>Wall Calculation</h3>
 <div id="summary"></div>
 
+<!-- STARTING POSITIONS -->
+<h3>Starting Positions</h3>
+
+<div class="table-wrap">
+<table id="startingPositions">
+<thead>
+<tr>
+<th>Item</th>
+<th>Starting Position From Left (mm)</th>
+<th>Width / Thickness (mm)</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+
 <h3>Front Wall Diagram</h3>
 
 <div class="diagram-wrap">
@@ -655,6 +672,100 @@ Clear opening: ${windowWidth} mm × ${windowHeight} mm
 
 document.getElementById("summary").innerHTML = summaryHTML;
 
+
+/* =====================================================
+STARTING POSITIONS
+ALL POSITIONS MEASURED FROM LEFT-HAND EDGE OF WALL
+===================================================== */
+
+const positionBody = document.querySelector("#startingPositions tbody");
+positionBody.innerHTML = "";
+
+/* Outer left stud */
+addPositionRow(
+positionBody,
+"Left Outer Stud",
+0,
+timber,
+"Main Stud"
+);
+
+/* Main studs */
+mainStuds.forEach((stud,index) => {
+addPositionRow(
+positionBody,
+`Main Stud ${index + 1}`,
+stud.start,
+timber,
+"Main Stud"
+);
+});
+
+/* Door left frame */
+addPositionRow(
+positionBody,
+"Door Left Frame Stud",
+doorStart,
+timber,
+"Door Frame"
+);
+
+/* Door clear opening */
+addPositionRow(
+positionBody,
+"Door Clear Opening",
+doorClearStart,
+doorWidth,
+"Door Opening"
+);
+
+/* Door right frame */
+addPositionRow(
+positionBody,
+"Door Right Frame Stud",
+doorClearFinish,
+timber,
+"Door Frame"
+);
+
+/* Window */
+if (windowEnabled) {
+
+addPositionRow(
+positionBody,
+"Window Left Frame Stud",
+windowStart,
+timber,
+"Window Frame"
+);
+
+addPositionRow(
+positionBody,
+"Window Clear Opening",
+windowStart + timber,
+windowWidth,
+"Window Opening"
+);
+
+addPositionRow(
+positionBody,
+"Window Right Frame Stud",
+windowStart + timber + windowWidth,
+timber,
+"Window Frame"
+);
+}
+
+/* Outer right stud */
+addPositionRow(
+positionBody,
+"Right Outer Stud",
+length - timber,
+timber,
+"Main Stud"
+);
+
+
 const tbody = document.querySelector("#cuttingList tbody");
 tbody.innerHTML = "";
 
@@ -680,6 +791,36 @@ mainStuds,fixedStuds
 
 document.getElementById("results").style.display = "block";
 }
+
+
+/* =====================================================
+STARTING POSITION TABLE ROW
+===================================================== */
+
+function addPositionRow(tableBody,name,start,width,type) {
+
+const row = document.createElement("tr");
+
+const itemCell = document.createElement("td");
+itemCell.textContent = name;
+
+const startCell = document.createElement("td");
+startCell.textContent = Math.round(start);
+
+const widthCell = document.createElement("td");
+widthCell.textContent = Math.round(width);
+
+const typeCell = document.createElement("td");
+typeCell.textContent = type;
+
+row.appendChild(itemCell);
+row.appendChild(startCell);
+row.appendChild(widthCell);
+row.appendChild(typeCell);
+
+tableBody.appendChild(row);
+}
+
 
 /* =====================================================
 SINGLE FRONT WALL DIAGRAM
