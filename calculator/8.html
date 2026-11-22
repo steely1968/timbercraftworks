@@ -368,31 +368,25 @@ font-size: 14px;
 <h3>Front Wall Diagram</h3>
 
 <div class="diagram-wrap">
-
 <svg id="wallDiagram" viewBox="0 0 1200 650" preserveAspectRatio="xMidYMid meet"></svg>
 
 <div class="legend">
-
 <div class="legend-item">
 <div class="legend-box" style="background:#555;"></div>
 Main Timber
 </div>
-
 <div class="legend-item">
 <div class="legend-box" style="background:#999;"></div>
 Door / Window Frame
 </div>
-
 <div class="legend-item">
 <div class="legend-box" style="background:#d6d6d6;"></div>
 Inside Infill
 </div>
-
 <div class="legend-item">
 <div class="legend-box" style="background:#f4f4f4;"></div>
 Opening
 </div>
-
 </div>
 </div>
 
@@ -417,13 +411,12 @@ Opening
 The bottom rail runs continuously across the complete front wall.
 The door opening sits on top of the bottom rail.
 
+The door header sits directly above the door opening.
+Two vertical cripple studs are fitted above the header, between the header and top rail.
+
+Window framing includes horizontal studs directly above and below the window opening.
+
 Door and window framing members are positioned around the openings.
-Door and window infills are positioned behind the front frame,
-on the inside of the wall.
-
-The door header is directly above the door opening.
-The window has horizontal framing directly above and below the window opening.
-
 Only the front wall elevation is shown in the diagram.
 </div>
 
@@ -449,645 +442,325 @@ const doorHeight = Number(document.getElementById("doorHeight").value);
 const doorOffset = Number(document.getElementById("doorOffset").value);
 const doorPosition = document.getElementById("doorPosition").value;
 
-const windowEnabled =
-document.getElementById("windowEnabled").value === "yes";
+const windowEnabled = document.getElementById("windowEnabled").value === "yes";
+const windowWidth = Number(document.getElementById("windowWidth").value);
+const windowHeight = Number(document.getElementById("windowHeight").value);
+const windowSill = Number(document.getElementById("windowSill").value);
+const windowOffset = Number(document.getElementById("windowOffset").value);
+const windowPosition = document.getElementById("windowPosition").value;
 
-const windowWidth =
-Number(document.getElementById("windowWidth").value);
-
-const windowHeight =
-Number(document.getElementById("windowHeight").value);
-
-const windowSill =
-Number(document.getElementById("windowSill").value);
-
-const windowOffset =
-Number(document.getElementById("windowOffset").value);
-
-const windowPosition =
-document.getElementById("windowPosition").value;
-
-if (
-!Number.isFinite(length) ||
-!Number.isFinite(height) ||
-!Number.isFinite(timber) ||
-!Number.isFinite(studCount) ||
-length <= 0 ||
-height <= 0 ||
-timber <= 0 ||
-studCount < 2 ||
-!Number.isInteger(studCount)
-) {
+if (!Number.isFinite(length) || !Number.isFinite(height) ||
+!Number.isFinite(timber) || !Number.isFinite(studCount) ||
+length <= 0 || height <= 0 || timber <= 0 ||
+studCount < 2 || !Number.isInteger(studCount)) {
 alert("Please enter valid wall dimensions and stud numbers.");
 return;
 }
 
-if (
-doorWidth <= 0 ||
-doorHeight <= 0 ||
-doorWidth + timber * 2 >= length
-) {
+if (doorWidth <= 0 || doorHeight <= 0 ||
+doorWidth + timber * 2 >= length) {
 alert("Please check the door dimensions.");
 return;
 }
 
-if (doorHeight > height - timber) {
-alert("The door height is too large for the wall.");
+/* Allow room for the bottom rail, door, header and top rail */
+if (doorHeight + timber * 3 > height) {
+alert("The door is too high to fit the header and top framing.");
 return;
 }
 
-if (
-windowEnabled &&
-(
-windowWidth <= 0 ||
-windowHeight <= 0 ||
+if (windowEnabled &&
+(windowWidth <= 0 || windowHeight <= 0 ||
 windowSill < 0 ||
 windowWidth + timber * 2 >= length ||
-windowSill + windowHeight > height - timber
-)
-) {
+windowSill + windowHeight > height - timber)) {
 alert("Please check the window dimensions.");
 return;
 }
 
-
-/* ==============================
-DOOR POSITION
-============================== */
-
-const doorStart =
-doorPosition === "left"
+const doorStart = doorPosition === "left"
 ? doorOffset
 : length - doorOffset - (doorWidth + timber * 2);
 
-const doorFrameWidth =
-doorWidth + timber * 2;
+const doorFrameWidth = doorWidth + timber * 2;
+const doorClearStart = doorStart + timber;
+const doorClearFinish = doorClearStart + doorWidth;
+const doorFinish = doorStart + doorFrameWidth;
 
-const doorClearStart =
-doorStart + timber;
-
-const doorClearFinish =
-doorClearStart + doorWidth;
-
-const doorFinish =
-doorStart + doorFrameWidth;
-
-if (
-doorStart < timber ||
-doorFinish > length - timber
-) {
+if (doorStart < timber || doorFinish > length - timber) {
 alert("The door position is outside the usable wall area.");
 return;
 }
-
-
-/* ==============================
-WINDOW POSITION
-============================== */
 
 let windowStart = 0;
 let windowFinish = 0;
 
 if (windowEnabled) {
 
-const windowFrameWidth =
-windowWidth + timber * 2;
+const windowFrameWidth = windowWidth + timber * 2;
 
-windowStart =
-windowPosition === "left"
+windowStart = windowPosition === "left"
 ? windowOffset
 : length - windowOffset - windowFrameWidth;
 
-windowFinish =
-windowStart + windowFrameWidth;
+windowFinish = windowStart + windowFrameWidth;
 
-if (
-windowStart < timber ||
-windowFinish > length - timber
-) {
+if (windowStart < timber || windowFinish > length - timber) {
 alert("The window position is outside the usable wall area.");
 return;
 }
 
-if (
-windowSill + windowHeight >
-height - timber * 2
-) {
+if (windowSill + windowHeight > height - timber * 2) {
 alert("The window does not fit within the wall.");
 return;
 }
 
-if (
-windowStart < doorFinish &&
-windowFinish > doorStart
-) {
+if (windowStart < doorFinish && windowFinish > doorStart) {
 alert("The door and window overlap. Please adjust their positions.");
 return;
 }
 
 }
 
-
-/* ==============================
-FIXED VERTICAL STUDS
-============================== */
+/* Fixed vertical studs */
 
 const fixedStuds = [
-
-{
-start: 0,
-end: timber,
-type: "Outer"
-},
-
-{
-start: length - timber,
-end: length,
-type: "Outer"
-},
-
-{
-start: doorStart,
-end: doorStart + timber,
-type: "Door"
-},
-
-{
-start: doorClearFinish,
-end: doorFinish,
-type: "Door"
-}
-
+{start:0, end:timber, type:"Outer"},
+{start:length-timber, end:length, type:"Outer"},
+{start:doorStart, end:doorStart+timber, type:"Door"},
+{start:doorClearFinish, end:doorFinish, type:"Door"}
 ];
-
 
 if (windowEnabled) {
 
 fixedStuds.push(
-
-{
-start: windowStart,
-end: windowStart + timber,
-type: "Window"
-},
-
-{
-start: windowStart + timber + windowWidth,
-end: windowFinish,
-type: "Window"
-}
-
+{start:windowStart, end:windowStart+timber, type:"Window"},
+{start:windowStart+timber+windowWidth, end:windowFinish, type:"Window"}
 );
 
 }
 
+fixedStuds.sort((a,b) => a.start-b.start);
 
-fixedStuds.sort(
-(a,b) => a.start - b.start
-);
-
-
-for (
-let i = 0;
-i < fixedStuds.length - 1;
-i++
-) {
-
-if (
-fixedStuds[i].end >
-fixedStuds[i + 1].start
-) {
-
-alert(
-"The door/window positions overlap. Please adjust them."
-);
-
+for (let i=0; i<fixedStuds.length-1; i++) {
+if (fixedStuds[i].end > fixedStuds[i+1].start) {
+alert("The door/window positions overlap. Please adjust them.");
 return;
-
+}
 }
 
-}
+/* Main wall stud calculation - unchanged */
 
-
-/* ==============================
-MAIN STUD CALCULATION
-============================== */
-
-const mainStudsNeeded =
-studCount - 2;
-
+const mainStudsNeeded = studCount - 2;
 const solidIntervals = [];
 
-for (
-let i = 0;
-i < fixedStuds.length - 1;
-i++
-) {
+for (let i=0; i<fixedStuds.length-1; i++) {
 
-const gapStart =
-fixedStuds[i].end;
-
-const gapEnd =
-fixedStuds[i + 1].start;
+const gapStart = fixedStuds[i].end;
+const gapEnd = fixedStuds[i+1].start;
 
 if (gapEnd > gapStart) {
-
-solidIntervals.push({
-start: gapStart,
-end: gapEnd
-});
-
+solidIntervals.push({start:gapStart,end:gapEnd});
 }
 
 }
-
 
 const mainStuds = [];
 
-const totalAvailableLength =
-solidIntervals.reduce(
-(sum,interval) =>
-sum + interval.end - interval.start,
-0
+const totalAvailableLength = solidIntervals.reduce(
+(sum,interval) => sum + interval.end-interval.start, 0
 );
 
+if (mainStudsNeeded > 0 && totalAvailableLength > 0) {
 
-if (
-mainStudsNeeded > 0 &&
-totalAvailableLength > 0
-) {
+let remainingStuds = mainStudsNeeded;
 
-let remainingStuds =
-mainStudsNeeded;
+for (let i=0; i<solidIntervals.length; i++) {
 
+if (remainingStuds <= 0) break;
 
-for (
-let i = 0;
-i < solidIntervals.length;
-i++
-) {
-
-if (remainingStuds <= 0) {
-break;
-}
-
-const interval =
-solidIntervals[i];
-
+const interval = solidIntervals[i];
 let studsHere;
 
-
-if (
-i === solidIntervals.length - 1
-) {
-
-studsHere =
-remainingStuds;
-
+if (i === solidIntervals.length-1) {
+studsHere = remainingStuds;
 } else {
-
-studsHere =
-Math.round(
+studsHere = Math.round(
 mainStudsNeeded *
-(
-(interval.end - interval.start) /
-totalAvailableLength
-)
+((interval.end-interval.start)/totalAvailableLength)
 );
-
-studsHere =
-Math.min(
-studsHere,
-remainingStuds
-);
-
+studsHere = Math.min(studsHere,remainingStuds);
 }
-
 
 if (studsHere > 0) {
 
 const clearGap =
-(
-(interval.end - interval.start) -
-timber * studsHere
-) /
-(studsHere + 1);
-
+((interval.end-interval.start)-timber*studsHere) /
+(studsHere+1);
 
 if (clearGap <= 0) {
-
-alert(
-"There is not enough room for the requested main studs."
-);
-
+alert("There is not enough room for the requested main studs.");
 return;
-
 }
 
-
-for (
-let j = 0;
-j < studsHere;
-j++
-) {
+for (let j=0; j<studsHere; j++) {
 
 const studStart =
-interval.start +
-clearGap +
-j * (timber + clearGap);
+interval.start + clearGap +
+j*(timber+clearGap);
 
 mainStuds.push({
-
-start: studStart,
-
-end:
-studStart + timber
-
+start:studStart,
+end:studStart+timber
 });
 
 }
 
-remainingStuds -=
-studsHere;
-
+remainingStuds -= studsHere;
 }
 
 }
-
 
 if (remainingStuds > 0) {
-
-alert(
-"There is not enough space for the requested main studs."
-);
-
+alert("There is not enough space for the requested main studs.");
 return;
-
 }
 
 }
 
+/* Door header and vertical studs above it */
 
-/* ==============================
-HORIZONTAL FRAMING
-============================== */
+const doorHeaderStart = doorClearStart;
+const doorHeaderBottom = timber + doorHeight;
+const doorCrippleBottom = doorHeaderBottom + timber;
+const doorCrippleLength = height - timber - doorCrippleBottom;
 
-/*
-Door header:
-Starts at the inside edge of the
-left door frame and finishes at
-the inside edge of the right door frame.
-*/
+if (doorCrippleLength < 0) {
+alert("There is not enough room above the door header.");
+return;
+}
 
-const doorHeaderStart =
-doorClearStart;
+/* Two vertical studs spaced evenly above the door */
 
-const doorHeaderBottom =
-height - doorHeight - timber;
+const doorCripples = [
+{
+start: doorClearStart + doorWidth / 3 - timber / 2,
+end: doorClearStart + doorWidth / 3 + timber / 2
+},
+{
+start: doorClearStart + doorWidth * 2 / 3 - timber / 2,
+end: doorClearStart + doorWidth * 2 / 3 + timber / 2
+}
+];
 
-
-/*
-Window bottom and top framing.
-The window opening is measured
-from the bottom rail.
-*/
+/* Window horizontal framing */
 
 let windowBottomStudStart = 0;
 let windowTopStudStart = 0;
 
-let windowBottomStudBottom = 0;
-let windowTopStudBottom = 0;
-
 if (windowEnabled) {
-
-windowBottomStudStart =
-windowStart + timber;
-
-windowBottomStudBottom =
-windowSill;
-
-windowTopStudStart =
-windowStart + timber;
-
-windowTopStudBottom =
-windowSill + windowHeight;
-
+windowBottomStudStart = windowStart + timber;
+windowTopStudStart = windowStart + timber;
 }
 
+/* Cutting list */
 
-/* ==============================
-CUTTING LIST
-============================== */
-
-const verticalStudLength =
-height - timber * 2;
-
+const verticalStudLength = height-timber*2;
 const cuts = [];
 
-
-function addCut(
-name,
-quantity,
-cutLength,
-thickness
-) {
-
+function addCut(name,quantity,cutLength,thickness) {
 cuts.push({
-
 name,
 quantity,
-length:
-Math.round(cutLength),
-
-thickness:
-Math.round(thickness)
-
+length:Math.round(cutLength),
+thickness:Math.round(thickness)
 });
-
 }
 
-
-addCut(
-"Bottom Rail",
-1,
-length,
-timber
-);
-
-addCut(
-"Top Rail",
-1,
-length,
-timber
-);
-
-addCut(
-"Outer End Studs",
-2,
-verticalStudLength,
-timber
-);
-
+addCut("Bottom Rail",1,length,timber);
+addCut("Top Rail",1,length,timber);
+addCut("Outer End Studs",2,verticalStudLength,timber);
 
 if (mainStuds.length > 0) {
-
-addCut(
-"Main Wall Studs",
-mainStuds.length,
-verticalStudLength,
-timber
-);
-
+addCut("Main Wall Studs",mainStuds.length,verticalStudLength,timber);
 }
 
+addCut("Door Vertical Frame Studs",2,verticalStudLength,timber);
+addCut("Door Header Above Opening",1,doorWidth,timber);
+
+/* NEW: vertical studs above door header */
 
 addCut(
-"Door Vertical Frame Studs",
-2,
-verticalStudLength,
+"Door Above-Header Vertical Studs",
+doorCripples.length,
+doorCrippleLength,
 timber
 );
-
-
-addCut(
-"Door Header Above Opening",
-1,
-doorWidth,
-timber
-);
-
 
 if (windowEnabled) {
 
-addCut(
-"Window Vertical Frame Studs",
-2,
-verticalStudLength,
-timber
-);
-
-addCut(
-"Window Bottom Stud",
-1,
-windowWidth,
-timber
-);
-
-addCut(
-"Window Top Stud",
-1,
-windowWidth,
-timber
-);
+addCut("Window Vertical Frame Studs",2,verticalStudLength,timber);
+addCut("Window Bottom Stud",1,windowWidth,timber);
+addCut("Window Top Stud",1,windowWidth,timber);
 
 }
 
-
-/* ==============================
-SUMMARY
-============================== */
+/* Summary */
 
 let summaryHTML = `
-
 <div class="result-box">
-
 <strong>Wall Size</strong>
-
 ${length} mm × ${height} mm
-
 </div>
 
-
 <div class="result-box">
-
 <strong>Bottom Rail</strong>
-
-Continuous full wall length:
-${length} mm
-
+Continuous full wall length: ${length} mm
 </div>
 
-
 <div class="result-box">
-
 <strong>Door</strong>
-
-Clear opening:
-${doorWidth} mm × ${doorHeight} mm
-
+Clear opening: ${doorWidth} mm × ${doorHeight} mm
 </div>
 
-
 <div class="result-box">
-
-<strong>Main Wall Studs</strong>
-
-${mainStuds.length}
-additional studs
-
-</div>
-
-
-<div class="result-box">
-
 <strong>Door Header</strong>
-
-${doorWidth} mm long,
-directly above the door opening
-
+${doorWidth} mm long, directly above the door opening
 </div>
 
-`;
+<div class="result-box">
+<strong>Vertical Studs Above Door</strong>
+${doorCripples.length} studs, each ${Math.round(doorCrippleLength)} mm long
+</div>
 
+<div class="result-box">
+<strong>Main Wall Studs</strong>
+${mainStuds.length} additional studs
+</div>
+`;
 
 if (windowEnabled) {
-
 summaryHTML += `
-
 <div class="result-box">
-
 <strong>Window</strong>
-
-Clear opening:
-${windowWidth} mm × ${windowHeight} mm
-
+Clear opening: ${windowWidth} mm × ${windowHeight} mm
 </div>
-
 
 <div class="result-box">
-
 <strong>Window Horizontal Framing</strong>
-
-Bottom:
-${windowWidth} mm
-
-<br>
-
-Top:
-${windowWidth} mm
-
+Top and bottom framing members: ${windowWidth} mm each
 </div>
-
 `;
-
 }
 
+document.getElementById("summary").innerHTML = summaryHTML;
 
-document.getElementById("summary").innerHTML =
-summaryHTML;
-
-
-/* ==============================
-STARTING POSITION TABLE
-============================== */
+/* Starting positions table */
 
 const positionBody =
-document.querySelector(
-"#startingPositions tbody"
-);
+document.querySelector("#startingPositions tbody");
 
 positionBody.innerHTML = "";
-
 
 function addPositionRow(
 name,
@@ -1098,9 +771,7 @@ thickness,
 type
 ) {
 
-const row =
-document.createElement("tr");
-
+const row = document.createElement("tr");
 
 [
 name,
@@ -1111,223 +782,128 @@ Math.round(thickness),
 type
 ].forEach(value => {
 
-const cell =
-document.createElement("td");
-
-cell.textContent =
-value;
-
+const cell = document.createElement("td");
+cell.textContent = value;
 row.appendChild(cell);
 
 });
 
-
 positionBody.appendChild(row);
-
 }
 
-
-/* LEFT OUTER STUD */
+/* Left outer stud */
 
 addPositionRow(
-"Left Outer Stud",
-0,
-0,
-verticalStudLength,
-timber,
-"Vertical Stud"
+"Left Outer Stud",0,0,verticalStudLength,timber,"Vertical Stud"
 );
 
+/* Main studs */
 
-/* MAIN STUDS */
-
-mainStuds.forEach(
-(stud,index) => {
-
+mainStuds.forEach((stud,index) => {
 addPositionRow(
 `Main Stud ${index + 1}`,
-stud.start,
-0,
-verticalStudLength,
-timber,
-"Vertical Stud"
+stud.start,0,verticalStudLength,timber,"Vertical Stud"
 );
+});
 
-}
-);
-
-
-/* DOOR LEFT STUD */
+/* Door left frame */
 
 addPositionRow(
 "Door Left Frame Stud",
-doorStart,
-0,
-verticalStudLength,
-timber,
-"Door Frame"
+doorStart,0,verticalStudLength,timber,"Door Frame"
 );
 
-
-/* DOOR OPENING */
+/* Door clear opening */
 
 addPositionRow(
 "Door Clear Opening",
-doorClearStart,
-0,
-doorWidth,
-doorHeight,
-"Door Opening"
+doorClearStart,timber,doorWidth,doorHeight,"Door Opening"
 );
 
-
-/* DOOR RIGHT STUD */
+/* Door right frame */
 
 addPositionRow(
 "Door Right Frame Stud",
-doorClearFinish,
-0,
-verticalStudLength,
-timber,
-"Door Frame"
+doorClearFinish,0,verticalStudLength,timber,"Door Frame"
 );
 
-
-/* DOOR HEADER */
+/* Door header */
 
 addPositionRow(
 "Door Header Above Opening",
-doorHeaderStart,
-doorHeaderBottom,
-doorWidth,
-timber,
-"Horizontal Stud"
+doorHeaderStart,doorHeaderBottom,doorWidth,timber,"Horizontal Header"
 );
 
+/* NEW: vertical studs above door header */
 
-/* WINDOW */
+doorCripples.forEach((stud,index) => {
+addPositionRow(
+`Door Above-Header Stud ${index + 1}`,
+stud.start,
+doorCrippleBottom,
+doorCrippleLength,
+timber,
+"Vertical Cripple Stud"
+);
+});
+
+/* Window framing */
 
 if (windowEnabled) {
 
-
-/* WINDOW LEFT STUD */
-
 addPositionRow(
 "Window Left Frame Stud",
-windowStart,
-0,
-verticalStudLength,
-timber,
-"Window Frame"
+windowStart,0,verticalStudLength,timber,"Window Frame"
 );
-
-
-/* WINDOW BOTTOM STUD */
 
 addPositionRow(
 "Window Bottom Stud",
-windowBottomStudStart,
-windowBottomStudBottom,
-windowWidth,
-timber,
-"Horizontal Stud"
+windowBottomStudStart,windowSill,windowWidth,timber,"Horizontal Stud"
 );
-
-
-/* WINDOW OPENING */
 
 addPositionRow(
 "Window Clear Opening",
-windowStart + timber,
-windowSill,
-windowWidth,
-windowHeight,
-"Window Opening"
+windowStart+timber,windowSill,windowWidth,windowHeight,"Window Opening"
 );
-
-
-/* WINDOW TOP STUD */
 
 addPositionRow(
 "Window Top Stud",
-windowTopStudStart,
-windowTopStudBottom,
-windowWidth,
-timber,
-"Horizontal Stud"
+windowTopStudStart,windowSill+windowHeight,windowWidth,timber,"Horizontal Stud"
 );
-
-
-/* WINDOW RIGHT STUD */
 
 addPositionRow(
 "Window Right Frame Stud",
-windowStart + timber + windowWidth,
-0,
-verticalStudLength,
-timber,
-"Window Frame"
+windowStart+timber+windowWidth,0,verticalStudLength,timber,"Window Frame"
 );
 
 }
 
-
-/* RIGHT OUTER STUD */
+/* Right outer stud */
 
 addPositionRow(
 "Right Outer Stud",
-length - timber,
-0,
-verticalStudLength,
-timber,
-"Vertical Stud"
+length-timber,0,verticalStudLength,timber,"Vertical Stud"
 );
 
+/* Cutting list table */
 
-/* ==============================
-CUTTING LIST TABLE
-============================== */
-
-const tbody =
-document.querySelector(
-"#cuttingList tbody"
-);
-
+const tbody = document.querySelector("#cuttingList tbody");
 tbody.innerHTML = "";
-
 
 cuts.forEach(cut => {
 
-const row =
-document.createElement("tr");
+const row = document.createElement("tr");
 
-
-[
-cut.name,
-cut.quantity,
-cut.length,
-cut.thickness
-].forEach(value => {
-
-const cell =
-document.createElement("td");
-
-cell.textContent =
-value;
-
+[cut.name,cut.quantity,cut.length,cut.thickness].forEach(value => {
+const cell = document.createElement("td");
+cell.textContent = value;
 row.appendChild(cell);
-
 });
-
 
 tbody.appendChild(row);
-
 });
 
-
-/* ==============================
-DRAW DIAGRAM
-============================== */
+/* Draw diagram */
 
 drawDiagram(
 length,
@@ -1342,19 +918,17 @@ windowWidth,
 windowHeight,
 windowSill,
 mainStuds,
-fixedStuds
+fixedStuds,
+doorCripples,
+doorCrippleLength
 );
 
-
-document.getElementById("results").style.display =
-"block";
+document.getElementById("results").style.display = "block";
 
 }
 
 
-/* =====================================================
-SINGLE FRONT WALL DIAGRAM
-===================================================== */
+/* FRONT WALL DIAGRAM */
 
 function drawDiagram(
 length,
@@ -1369,71 +943,36 @@ windowWidth,
 windowHeight,
 windowSill,
 mainStuds,
-fixedStuds
+fixedStuds,
+doorCripples,
+doorCrippleLength
 ) {
 
-const svg =
-document.getElementById(
-"wallDiagram"
-);
-
+const svg = document.getElementById("wallDiagram");
 svg.innerHTML = "";
-
 
 const wallX = 120;
 const wallY = 95;
 const wallWidth = 960;
 const wallHeight = 440;
 
+const scale = Math.min(wallWidth/length,wallHeight/height);
 
-const scale =
-Math.min(
-wallWidth / length,
-wallHeight / height
-);
+const drawingWidth = length*scale;
+const drawingHeight = height*scale;
 
+const x = wallX+(wallWidth-drawingWidth)/2;
+const y = wallY+(wallHeight-drawingHeight)/2;
 
-const drawingWidth =
-length * scale;
-
-const drawingHeight =
-height * scale;
-
-
-const x =
-wallX +
-(wallWidth - drawingWidth) / 2;
-
-const y =
-wallY +
-(wallHeight - drawingHeight) / 2;
-
-
-const timberPx =
-timber * scale;
-
+const timberPx = timber*scale;
 
 const mainColour = "#555";
 const frameColour = "#999";
-const infillColour = "#d6d6d6";
 const openingColour = "#f4f4f4";
 
+function rect(rx,ry,rw,rh,fill,stroke="#111",strokeWidth=1) {
 
-function rect(
-rx,
-ry,
-rw,
-rh,
-fill,
-stroke="#111",
-strokeWidth=1
-) {
-
-const el =
-document.createElementNS(
-"http://www.w3.org/2000/svg",
-"rect"
-);
+const el = document.createElementNS("http://www.w3.org/2000/svg","rect");
 
 el.setAttribute("x",rx);
 el.setAttribute("y",ry);
@@ -1441,31 +980,14 @@ el.setAttribute("width",rw);
 el.setAttribute("height",rh);
 el.setAttribute("fill",fill);
 el.setAttribute("stroke",stroke);
-el.setAttribute(
-"stroke-width",
-strokeWidth
-);
+el.setAttribute("stroke-width",strokeWidth);
 
 svg.appendChild(el);
-
 }
 
+function line(x1,y1,x2,y2,stroke="#111",width=1,dash="") {
 
-function line(
-x1,
-y1,
-x2,
-y2,
-stroke="#111",
-width=1,
-dash=""
-) {
-
-const el =
-document.createElementNS(
-"http://www.w3.org/2000/svg",
-"line"
-);
+const el = document.createElementNS("http://www.w3.org/2000/svg","line");
 
 el.setAttribute("x1",x1);
 el.setAttribute("y1",y1);
@@ -1474,471 +996,242 @@ el.setAttribute("y2",y2);
 el.setAttribute("stroke",stroke);
 el.setAttribute("stroke-width",width);
 
-if (dash) {
-el.setAttribute(
-"stroke-dasharray",
-dash
-);
-}
+if (dash) el.setAttribute("stroke-dasharray",dash);
 
 svg.appendChild(el);
-
 }
 
+function text(tx,ty,value,size=16,anchor="middle",weight="normal") {
 
-function text(
-tx,
-ty,
-value,
-size=16,
-anchor="middle",
-weight="normal"
-) {
-
-const el =
-document.createElementNS(
-"http://www.w3.org/2000/svg",
-"text"
-);
+const el = document.createElementNS("http://www.w3.org/2000/svg","text");
 
 el.setAttribute("x",tx);
 el.setAttribute("y",ty);
-el.setAttribute(
-"font-size",
-size
-);
-
-el.setAttribute(
-"font-family",
-"Arial, Helvetica, sans-serif"
-);
-
-el.setAttribute(
-"text-anchor",
-anchor
-);
-
-el.setAttribute(
-"font-weight",
-weight
-);
-
-el.setAttribute(
-"fill",
-"#111"
-);
-
-el.textContent =
-value;
+el.setAttribute("font-size",size);
+el.setAttribute("font-family","Arial, Helvetica, sans-serif");
+el.setAttribute("text-anchor",anchor);
+el.setAttribute("font-weight",weight);
+el.setAttribute("fill","#111");
+el.textContent = value;
 
 svg.appendChild(el);
-
 }
 
+/* Wall outline */
 
-/* ==============================
-WALL OUTLINE
-============================== */
+rect(x,y,drawingWidth,drawingHeight,"#fff","#111",2);
 
+/* Top rail */
+
+rect(x,y,drawingWidth,timberPx,mainColour);
+
+/* Continuous bottom rail */
+
+const bottomRailY = y+drawingHeight-timberPx;
+
+rect(x,bottomRailY,drawingWidth,timberPx,mainColour);
+
+/* Main vertical studs */
+
+mainStuds.forEach(stud => {
 rect(
-x,
-y,
-drawingWidth,
-drawingHeight,
-"#fff",
-"#111",
-2
-);
-
-
-/* ==============================
-TOP RAIL
-============================== */
-
-rect(
-x,
-y,
-drawingWidth,
-timberPx,
+x+stud.start*scale,
+y+timberPx,
+(stud.end-stud.start)*scale,
+drawingHeight-timberPx*2,
 mainColour
 );
+});
 
+/* Door and window vertical frame studs */
 
-/* ==============================
-BOTTOM RAIL
-============================== */
+fixedStuds.forEach(stud => {
 
-const bottomRailY =
-y +
-drawingHeight -
-timberPx;
+const fill = (stud.type === "Door" || stud.type === "Window")
+? frameColour : mainColour;
 
 rect(
-x,
-bottomRailY,
-drawingWidth,
-timberPx,
-mainColour
-);
-
-
-/* ==============================
-MAIN WALL STUDS
-============================== */
-
-mainStuds.forEach(
-stud => {
-
-rect(
-x + stud.start * scale,
-y + timberPx,
-(stud.end - stud.start) * scale,
-drawingHeight - timberPx * 2,
-mainColour
-);
-
-}
-);
-
-
-/* ==============================
-VERTICAL DOOR / WINDOW STUDS
-============================== */
-
-fixedStuds.forEach(
-stud => {
-
-const fill =
-(
-stud.type === "Door" ||
-stud.type === "Window"
-)
-? frameColour
-: mainColour;
-
-
-rect(
-x + stud.start * scale,
-y + timberPx,
-(stud.end - stud.start) * scale,
-drawingHeight - timberPx * 2,
+x+stud.start*scale,
+y+timberPx,
+(stud.end-stud.start)*scale,
+drawingHeight-timberPx*2,
 fill
 );
+});
 
-}
-);
+/* Door opening */
 
-
-/* ==============================
-DOOR OPENING
-============================== */
-
-const doorOpeningTop =
-bottomRailY -
-doorHeight * scale;
-
-
-const doorClearX =
-x +
-(doorStart + timber) * scale;
-
+const doorOpeningTop = bottomRailY-doorHeight*scale;
+const doorClearX = x+(doorStart+timber)*scale;
 
 rect(
 doorClearX,
 doorOpeningTop,
-doorWidth * scale,
-doorHeight * scale,
+doorWidth*scale,
+doorHeight*scale,
 openingColour
 );
 
+/* Door header */
 
-/* ==============================
-DOOR HEADER
-============================== */
-
-const doorHeaderY =
-doorOpeningTop -
-timberPx;
-
+const doorHeaderY = doorOpeningTop-timberPx;
 
 rect(
 doorClearX,
 doorHeaderY,
-doorWidth * scale,
+doorWidth*scale,
 timberPx,
 mainColour,
 "#111",
 1
 );
 
+/* NEW: vertical cripple studs above the door header */
 
-/* ==============================
-DOOR LABEL
-============================== */
+const topRailUndersideY = y+timberPx;
 
-text(
-doorClearX +
-doorWidth * scale / 2,
-doorOpeningTop +
-doorHeight * scale / 2 +
-5,
-`DOOR ${doorWidth} × ${doorHeight}`,
-13,
-"middle",
-"bold"
+doorCripples.forEach(stud => {
+
+const studX = x+stud.start*scale;
+const studY = doorHeaderY-doorCrippleLength*scale;
+
+rect(
+studX,
+topRailUndersideY,
+(stud.end-stud.start)*scale,
+doorCrippleLength*scale,
+mainColour,
+"#111",
+1
 );
 
+});
 
-/* ==============================
-WINDOW
-============================== */
+/* Window */
 
 if (windowEnabled) {
 
-const windowBottom =
-bottomRailY -
-windowSill * scale;
+const windowBottom = bottomRailY-windowSill*scale;
+const windowTop = windowBottom-windowHeight*scale;
+const windowClearX = x+(windowStart+timber)*scale;
 
-
-const windowTop =
-windowBottom -
-windowHeight * scale;
-
-
-const windowClearX =
-x +
-(windowStart + timber) * scale;
-
-
-/* WINDOW OPENING */
+/* Window opening */
 
 rect(
 windowClearX,
 windowTop,
-windowWidth * scale,
-windowHeight * scale,
+windowWidth*scale,
+windowHeight*scale,
 openingColour
 );
 
-
-/* ==============================
-WINDOW BOTTOM STUD
-============================== */
-
-const windowBottomStudY =
-windowBottom -
-timberPx;
-
+/* Window bottom horizontal stud */
 
 rect(
 windowClearX,
-windowBottomStudY,
-windowWidth * scale,
+windowBottom-timberPx,
+windowWidth*scale,
 timberPx,
 mainColour,
 "#111",
 1
 );
 
-
-/* ==============================
-WINDOW TOP STUD
-============================== */
-
-const windowTopStudY =
-windowTop -
-timberPx;
-
+/* Window top horizontal stud */
 
 rect(
 windowClearX,
-windowTopStudY,
-windowWidth * scale,
+windowTop-timberPx,
+windowWidth*scale,
 timberPx,
 mainColour,
 "#111",
 1
-);
-
-
-/* ==============================
-WINDOW LABEL
-============================== */
-
-text(
-windowClearX +
-windowWidth * scale / 2,
-windowTop +
-windowHeight * scale / 2 +
-5,
-`WINDOW ${windowWidth} × ${windowHeight}`,
-12,
-"middle",
-"bold"
 );
 
 }
 
+/* Overall wall length dimension */
 
-/* ==============================
-OVERALL WALL LENGTH
-============================== */
+const dimensionY = y+drawingHeight+40;
 
-const dimensionY =
-y +
-drawingHeight +
-40;
-
-
-line(
-x,
-dimensionY,
-x + drawingWidth,
-dimensionY,
-"#111",
-2
-);
-
-line(
-x,
-dimensionY - 8,
-x,
-dimensionY + 8,
-"#111",
-2
-);
-
-line(
-x + drawingWidth,
-dimensionY - 8,
-x + drawingWidth,
-dimensionY + 8,
-"#111",
-2
-);
-
+line(x,dimensionY,x+drawingWidth,dimensionY,"#111",2);
+line(x,dimensionY-8,x,dimensionY+8,"#111",2);
+line(x+drawingWidth,dimensionY-8,x+drawingWidth,dimensionY+8,"#111",2);
 
 text(
-x + drawingWidth / 2,
-dimensionY + 25,
+x+drawingWidth/2,
+dimensionY+25,
 `${Math.round(length)} mm`,
-18,
-"middle",
-"bold"
+18,"middle","bold"
 );
 
+/* Overall wall height dimension */
 
-/* ==============================
-OVERALL WALL HEIGHT
-============================== */
+const dimensionX = x-35;
 
-const dimensionX =
-x - 35;
+line(dimensionX,y,dimensionX,y+drawingHeight,"#111",2);
+line(dimensionX-8,y,dimensionX+8,y,"#111",2);
+line(dimensionX-8,y+drawingHeight,dimensionX+8,y+drawingHeight,"#111",2);
 
+const heightText = document.createElementNS("http://www.w3.org/2000/svg","text");
 
-line(
-dimensionX,
-y,
-dimensionX,
-y + drawingHeight,
-"#111",
-2
-);
-
-line(
-dimensionX - 8,
-y,
-dimensionX + 8,
-y,
-"#111",
-2
-);
-
-line(
-dimensionX - 8,
-y + drawingHeight,
-dimensionX + 8,
-y + drawingHeight,
-"#111",
-2
-);
-
-
-const heightText =
-document.createElementNS(
-"http://www.w3.org/2000/svg",
-"text"
-);
-
-
-heightText.setAttribute(
-"x",
-dimensionX - 15
-);
-
-heightText.setAttribute(
-"y",
-y + drawingHeight / 2
-);
-
-heightText.setAttribute(
-"font-size",
-"18"
-);
-
-heightText.setAttribute(
-"font-family",
-"Arial"
-);
-
-heightText.setAttribute(
-"text-anchor",
-"middle"
-);
-
-heightText.setAttribute(
-"font-weight",
-"bold"
-);
-
+heightText.setAttribute("x",dimensionX-15);
+heightText.setAttribute("y",y+drawingHeight/2);
+heightText.setAttribute("font-size","18");
+heightText.setAttribute("font-family","Arial");
+heightText.setAttribute("text-anchor","middle");
+heightText.setAttribute("font-weight","bold");
 heightText.setAttribute(
 "transform",
-`rotate(-90 ${dimensionX - 15} ${y + drawingHeight / 2})`
+`rotate(-90 ${dimensionX-15} ${y+drawingHeight/2})`
 );
 
-heightText.textContent =
-`${Math.round(height)} mm`;
+heightText.textContent = `${Math.round(height)} mm`;
+svg.appendChild(heightText);
 
-svg.appendChild(
-heightText
-);
-
-
-/* ==============================
-DIAGRAM TITLE
-============================== */
+/* Diagram title */
 
 text(
-x + drawingWidth / 2,
-y - 25,
+x+drawingWidth/2,
+y-25,
 "FRONT WALL",
-22,
-"middle",
-"bold"
+22,"middle","bold"
 );
 
-
-/* ==============================
-INSIDE INFILL NOTE
-============================== */
+/* Door label */
 
 text(
-x + drawingWidth / 2,
-y + drawingHeight + 75,
+doorClearX+doorWidth*scale/2,
+doorOpeningTop+doorHeight*scale/2+5,
+`DOOR ${doorWidth} × ${doorHeight}`,
+13,"middle","bold"
+);
+
+/* Window label */
+
+if (windowEnabled) {
+
+const windowBottom = bottomRailY-windowSill*scale;
+const windowTop = windowBottom-windowHeight*scale;
+const windowClearX = x+(windowStart+timber)*scale;
+
+text(
+windowClearX+windowWidth*scale/2,
+windowTop+windowHeight*scale/2+5,
+`WINDOW ${windowWidth} × ${windowHeight}`,
+12,"middle","bold"
+);
+
+}
+
+/* Infill note */
+
+text(
+x+drawingWidth/2,
+y+drawingHeight+75,
 "DOOR / WINDOW INFILLS RECESSED TO INSIDE",
-15,
-"middle",
-"bold"
+15,"middle","bold"
 );
 
 }
