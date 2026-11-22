@@ -549,29 +549,109 @@ return;
 }
 }
 
-/* Main wall stud calculation - unchanged */
+/* =====================================================
+MAIN WALL STUD CALCULATION
+DOOR AND WINDOW OPENINGS ARE EXCLUDED BEFORE STUDS
+ARE POSITIONED
+===================================================== */
 
 const mainStudsNeeded = studCount - 2;
 const solidIntervals = [];
+
+/* Define the actual clear openings.
+No main wall stud can be placed inside these areas. */
+
+const openings = [
+{
+start: doorClearStart,
+end: doorClearFinish
+}
+];
+
+if (windowEnabled) {
+openings.push({
+start: windowStart + timber,
+end: windowStart + timber + windowWidth
+});
+}
+
+/* Start with the spaces between fixed vertical studs.
+Subtract the door and window openings from those spaces. */
 
 for (let i=0; i<fixedStuds.length-1; i++) {
 
 const gapStart = fixedStuds[i].end;
 const gapEnd = fixedStuds[i+1].start;
 
-if (gapEnd > gapStart) {
-solidIntervals.push({start:gapStart,end:gapEnd});
+if (gapEnd <= gapStart) continue;
+
+let availableSegments = [
+{start:gapStart, end:gapEnd}
+];
+
+openings.forEach(opening => {
+
+const remainingSegments = [];
+
+availableSegments.forEach(segment => {
+
+if (
+opening.end <= segment.start ||
+opening.start >= segment.end
+) {
+
+remainingSegments.push(segment);
+
+} else {
+
+if (opening.start > segment.start) {
+remainingSegments.push({
+start:segment.start,
+end:opening.start
+});
+}
+
+if (opening.end < segment.end) {
+remainingSegments.push({
+start:opening.end,
+end:segment.end
+});
 }
 
 }
+
+});
+
+availableSegments = remainingSegments;
+
+});
+
+availableSegments.forEach(segment => {
+
+if (segment.end > segment.start) {
+solidIntervals.push(segment);
+}
+
+});
+
+}
+
+/* Distribute the requested main studs only across
+the remaining solid wall sections. */
 
 const mainStuds = [];
 
 const totalAvailableLength = solidIntervals.reduce(
-(sum,interval) => sum + interval.end-interval.start, 0
+(sum,interval) => sum + interval.end-interval.start,
+0
 );
 
-if (mainStudsNeeded > 0 && totalAvailableLength > 0) {
+if (mainStudsNeeded > 0) {
+
+if (totalAvailableLength <= 0) {
+alert("There is no solid wall space available for the requested main studs.");
+return;
+}
 
 let remainingStuds = mainStudsNeeded;
 
@@ -583,23 +663,31 @@ const interval = solidIntervals[i];
 let studsHere;
 
 if (i === solidIntervals.length-1) {
+
 studsHere = remainingStuds;
+
 } else {
+
 studsHere = Math.round(
 mainStudsNeeded *
 ((interval.end-interval.start)/totalAvailableLength)
 );
+
 studsHere = Math.min(studsHere,remainingStuds);
+
 }
+
+/* Do not put studs into an interval too small to hold them. */
+
+const intervalLength = interval.end-interval.start;
 
 if (studsHere > 0) {
 
 const clearGap =
-((interval.end-interval.start)-timber*studsHere) /
-(studsHere+1);
+(intervalLength-timber*studsHere)/(studsHere+1);
 
 if (clearGap <= 0) {
-alert("There is not enough room for the requested main studs.");
+alert("There is not enough room for the requested main studs. Reduce the stud count or change the opening positions.");
 return;
 }
 
@@ -617,12 +705,13 @@ end:studStart+timber
 }
 
 remainingStuds -= studsHere;
+
 }
 
 }
 
 if (remainingStuds > 0) {
-alert("There is not enough space for the requested main studs.");
+alert("There is not enough solid wall space for all the requested main studs. Reduce the stud count or change the opening positions.");
 return;
 }
 
@@ -688,8 +777,6 @@ addCut("Main Wall Studs",mainStuds.length,verticalStudLength,timber);
 addCut("Door Vertical Frame Studs",2,verticalStudLength,timber);
 addCut("Door Header Above Opening",1,doorWidth,timber);
 
-/* NEW: vertical studs above door header */
-
 addCut(
 "Door Above-Header Vertical Studs",
 doorCripples.length,
@@ -735,7 +822,7 @@ ${doorCripples.length} studs, each ${Math.round(doorCrippleLength)} mm long
 
 <div class="result-box">
 <strong>Main Wall Studs</strong>
-${mainStuds.length} additional studs
+${mainStuds.length} additional studs, positioned only in solid wall sections
 </div>
 `;
 
@@ -834,7 +921,7 @@ addPositionRow(
 doorHeaderStart,doorHeaderBottom,doorWidth,timber,"Horizontal Header"
 );
 
-/* NEW: vertical studs above door header */
+/* Vertical studs above door header */
 
 doorCripples.forEach((stud,index) => {
 addPositionRow(
@@ -1086,14 +1173,13 @@ mainColour,
 1
 );
 
-/* NEW: vertical cripple studs above the door header */
+/* Vertical cripple studs above the door header */
 
 const topRailUndersideY = y+timberPx;
 
 doorCripples.forEach(stud => {
 
 const studX = x+stud.start*scale;
-const studY = doorHeaderY-doorCrippleLength*scale;
 
 rect(
 studX,
@@ -1240,3 +1326,4 @@ y+drawingHeight+75,
 
 </body>
 </html>
+
