@@ -1,0 +1,4160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111111">
+<title>Timber Craft Works - Floor Joist Calculator</title>
+
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: Arial, Helvetica, sans-serif;
+background: #f3f3f3;
+color: #222;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+}
+
+header {
+background: #111;
+color: white;
+text-align: center;
+padding: 25px 15px;
+}
+
+header h1 {
+font-size: clamp(24px, 5vw, 34px);
+}
+
+main {
+width: 100%;
+max-width: 850px;
+margin: 30px auto;
+padding: 0 15px;
+flex: 1;
+}
+
+.calculator {
+background: white;
+padding: 25px;
+border-radius: 10px;
+box-shadow: 0 3px 12px rgba(0,0,0,.08);
+}
+
+h2 {
+margin-bottom: 20px;
+font-size: 23px;
+}
+
+.field {
+margin-bottom: 18px;
+}
+
+label {
+display: block;
+font-weight: bold;
+margin-bottom: 7px;
+}
+
+input {
+width: 100%;
+padding: 13px;
+border: 1px solid #ccc;
+border-radius: 5px;
+font-size: 17px;
+}
+
+button {
+width: 100%;
+padding: 15px;
+background: #111;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 17px;
+font-weight: bold;
+cursor: pointer;
+}
+
+button:hover {
+background: #333;
+}
+
+.results {
+display: none;
+margin-top: 30px;
+}
+
+.summary {
+background: #f1f1f1;
+padding: 18px;
+border-radius: 7px;
+margin-bottom: 25px;
+line-height: 1.8;
+}
+
+.table-wrapper {
+width: 100%;
+overflow-x: auto;
+margin-top: 15px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+min-width: 400px;
+}
+
+th, td {
+padding: 12px 10px;
+border: 1px solid #ddd;
+text-align: center;
+}
+
+th {
+background: #111;
+color: white;
+}
+
+tr:nth-child(even) {
+background: #f5f5f5;
+}
+
+.diagram-section {
+margin-top: 30px;
+padding: 20px 12px;
+background: #f5f5f5;
+border-radius: 8px;
+}
+
+.diagram-section h3 {
+font-size: 19px;
+margin-bottom: 8px;
+}
+
+.diagram-section p {
+font-size: 13px;
+color: #555;
+margin-bottom: 15px;
+}
+
+.diagram-container {
+width: 100%;
+background: white;
+border: 1px solid #ddd;
+border-radius: 6px;
+padding: 10px;
+}
+
+#joistDiagram {
+display: block;
+width: 100%;
+height: auto;
+}
+
+.diagram-key {
+display: flex;
+flex-wrap: wrap;
+gap: 15px;
+margin-top: 15px;
+font-size: 13px;
+}
+
+.key-item {
+display: flex;
+align-items: center;
+gap: 7px;
+}
+
+.key-colour {
+width: 17px;
+height: 17px;
+background: #bd8950;
+border: 1px solid #80572d;
+}
+
+.diagram-note {
+margin-top: 12px;
+font-size: 12px;
+color: #666;
+line-height: 1.5;
+}
+
+/* CUTTING LIST */
+
+.cutting-list {
+margin-top: 30px;
+padding: 20px 12px;
+background: #f5f5f5;
+border-radius: 8px;
+}
+
+.cutting-list h3 {
+font-size: 19px;
+margin-bottom: 8px;
+}
+
+.cutting-list p {
+font-size: 13px;
+color: #555;
+margin-bottom: 15px;
+}
+
+.cutting-list .table-wrapper {
+margin-top: 0;
+}
+
+.cutting-list table {
+min-width: 500px;
+}
+
+.cutting-list th:first-child {
+width: 15%;
+}
+
+.cutting-list th:nth-child(2) {
+width: 35%;
+}
+
+.cutting-list th:nth-child(3) {
+width: 25%;
+}
+
+.cutting-list th:nth-child(4) {
+width: 25%;
+}
+
+.cutting-note {
+margin-top: 12px;
+font-size: 12px;
+color: #666;
+line-height: 1.5;
+}
+
+footer {
+background: #111;
+color: white;
+text-align: center;
+padding: 22px 12px;
+margin-top: 30px;
+font-size: 14px;
+}
+
+@media(max-width:500px) {
+main {
+margin: 18px auto;
+padding: 0 10px;
+}
+
+.calculator {
+padding: 18px 14px;
+}
+
+.diagram-section {
+padding: 15px 8px;
+}
+
+.cutting-list {
+padding: 15px 8px;
+}
+
+th, td {
+padding: 10px 7px;
+font-size: 13px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Timber Craft Works</h1>
+</header>
+
+<main>
+
+<div class="calculator">
+
+<h2>Floor Joist Spacing Calculator</h2>
+
+<div class="field">
+<label for="floorLength">Overall Floor Length (mm)</label>
+<input type="number" id="floorLength" min="1" placeholder="Enter overall floor length">
+</div>
+
+<div class="field">
+<label for="floorWidth">Overall Floor Width (mm)</label>
+<input type="number" id="floorWidth" min="1" placeholder="Enter overall floor width">
+</div>
+
+<div class="field">
+<label for="joistThickness">Timber Thickness (mm)</label>
+<input type="number" id="joistThickness" min="1" placeholder="Enter timber thickness">
+</div>
+
+<div class="field">
+<label for="numberOfJoists">Number of Floor Joists (including end joists)</label>
+<input type="number" id="numberOfJoists" min="2" step="1" placeholder="Enter number of floor joists">
+</div>
+
+<button onclick="calculateJoists()">Calculate Floor Joist Positions</button>
+
+<div class="results" id="results">
+
+<h2 style="margin-top:25px;">Calculation Results</h2>
+
+<div class="summary" id="summary"></div>
+
+<h3>Floor Joist Position Table</h3>
+
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Joist</th>
+<th>Start (mm)</th>
+<th>Finish (mm)</th>
+<th>Clear Gap (mm)</th>
+</tr>
+</thead>
+<tbody id="joistTable"></tbody>
+</table>
+</div>
+
+<div class="diagram-section">
+
+<h3>Scaled Floor Joist Layout</h3>
+
+<p>Overhead view of the complete timber floor frame.</p>
+
+<div class="diagram-container">
+<svg id="joistDiagram"
+xmlns="http://www.w3.org/2000/svg"
+role="img"
+aria-label="Scaled overhead timber floor joist diagram">
+</svg>
+</div>
+
+<div class="diagram-key">
+<div class="key-item">
+<span class="key-colour"></span>
+Timber
+</div>
+</div>
+
+<div class="diagram-note">
+All timber members are drawn using the same thickness measurement.
+The two long side rails run continuously along the floor frame.
+The floor joists connect the inside faces of the side rails.
+The diagram scales automatically to the entered measurements.
+</div>
+
+</div>
+
+<!-- CUTTING LIST -->
+
+<div class="cutting-list">
+
+<h3>Cutting List</h3>
+
+<p>Timber required to build the floor frame from the measurements entered above.</p>
+
+<div class="table-wrapper">
+
+<table>
+<thead>
+<tr>
+<th>Qty</th>
+<th>Timber</th>
+<th>Cut Length</th>
+<th>Thickness</th>
+</tr>
+</thead>
+
+<tbody id="cuttingListTable">
+</tbody>
+
+</table>
+
+</div>
+
+<div class="cutting-note">
+Cut lengths are calculated automatically from the entered floor dimensions.
+The two side rails are the full floor length.
+The floor joists fit between the two side rails.
+</div>
+
+</div>
+
+</div>
+</div>
+
+</main>
+
+<footer>
+Timber Craft Works
+</footer>
+
+<script>
+
+function calculateJoists() {
+
+const length = Number(document.getElementById("floorLength").value);
+const width = Number(document.getElementById("floorWidth").value);
+const thickness = Number(document.getElementById("joistThickness").value);
+const count = Number(document.getElementById("numberOfJoists").value);
+
+if (
+!Number.isFinite(length) ||
+!Number.isFinite(width) ||
+!Number.isFinite(thickness) ||
+!Number.isInteger(count) ||
+length <= 0 ||
+width <= 0 ||
+thickness <= 0 ||
+count < 2
+) {
+alert("Please enter valid measurements and at least two floor joists.");
+return;
+}
+
+if (width <= thickness * 2 || length < thickness * count) {
+alert("The floor dimensions are too small for the timber thickness and number of floor joists.");
+return;
+}
+
+// Floor joists fit between the two continuous side rails.
+
+const crossJoistLength = width - (thickness * 2);
+
+// Floor joists include both end joists.
+
+const clearGap = (length - thickness * count) / (count - 1);
+
+const positions = [];
+
+let currentPosition = 0;
+
+for (let i = 0; i < count; i++) {
+
+const start = currentPosition;
+const finish = start + thickness;
+
+positions.push({
+number: i + 1,
+start: start,
+finish: finish,
+gap: i === count - 1 ? 0 : clearGap
+});
+
+currentPosition = finish + clearGap;
+}
+
+document.getElementById("summary").innerHTML = `
+<strong>Overall floor length:</strong> ${length.toFixed(2)} mm<br>
+<strong>Overall floor width:</strong> ${width.toFixed(2)} mm<br>
+<strong>Timber thickness:</strong> ${thickness.toFixed(2)} mm<br>
+<strong>Number of floor joists:</strong> ${count}<br>
+<strong>Side rail length:</strong> ${length.toFixed(2)} mm<br>
+<strong>Floor joist length:</strong> ${crossJoistLength.toFixed(2)} mm<br>
+<strong>Clear gap between floor joists:</strong> ${clearGap.toFixed(2)} mm
+`;
+
+const table = document.getElementById("joistTable");
+table.innerHTML = "";
+
+positions.forEach(joist => {
+
+const row = document.createElement("tr");
+
+row.innerHTML = `
+<td>${joist.number}</td>
+<td>${joist.start.toFixed(2)}</td>
+<td>${joist.finish.toFixed(2)}</td>
+<td>${joist.gap.toFixed(2)}</td>
+`;
+
+table.appendChild(row);
+});
+
+
+// CUTTING LIST
+
+const cuttingListTable = document.getElementById("cuttingListTable");
+
+cuttingListTable.innerHTML = `
+
+<tr>
+<td>2</td>
+<td>Side Rails</td>
+<td>${length.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+</tr>
+
+<tr>
+<td>${count}</td>
+<td>Floor Joists</td>
+<td>${crossJoistLength.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+</tr>
+
+`;
+
+drawJoistDiagram(length, width, thickness, positions);
+
+document.getElementById("results").style.display = "block";
+}
+
+function drawJoistDiagram(length, width, thickness, positions) {
+
+const svg = document.getElementById("joistDiagram");
+
+const svgWidth = 700;
+const svgHeight = 480;
+
+// Drawing margins.
+
+const left = 105;
+const right = 35;
+const top = 90;
+const bottom = 90;
+
+const availableWidth = svgWidth - left - right;
+const availableHeight = svgHeight - top - bottom;
+
+// One uniform scale for both dimensions.
+
+const scale = Math.min(
+availableWidth / length,
+availableHeight / width
+);
+
+const drawingLength = length * scale;
+const drawingWidth = width * scale;
+
+// ALL timber uses this exact same thickness.
+
+const timber = thickness * scale;
+
+const x = left + (availableWidth - drawingLength) / 2;
+const y = top + (availableHeight - drawingWidth) / 2;
+
+const colour = "#bd8950";
+const outline = "#80572d";
+
+let drawing = "";
+
+// Frame background.
+
+drawing += `
+<rect
+x="${x}"
+y="${y}"
+width="${drawingLength}"
+height="${drawingWidth}"
+fill="#fafafa"
+stroke="#777"
+stroke-width="1"
+/>
+`;
+
+// LEFT LONG SIDE RAIL.
+// Full floor length.
+// Same thickness as every floor joist.
+
+drawing += `
+<rect
+x="${x}"
+y="${y}"
+width="${drawingLength}"
+height="${timber}"
+fill="${colour}"
+stroke="${outline}"
+stroke-width="1"
+/>
+`;
+
+// RIGHT LONG SIDE RAIL.
+// Full floor length.
+// Exactly the same thickness.
+
+drawing += `
+<rect
+x="${x}"
+y="${y + drawingWidth - timber}"
+width="${drawingLength}"
+height="${timber}"
+fill="${colour}"
+stroke="${outline}"
+stroke-width="1"
+/>
+`;
+
+// INTERNAL FLOOR JOISTS.
+// Run BETWEEN the two long side rails.
+// Same thickness as the side rails.
+
+positions.forEach((joist, index) => {
+
+const joistX = x + (joist.start * scale);
+
+drawing += `
+<rect
+x="${joistX}"
+y="${y + timber}"
+width="${timber}"
+height="${drawingWidth - (timber * 2)}"
+fill="${colour}"
+stroke="${outline}"
+stroke-width="1"
+/>
+`;
+
+if (timber > 16) {
+
+drawing += `
+<text
+x="${joistX + timber / 2}"
+y="${y + drawingWidth / 2}"
+text-anchor="middle"
+dominant-baseline="middle"
+font-size="11"
+fill="#382514"
+>${index + 1}</text>
+`;
+}
+
+});
+
+// OVERALL FLOOR LENGTH DIMENSION.
+
+drawing += `
+<line
+x1="${x}"
+y1="${y - 35}"
+x2="${x + drawingLength}"
+y2="${y - 35}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x}"
+y1="${y - 42}"
+x2="${x}"
+y2="${y - 28}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x + drawingLength}"
+y1="${y - 42}"
+x2="${x + drawingLength}"
+y2="${y - 28}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<text
+x="${x + drawingLength / 2}"
+y="${y - 48}"
+text-anchor="middle"
+font-size="14"
+font-weight="bold"
+fill="#222"
+>${length} mm</text>
+`;
+
+// OVERALL FLOOR WIDTH DIMENSION.
+
+drawing += `
+<line
+x1="${x - 35}"
+y1="${y}"
+x2="${x - 35}"
+y2="${y + drawingWidth}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x - 42}"
+y1="${y}"
+x2="${x - 28}"
+y2="${y}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x - 42}"
+y1="${y + drawingWidth}"
+x2="${x - 28}"
+y2="${y + drawingWidth}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<text
+x="${x - 48}"
+y="${y + drawingWidth / 2}"
+text-anchor="middle"
+dominant-baseline="middle"
+font-size="13"
+font-weight="bold"
+fill="#222"
+transform="rotate(-90 ${x - 48} ${y + drawingWidth / 2})"
+>${width} mm</text>
+`;
+
+// Timber thickness label.
+
+drawing += `
+<text
+x="${svgWidth / 2}"
+y="${svgHeight - 24}"
+text-anchor="middle"
+font-size="12"
+fill="#444"
+>All timber: ${thickness} mm thick</text>
+`;
+
+svg.setAttribute("viewBox", `0 0 ${svgWidth} ${svgHeight}`);
+
+svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+svg.innerHTML = drawing;
+}
+
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111111">
+<title>Timber Craft Works - Shed Back Wall Calculator</title>
+
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: Arial, Helvetica, sans-serif;
+background: #f3f3f3;
+color: #222;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+}
+
+header {
+background: #111;
+color: white;
+text-align: center;
+padding: 25px 15px;
+}
+
+header h1 {
+font-size: clamp(24px, 5vw, 34px);
+}
+
+main {
+width: 100%;
+max-width: 850px;
+margin: 30px auto;
+padding: 0 15px;
+flex: 1;
+}
+
+.calculator {
+background: white;
+padding: 25px;
+border-radius: 10px;
+box-shadow: 0 3px 12px rgba(0,0,0,.08);
+}
+
+h2 {
+margin-bottom: 20px;
+font-size: 23px;
+}
+
+.field {
+margin-bottom: 18px;
+}
+
+label {
+display: block;
+font-weight: bold;
+margin-bottom: 7px;
+}
+
+input {
+width: 100%;
+padding: 13px;
+border: 1px solid #ccc;
+border-radius: 5px;
+font-size: 17px;
+}
+
+button {
+width: 100%;
+padding: 15px;
+background: #111;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 17px;
+font-weight: bold;
+cursor: pointer;
+}
+
+button:hover {
+background: #333;
+}
+
+.results {
+display: none;
+margin-top: 30px;
+}
+
+.summary {
+background: #f1f1f1;
+padding: 18px;
+border-radius: 7px;
+margin-bottom: 25px;
+line-height: 1.8;
+}
+
+.table-wrapper {
+width: 100%;
+overflow-x: auto;
+margin-top: 15px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+min-width: 400px;
+}
+
+th, td {
+padding: 12px 10px;
+border: 1px solid #ddd;
+text-align: center;
+}
+
+th {
+background: #111;
+color: white;
+}
+
+tr:nth-child(even) {
+background: #f5f5f5;
+}
+
+.diagram-section {
+margin-top: 30px;
+padding: 20px 12px;
+background: #f5f5f5;
+border-radius: 8px;
+}
+
+.diagram-section h3 {
+font-size: 19px;
+margin-bottom: 8px;
+}
+
+.diagram-section p {
+font-size: 13px;
+color: #555;
+margin-bottom: 15px;
+}
+
+.diagram-container {
+width: 100%;
+background: white;
+border: 1px solid #ddd;
+border-radius: 6px;
+padding: 10px;
+}
+
+#joistDiagram {
+display: block;
+width: 100%;
+height: auto;
+}
+
+.diagram-key {
+display: flex;
+flex-wrap: wrap;
+gap: 15px;
+margin-top: 15px;
+font-size: 13px;
+}
+
+.key-item {
+display: flex;
+align-items: center;
+gap: 7px;
+}
+
+.key-colour {
+width: 17px;
+height: 17px;
+background: #bd8950;
+border: 1px solid #80572d;
+}
+
+.diagram-note {
+margin-top: 12px;
+font-size: 12px;
+color: #666;
+line-height: 1.5;
+}
+
+/* CUTTING LIST */
+
+.cutting-list {
+margin-top: 30px;
+padding: 20px 12px;
+background: #f5f5f5;
+border-radius: 8px;
+}
+
+.cutting-list h3 {
+font-size: 19px;
+margin-bottom: 8px;
+}
+
+.cutting-list p {
+font-size: 13px;
+color: #555;
+margin-bottom: 15px;
+}
+
+.cutting-list .table-wrapper {
+margin-top: 0;
+}
+
+.cutting-list table {
+min-width: 500px;
+}
+
+.cutting-list th:first-child {
+width: 15%;
+}
+
+.cutting-list th:nth-child(2) {
+width: 35%;
+}
+
+.cutting-list th:nth-child(3) {
+width: 25%;
+}
+
+.cutting-list th:nth-child(4) {
+width: 25%;
+}
+
+.cutting-note {
+margin-top: 12px;
+font-size: 12px;
+color: #666;
+line-height: 1.5;
+}
+
+footer {
+background: #111;
+color: white;
+text-align: center;
+padding: 22px 12px;
+margin-top: 30px;
+font-size: 14px;
+}
+
+@media(max-width:500px) {
+main {
+margin: 18px auto;
+padding: 0 10px;
+}
+
+.calculator {
+padding: 18px 14px;
+}
+
+.diagram-section {
+padding: 15px 8px;
+}
+
+.cutting-list {
+padding: 15px 8px;
+}
+
+th, td {
+padding: 10px 7px;
+font-size: 13px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Timber Craft Works</h1>
+</header>
+
+<main>
+
+<div class="calculator">
+
+<h2>Shed Back Wall Joist Spacing Calculator</h2>
+
+<div class="field">
+<label for="floorLength">Overall Back Wall Length (mm)</label>
+<input type="number" id="floorLength" min="1" placeholder="Enter overall back wall length">
+</div>
+
+<div class="field">
+<label for="floorWidth">Overall Back Wall Height (mm)</label>
+<input type="number" id="floorWidth" min="1" placeholder="Enter overall back wall height">
+</div>
+
+<div class="field">
+<label for="joistThickness">Timber Thickness (mm)</label>
+<input type="number" id="joistThickness" min="1" placeholder="Enter timber thickness">
+</div>
+
+<div class="field">
+<label for="numberOfJoists">Number of Wall Studs (including end studs)</label>
+<input type="number" id="numberOfJoists" min="2" step="1" placeholder="Enter number of wall studs">
+</div>
+
+<button onclick="calculateJoists()">Calculate Wall Stud Positions</button>
+
+<div class="results" id="results">
+
+<h2 style="margin-top:25px;">Calculation Results</h2>
+
+<div class="summary" id="summary"></div>
+
+<h3>Wall Stud Position Table</h3>
+
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Stud</th>
+<th>Start (mm)</th>
+<th>Finish (mm)</th>
+<th>Clear Gap (mm)</th>
+</tr>
+</thead>
+<tbody id="joistTable"></tbody>
+</table>
+</div>
+
+<div class="diagram-section">
+
+<h3>Scaled Shed Back Wall Layout</h3>
+
+<p>Overhead view of the complete timber back wall frame.</p>
+
+<div class="diagram-container">
+<svg id="joistDiagram"
+xmlns="http://www.w3.org/2000/svg"
+role="img"
+aria-label="Scaled shed back wall timber frame diagram">
+</svg>
+</div>
+
+<div class="diagram-key">
+<div class="key-item">
+<span class="key-colour"></span>
+Timber
+</div>
+</div>
+
+<div class="diagram-note">
+All timber members are drawn using the same thickness measurement.
+The two long side rails run continuously along the back wall frame.
+The wall studs connect the inside faces of the side rails.
+The diagram scales automatically to the entered measurements.
+</div>
+
+</div>
+
+<!-- CUTTING LIST -->
+
+<div class="cutting-list">
+
+<h3>Cutting List</h3>
+
+<p>Timber required to build the shed back wall from the measurements entered above.</p>
+
+<div class="table-wrapper">
+
+<table>
+<thead>
+<tr>
+<th>Qty</th>
+<th>Timber</th>
+<th>Cut Length</th>
+<th>Thickness</th>
+</tr>
+</thead>
+
+<tbody id="cuttingListTable">
+</tbody>
+
+</table>
+
+</div>
+
+<div class="cutting-note">
+Cut lengths are calculated automatically from the entered wall dimensions.
+The two side rails are the full back wall length.
+The wall studs fit between the two side rails.
+</div>
+
+</div>
+
+</div>
+</div>
+
+</main>
+
+<footer>
+Timber Craft Works
+</footer>
+
+<script>
+
+function calculateJoists() {
+
+const length = Number(document.getElementById("floorLength").value);
+const width = Number(document.getElementById("floorWidth").value);
+const thickness = Number(document.getElementById("joistThickness").value);
+const count = Number(document.getElementById("numberOfJoists").value);
+
+if (
+!Number.isFinite(length) ||
+!Number.isFinite(width) ||
+!Number.isFinite(thickness) ||
+!Number.isInteger(count) ||
+length <= 0 ||
+width <= 0 ||
+thickness <= 0 ||
+count < 2
+) {
+alert("Please enter valid measurements and at least two wall studs.");
+return;
+}
+
+if (width <= thickness * 2 || length < thickness * count) {
+alert("The wall dimensions are too small for the timber thickness and number of wall studs.");
+return;
+}
+
+// Wall studs fit between the two continuous side rails.
+
+const crossJoistLength = width - (thickness * 2);
+
+// Wall studs include both end studs.
+
+const clearGap = (length - thickness * count) / (count - 1);
+
+const positions = [];
+
+let currentPosition = 0;
+
+for (let i = 0; i < count; i++) {
+
+const start = currentPosition;
+const finish = start + thickness;
+
+positions.push({
+number: i + 1,
+start: start,
+finish: finish,
+gap: i === count - 1 ? 0 : clearGap
+});
+
+currentPosition = finish + clearGap;
+}
+
+document.getElementById("summary").innerHTML = `
+<strong>Overall back wall length:</strong> ${length.toFixed(2)} mm<br>
+<strong>Overall back wall height:</strong> ${width.toFixed(2)} mm<br>
+<strong>Timber thickness:</strong> ${thickness.toFixed(2)} mm<br>
+<strong>Number of wall studs:</strong> ${count}<br>
+<strong>Side rail length:</strong> ${length.toFixed(2)} mm<br>
+<strong>Wall stud length:</strong> ${crossJoistLength.toFixed(2)} mm<br>
+<strong>Clear gap between wall studs:</strong> ${clearGap.toFixed(2)} mm
+`;
+
+const table = document.getElementById("joistTable");
+table.innerHTML = "";
+
+positions.forEach(joist => {
+
+const row = document.createElement("tr");
+
+row.innerHTML = `
+<td>${joist.number}</td>
+<td>${joist.start.toFixed(2)}</td>
+<td>${joist.finish.toFixed(2)}</td>
+<td>${joist.gap.toFixed(2)}</td>
+`;
+
+table.appendChild(row);
+});
+
+
+// CUTTING LIST
+
+const cuttingListTable = document.getElementById("cuttingListTable");
+
+cuttingListTable.innerHTML = `
+
+<tr>
+<td>2</td>
+<td>Side Rails</td>
+<td>${length.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+</tr>
+
+<tr>
+<td>${count}</td>
+<td>Wall Studs</td>
+<td>${crossJoistLength.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+</tr>
+
+`;
+
+drawJoistDiagram(length, width, thickness, positions);
+
+document.getElementById("results").style.display = "block";
+}
+
+function drawJoistDiagram(length, width, thickness, positions) {
+
+const svg = document.getElementById("joistDiagram");
+
+const svgWidth = 700;
+const svgHeight = 480;
+
+// Drawing margins.
+
+const left = 105;
+const right = 35;
+const top = 90;
+const bottom = 90;
+
+const availableWidth = svgWidth - left - right;
+const availableHeight = svgHeight - top - bottom;
+
+// One uniform scale for both dimensions.
+
+const scale = Math.min(
+availableWidth / length,
+availableHeight / width
+);
+
+const drawingLength = length * scale;
+const drawingWidth = width * scale;
+
+// ALL timber uses this exact same thickness.
+
+const timber = thickness * scale;
+
+const x = left + (availableWidth - drawingLength) / 2;
+const y = top + (availableHeight - drawingWidth) / 2;
+
+const colour = "#bd8950";
+const outline = "#80572d";
+
+let drawing = "";
+
+// Frame background.
+
+drawing += `
+<rect
+x="${x}"
+y="${y}"
+width="${drawingLength}"
+height="${drawingWidth}"
+fill="#fafafa"
+stroke="#777"
+stroke-width="1"
+/>
+`;
+
+// LEFT LONG SIDE RAIL.
+// Full back wall length.
+// Same thickness as every wall stud.
+
+drawing += `
+<rect
+x="${x}"
+y="${y}"
+width="${drawingLength}"
+height="${timber}"
+fill="${colour}"
+stroke="${outline}"
+stroke-width="1"
+/>
+`;
+
+// RIGHT LONG SIDE RAIL.
+// Full back wall length.
+// Exactly the same thickness.
+
+drawing += `
+<rect
+x="${x}"
+y="${y + drawingWidth - timber}"
+width="${drawingLength}"
+height="${timber}"
+fill="${colour}"
+stroke="${outline}"
+stroke-width="1"
+/>
+`;
+
+// INTERNAL WALL STUDS.
+// Run BETWEEN the two long side rails.
+// Same thickness as the side rails.
+
+positions.forEach((joist, index) => {
+
+const joistX = x + (joist.start * scale);
+
+drawing += `
+<rect
+x="${joistX}"
+y="${y + timber}"
+width="${timber}"
+height="${drawingWidth - (timber * 2)}"
+fill="${colour}"
+stroke="${outline}"
+stroke-width="1"
+/>
+`;
+
+if (timber > 16) {
+
+drawing += `
+<text
+x="${joistX + timber / 2}"
+y="${y + drawingWidth / 2}"
+text-anchor="middle"
+dominant-baseline="middle"
+font-size="11"
+fill="#382514"
+>${index + 1}</text>
+`;
+}
+
+});
+
+// OVERALL BACK WALL LENGTH DIMENSION.
+
+drawing += `
+<line
+x1="${x}"
+y1="${y - 35}"
+x2="${x + drawingLength}"
+y2="${y - 35}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x}"
+y1="${y - 42}"
+x2="${x}"
+y2="${y - 28}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x + drawingLength}"
+y1="${y - 42}"
+x2="${x + drawingLength}"
+y2="${y - 28}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<text
+x="${x + drawingLength / 2}"
+y="${y - 48}"
+text-anchor="middle"
+font-size="14"
+font-weight="bold"
+fill="#222"
+>${length} mm</text>
+`;
+
+// OVERALL BACK WALL HEIGHT DIMENSION.
+
+drawing += `
+<line
+x1="${x - 35}"
+y1="${y}"
+x2="${x - 35}"
+y2="${y + drawingWidth}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x - 42}"
+y1="${y}"
+x2="${x - 28}"
+y2="${y}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x - 42}"
+y1="${y + drawingWidth}"
+x2="${x - 28}"
+y2="${y + drawingWidth}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<text
+x="${x - 48}"
+y="${y + drawingWidth / 2}"
+text-anchor="middle"
+dominant-baseline="middle"
+font-size="13"
+font-weight="bold"
+fill="#222"
+transform="rotate(-90 ${x - 48} ${y + drawingWidth / 2})"
+>${width} mm</text>
+`;
+
+// Timber thickness label.
+
+drawing += `
+<text
+x="${svgWidth / 2}"
+y="${svgHeight - 24}"
+text-anchor="middle"
+font-size="12"
+fill="#444"
+>All timber: ${thickness} mm thick</text>
+`;
+
+svg.setAttribute("viewBox", `0 0 ${svgWidth} ${svgHeight}`);
+
+svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+svg.innerHTML = drawing;
+}
+
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111111">
+<title>Timber Craft Works - Pent Side Wall Calculator</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;background:#f3f3f3;color:#222;min-height:100vh;display:flex;flex-direction:column}
+header{background:#111;color:white;text-align:center;padding:25px 15px}
+header h1{font-size:clamp(24px,5vw,34px)}
+main{width:100%;max-width:850px;margin:30px auto;padding:0 15px;flex:1}
+.calculator{background:white;padding:25px;border-radius:10px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+h2{margin-bottom:20px;font-size:23px}
+.field{margin-bottom:18px}
+label{display:block;font-weight:bold;margin-bottom:7px}
+input{width:100%;padding:13px;border:1px solid #ccc;border-radius:5px;font-size:17px}
+button{width:100%;padding:15px;background:#111;color:white;border:none;border-radius:5px;font-size:17px;font-weight:bold;cursor:pointer}
+button:hover{background:#333}
+.results{display:none;margin-top:30px}
+.summary{background:#f1f1f1;padding:18px;border-radius:7px;margin-bottom:25px;line-height:1.8}
+.table-wrapper{width:100%;overflow-x:auto;margin-top:15px}
+table{width:100%;border-collapse:collapse;min-width:400px}
+th,td{padding:12px 10px;border:1px solid #ddd;text-align:center}
+th{background:#111;color:white}
+tr:nth-child(even){background:#f5f5f5}
+.diagram-section,.cutting-list{margin-top:30px;padding:20px 12px;background:#f5f5f5;border-radius:8px}
+.diagram-section h3,.cutting-list h3{font-size:19px;margin-bottom:8px}
+.diagram-section p,.cutting-list p{font-size:13px;color:#555;margin-bottom:15px}
+.diagram-container{width:100%;background:white;border:1px solid #ddd;border-radius:6px;padding:10px}
+.diagram-container svg{display:block;width:100%;height:auto}
+.diagram-key{display:flex;flex-wrap:wrap;gap:15px;margin-top:15px;font-size:13px}
+.key-item{display:flex;align-items:center;gap:7px}
+.key-colour{width:17px;height:17px;background:#bd8950;border:1px solid #80572d}
+.diagram-note,.cutting-note{margin-top:12px;font-size:12px;color:#666;line-height:1.5}
+.cutting-list table{min-width:550px}
+.section-divider{margin:40px 0;border:0;border-top:3px solid #111}
+.new-calculator{margin-top:35px;padding-top:25px;border-top:3px solid #111}
+.new-calculator h2{margin-bottom:10px}
+.new-calculator .intro{font-size:14px;line-height:1.6;color:#555;margin-bottom:25px}
+.new-calculator .results{margin-top:30px}
+.new-calculator .diagram-section{margin-top:25px}
+.new-calculator .cutting-list{margin-top:25px}
+footer{background:#111;color:white;text-align:center;padding:22px 12px;margin-top:30px;font-size:14px}
+
+@media(max-width:500px){
+main{margin:18px auto;padding:0 10px}
+.calculator{padding:18px 14px}
+.diagram-section,.cutting-list{padding:15px 8px}
+th,td{padding:10px 7px;font-size:13px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Timber Craft Works</h1>
+</header>
+
+<main>
+<div class="calculator">
+
+<h2>Pent Side Wall Calculator</h2>
+
+<div class="field">
+<label for="wallLength">Overall Building Length - Front to Back (mm)</label>
+<input type="number" id="wallLength" min="1" placeholder="Enter overall building length">
+</div>
+
+<div class="field">
+<label for="frontWallDepth">Front Wall Stud Depth (mm)</label>
+<input type="number" id="frontWallDepth" min="1" placeholder="Enter front wall stud depth">
+</div>
+
+<div class="field">
+<label for="rearWallDepth">Rear Wall Stud Depth (mm)</label>
+<input type="number" id="rearWallDepth" min="1" placeholder="Enter rear wall stud depth">
+</div>
+
+<div class="field">
+<label for="lowHeight">Low End Wall Height (mm)</label>
+<input type="number" id="lowHeight" min="1" placeholder="Enter low end height">
+</div>
+
+<div class="field">
+<label for="highHeight">High End Wall Height (mm)</label>
+<input type="number" id="highHeight" min="1" placeholder="Enter high end height">
+</div>
+
+<div class="field">
+<label for="sideStudDepth">Side Wall Stud Depth (mm)</label>
+<input type="number" id="sideStudDepth" min="1" placeholder="Enter side wall stud depth">
+</div>
+
+<div class="field">
+<label for="sideStudWidth">Side Wall Stud Width (mm)</label>
+<input type="number" id="sideStudWidth" min="1" placeholder="Enter side wall stud width">
+</div>
+
+<div class="field">
+<label for="numberOfStuds">Number of Wall Studs (including end studs)</label>
+<input type="number" id="numberOfStuds" min="2" step="1" placeholder="Enter number of wall studs">
+</div>
+
+<button onclick="calculateWall()">Calculate Side Wall Positions</button>
+
+<div class="results" id="results">
+
+<h2 style="margin-top:25px;">Calculation Results</h2>
+
+<div class="summary" id="summary"></div>
+
+<h3>Wall Stud Position Table</h3>
+
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Stud</th>
+<th>Start Position From Inside Front Wall (mm)</th>
+<th>Overall Building Position (mm)</th>
+<th>Stud Length (mm)</th>
+<th>Clear Gap (mm)</th>
+</tr>
+</thead>
+<tbody id="studTable"></tbody>
+</table>
+</div>
+
+<div class="diagram-section">
+<h3>Scaled Pent Side Wall Layout</h3>
+<p>
+Side elevation showing the side wall positioned inside the front and rear walls.
+The front and rear wall stud depths are shown separately from the side-wall stud dimensions.
+</p>
+
+<div class="diagram-container">
+<svg id="wallDiagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Scaled pent side wall diagram"></svg>
+</div>
+
+<div class="diagram-key">
+<div class="key-item"><span class="key-colour"></span>Timber</div>
+</div>
+
+<div class="diagram-note">
+The side wall sits between the inside faces of the front and rear walls.
+The front and rear wall stud depths are therefore removed from the overall building length before calculating the side-wall stud positions.
+The side-wall studs are rectangular and use separate depth and width measurements.
+The diagram scales automatically to the entered measurements.
+</div>
+</div>
+
+<div class="cutting-list">
+<h3>Cutting List - Both Side Walls</h3>
+<p>Timber quantities below include both matching side walls.</p>
+
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Qty</th>
+<th>Timber</th>
+<th>Cut Length</th>
+<th>Depth</th>
+<th>Width</th>
+<th>Cut Angle</th>
+</tr>
+</thead>
+<tbody id="cuttingListTable"></tbody>
+</table>
+</div>
+
+<div class="cutting-note">
+Quantities are doubled to allow for two side walls.
+The side-wall bottom rails and sloping top rails run between the inside faces of the front and rear walls.
+Side-wall studs are calculated individually from the internal side-wall length.
+The side-wall stud depth and width are kept as separate dimensions.
+Check actual joints, fixings and bearing details before cutting timber.
+</div>
+</div>
+
+<!-- INDEPENDENT ROOF JOIST CALCULATOR -->
+
+<div class="new-calculator">
+
+<h2>Roof Joist Calculator</h2>
+
+<p class="intro">
+Calculate roof joists running from front to back, including the roof pitch, front and rear overhangs, and the timber infill pieces between the joists.
+This calculator works independently of the side wall calculator.
+All measurements are in millimetres.
+</p>
+
+<div class="field">
+<label for="roofLength">Horizontal Roof Length - Front to Back Between Walls (mm)</label>
+<input type="number" id="roofLength" min="1" placeholder="Enter horizontal front to back length">
+</div>
+
+<div class="field">
+<label for="roofWidth">Overall Roof Width - Side to Side (mm)</label>
+<input type="number" id="roofWidth" min="1" placeholder="Enter overall roof width">
+</div>
+
+<div class="field">
+<label for="roofFrontHeight">Front Wall Roof Height (mm)</label>
+<input type="number" id="roofFrontHeight" min="1" placeholder="Enter front roof height">
+</div>
+
+<div class="field">
+<label for="roofRearHeight">Rear Wall Roof Height (mm)</label>
+<input type="number" id="roofRearHeight" min="1" placeholder="Enter rear roof height">
+</div>
+
+<div class="field">
+<label for="roofThickness">Roof Joist Timber Thickness (mm)</label>
+<input type="number" id="roofThickness" min="1" placeholder="Enter timber thickness">
+</div>
+
+<div class="field">
+<label for="roofJoistCount">Number of Roof Joists (including both end joists)</label>
+<input type="number" id="roofJoistCount" min="2" step="1" placeholder="Enter number of roof joists">
+</div>
+
+<div class="field">
+<label for="frontOverhang">Front Overhang (mm)</label>
+<input type="number" id="frontOverhang" min="0" value="0" placeholder="Enter front overhang">
+</div>
+
+<div class="field">
+<label for="rearOverhang">Rear Overhang (mm)</label>
+<input type="number" id="rearOverhang" min="0" value="0" placeholder="Enter rear overhang">
+</div>
+
+<button onclick="calculateRoof()">Calculate Roof Joists</button>
+
+<div class="results" id="roofResults">
+
+<h2 style="margin-top:25px;">Roof Joist Results</h2>
+
+<div class="summary" id="roofSummary"></div>
+
+<h3>Roof Joist Position Table</h3>
+
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Joist</th>
+<th>Position Across Width (mm)</th>
+<th>Sloping Cut Length (mm)</th>
+<th>Clear Gap (mm)</th>
+</tr>
+</thead>
+<tbody id="roofJoistTable"></tbody>
+</table>
+</div>
+
+<div class="diagram-section">
+<h3>Scaled Roof Joist Layout</h3>
+<p>Plan view showing the joists running front to back. Front and rear infills are positioned directly over the wall lines, inside the overhangs.</p>
+
+<div class="diagram-container">
+<svg id="roofDiagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Roof plan showing front to back joists and infills positioned over the wall lines"></svg>
+</div>
+
+<div class="diagram-key">
+<div class="key-item"><span class="key-colour"></span>Roof joists and infill timber</div>
+</div>
+
+<div class="diagram-note">
+The roof joists run continuously from front to back. They are spaced across the roof width. The front and rear infills connect adjacent joists across the gaps. Each infill is centred directly over its corresponding wall line. Overhangs extend beyond the wall lines, so the infills are not positioned at the ends of the overhanging joists.
+</div>
+</div>
+
+<div class="cutting-list">
+<h3>Roof Joist Cutting List</h3>
+<p>Includes all front-to-back roof joists and the front and rear infill pieces.</p>
+
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Qty</th>
+<th>Timber</th>
+<th>Cut Length</th>
+<th>Thickness</th>
+<th>Position</th>
+</tr>
+</thead>
+<tbody id="roofCuttingTable"></tbody>
+</table>
+</div>
+
+<div class="cutting-note">
+Roof joists are cut to the calculated sloping length, including the front and rear overhangs.
+Infill pieces are cut to the clear gap between adjacent joists.
+Two infill pieces are allowed for every gap: one centred over the front wall line and one centred over the rear wall line.
+All infill timber uses the same thickness as the roof joists.
+The calculated sloping length assumes the roof pitch continues at the same angle through both overhangs.
+Check actual bearing and joint details before cutting timber.
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</main>
+
+<footer>
+Timber Craft Works
+</footer>
+
+<script>
+
+// ==========================================================
+// SIDE WALL CALCULATOR
+// ==========================================================
+
+function calculateWall() {
+
+const overallLength = Number(document.getElementById("wallLength").value);
+const frontWallDepth = Number(document.getElementById("frontWallDepth").value);
+const rearWallDepth = Number(document.getElementById("rearWallDepth").value);
+const low = Number(document.getElementById("lowHeight").value);
+const high = Number(document.getElementById("highHeight").value);
+const sideStudDepth = Number(document.getElementById("sideStudDepth").value);
+const sideStudWidth = Number(document.getElementById("sideStudWidth").value);
+const count = Number(document.getElementById("numberOfStuds").value);
+
+if (
+!Number.isFinite(overallLength) ||
+!Number.isFinite(frontWallDepth) ||
+!Number.isFinite(rearWallDepth) ||
+!Number.isFinite(low) ||
+!Number.isFinite(high) ||
+!Number.isFinite(sideStudDepth) ||
+!Number.isFinite(sideStudWidth) ||
+!Number.isInteger(count) ||
+overallLength <= 0 ||
+frontWallDepth <= 0 ||
+rearWallDepth <= 0 ||
+low <= 0 ||
+high <= 0 ||
+sideStudDepth <= 0 ||
+sideStudWidth <= 0 ||
+count < 2
+) {
+
+alert("Please enter valid measurements and at least two wall studs.");
+return;
+}
+
+
+// ----------------------------------------------------------
+// ACTUAL INTERNAL SIDE WALL LENGTH
+// ----------------------------------------------------------
+
+const internalLength =
+overallLength - frontWallDepth - rearWallDepth;
+
+if (internalLength <= 0) {
+
+alert("The front and rear wall stud depths are greater than the overall building length.");
+return;
+}
+
+
+// ----------------------------------------------------------
+// BASIC SIZE CHECK
+// ----------------------------------------------------------
+
+if (
+low <= sideStudWidth * 2 ||
+high <= sideStudWidth * 2 ||
+internalLength < sideStudWidth * count
+) {
+
+alert("The side wall dimensions are too small for the selected stud width and number of studs.");
+return;
+}
+
+
+// ----------------------------------------------------------
+// ROOF / WALL SLOPE
+// ----------------------------------------------------------
+
+const rise = high - low;
+
+const angleRadians =
+Math.atan(rise / internalLength);
+
+const angleDegrees =
+angleRadians * 180 / Math.PI;
+
+const slopeLength =
+Math.sqrt(
+internalLength * internalLength +
+rise * rise
+);
+
+
+// ----------------------------------------------------------
+// SIDE STUD SPACING
+//
+// sideStudWidth is the dimension occupying the wall length.
+// sideStudDepth is the wall thickness / depth.
+// ----------------------------------------------------------
+
+const clearGap =
+(
+internalLength -
+sideStudWidth * count
+) / (count - 1);
+
+
+// ----------------------------------------------------------
+// TOP RAIL DEPTH IN THE ELEVATION
+//
+// The side stud width is the vertical framing dimension.
+// The stud depth is the wall thickness.
+// ----------------------------------------------------------
+
+const topRailVerticalDepth =
+sideStudWidth / Math.cos(angleRadians);
+
+
+// ----------------------------------------------------------
+// CALCULATE EACH STUD
+// ----------------------------------------------------------
+
+const positions = [];
+
+for (let i = 0; i < count; i++) {
+
+const start =
+i * (sideStudWidth + clearGap);
+
+const centre =
+start + sideStudWidth / 2;
+
+const wallHeightAtCentre =
+low + rise * centre / internalLength;
+
+const studLength =
+wallHeightAtCentre -
+sideStudWidth -
+topRailVerticalDepth;
+
+if (studLength <= 0) {
+
+alert("The wall is too short for the selected timber dimensions.");
+return;
+}
+
+positions.push({
+
+number: i + 1,
+
+// Position measured from inside face of front wall
+start: start,
+
+// Position measured from overall building front
+overallPosition:
+frontWallDepth + start,
+
+centre: centre,
+
+length: studLength,
+
+gap:
+i === count - 1 ? 0 : clearGap
+
+});
+
+}
+
+
+// ----------------------------------------------------------
+// SUMMARY
+// ----------------------------------------------------------
+
+document.getElementById("summary").innerHTML = `
+
+<strong>Overall building length:</strong>
+${overallLength.toFixed(2)} mm<br>
+
+<strong>Front wall stud depth:</strong>
+${frontWallDepth.toFixed(2)} mm<br>
+
+<strong>Rear wall stud depth:</strong>
+${rearWallDepth.toFixed(2)} mm<br>
+
+<strong>Actual internal side wall length:</strong>
+${internalLength.toFixed(2)} mm<br>
+
+<strong>Low end wall height:</strong>
+${low.toFixed(2)} mm<br>
+
+<strong>High end wall height:</strong>
+${high.toFixed(2)} mm<br>
+
+<strong>Height difference:</strong>
+${rise.toFixed(2)} mm<br>
+
+<strong>Side wall stud depth:</strong>
+${sideStudDepth.toFixed(2)} mm<br>
+
+<strong>Side wall stud width:</strong>
+${sideStudWidth.toFixed(2)} mm<br>
+
+<strong>Number of wall studs per wall:</strong>
+${count}<br>
+
+<strong>Clear gap between studs:</strong>
+${clearGap.toFixed(2)} mm<br>
+
+<strong>Sloping top rail length:</strong>
+${slopeLength.toFixed(2)} mm<br>
+
+<strong>Pent roof angle:</strong>
+${Math.abs(angleDegrees).toFixed(2)} degrees
+`;
+
+
+// ----------------------------------------------------------
+// STUD POSITION TABLE
+// ----------------------------------------------------------
+
+const table =
+document.getElementById("studTable");
+
+table.innerHTML = "";
+
+positions.forEach(stud => {
+
+const row =
+document.createElement("tr");
+
+row.innerHTML = `
+
+<td>${stud.number}</td>
+
+<td>
+${stud.start.toFixed(2)}
+</td>
+
+<td>
+${stud.overallPosition.toFixed(2)}
+</td>
+
+<td>
+${stud.length.toFixed(2)}
+</td>
+
+<td>
+${stud.gap.toFixed(2)}
+</td>
+
+`;
+
+table.appendChild(row);
+
+});
+
+
+// ----------------------------------------------------------
+// CUTTING LIST
+// ----------------------------------------------------------
+
+let cuttingRows = `
+
+<tr>
+<td>2</td>
+<td>Bottom Rails</td>
+<td>${internalLength.toFixed(2)} mm</td>
+<td>${sideStudDepth.toFixed(2)} mm</td>
+<td>${sideStudWidth.toFixed(2)} mm</td>
+<td>90°</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>Sloping Top Rails</td>
+<td>${slopeLength.toFixed(2)} mm</td>
+<td>${sideStudDepth.toFixed(2)} mm</td>
+<td>${sideStudWidth.toFixed(2)} mm</td>
+<td>${Math.abs(angleDegrees).toFixed(2)}°</td>
+</tr>
+
+`;
+
+positions.forEach(stud => {
+
+cuttingRows += `
+
+<tr>
+
+<td>2</td>
+
+<td>
+Wall Stud ${stud.number}
+</td>
+
+<td>
+${stud.length.toFixed(2)} mm
+</td>
+
+<td>
+${sideStudDepth.toFixed(2)} mm
+</td>
+
+<td>
+${sideStudWidth.toFixed(2)} mm
+</td>
+
+<td>
+${Math.abs(angleDegrees).toFixed(2)}° top
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById("cuttingListTable").innerHTML =
+cuttingRows;
+
+
+// ----------------------------------------------------------
+// DRAW DIAGRAM
+// ----------------------------------------------------------
+
+drawWallDiagram(
+overallLength,
+frontWallDepth,
+rearWallDepth,
+internalLength,
+low,
+high,
+sideStudDepth,
+sideStudWidth,
+positions
+);
+
+
+document.getElementById("results").style.display = "block";
+
+}
+
+
+// ==========================================================
+// SIDE WALL DIAGRAM
+// ==========================================================
+
+function drawWallDiagram(
+overallLength,
+frontWallDepth,
+rearWallDepth,
+internalLength,
+low,
+high,
+sideStudDepth,
+sideStudWidth,
+positions
+) {
+
+const svg =
+document.getElementById("wallDiagram");
+
+const W = 780;
+const H = 500;
+
+const left = 105;
+const right = 80;
+const top = 80;
+const bottom = 100;
+
+const aw = W - left - right;
+const ah = H - top - bottom;
+
+
+// ----------------------------------------------------------
+// SCALE BASED ON OVERALL BUILDING LENGTH
+// ----------------------------------------------------------
+
+const rise = high - low;
+
+const maxHeight =
+Math.max(low, high);
+
+const scale =
+Math.min(
+aw / overallLength,
+ah / maxHeight
+);
+
+
+// ----------------------------------------------------------
+// MAIN DIMENSIONS
+// ----------------------------------------------------------
+
+const overallWidth =
+overallLength * scale;
+
+const frontDepthPx =
+frontWallDepth * scale;
+
+const rearDepthPx =
+rearWallDepth * scale;
+
+const internalWidth =
+internalLength * scale;
+
+const studWidthPx =
+sideStudWidth * scale;
+
+
+// ----------------------------------------------------------
+// POSITIONING
+// ----------------------------------------------------------
+
+const x =
+left + (aw - overallWidth) / 2;
+
+const baseY =
+top + ah;
+
+const internalStartX =
+x + frontDepthPx;
+
+const internalEndX =
+internalStartX + internalWidth;
+
+
+// ----------------------------------------------------------
+// HEIGHTS
+// ----------------------------------------------------------
+
+const lowY =
+baseY - low * scale;
+
+const highY =
+baseY - high * scale;
+
+
+// ----------------------------------------------------------
+// TOP RAIL DEPTH
+// ----------------------------------------------------------
+
+const angle =
+Math.atan(rise / internalLength);
+
+const topRailDepth =
+sideStudWidth / Math.cos(angle);
+
+const topRailDepthPx =
+topRailDepth * scale;
+
+
+// ----------------------------------------------------------
+// COLOURS
+// ----------------------------------------------------------
+
+const colour = "#bd8950";
+const outline = "#80572d";
+
+let d = "";
+
+
+// ==========================================================
+// FRONT WALL STUD
+// ==========================================================
+
+d += `
+
+<rect
+x="${x}"
+y="${lowY}"
+width="${frontDepthPx}"
+height="${baseY-lowY}"
+fill="${colour}"
+stroke="${outline}"
+/>
+
+`;
+
+
+// ==========================================================
+// REAR WALL STUD
+// ==========================================================
+
+d += `
+
+<rect
+x="${internalEndX}"
+y="${highY}"
+width="${rearDepthPx}"
+height="${baseY-highY}"
+fill="${colour}"
+stroke="${outline}"
+/>
+
+`;
+
+
+// ==========================================================
+// SIDE WALL BOTTOM RAIL
+// ==========================================================
+
+d += `
+
+<rect
+x="${internalStartX}"
+y="${baseY-studWidthPx}"
+width="${internalWidth}"
+height="${studWidthPx}"
+fill="${colour}"
+stroke="${outline}"
+/>
+
+`;
+
+
+// ==========================================================
+// SIDE WALL SLOPING TOP RAIL
+// ==========================================================
+
+d += `
+
+<polygon
+points="
+${internalStartX},${lowY}
+${internalEndX},${highY}
+${internalEndX},${highY+topRailDepthPx}
+${internalStartX},${lowY+topRailDepthPx}
+"
+fill="${colour}"
+stroke="${outline}"
+/>
+
+`;
+
+
+// ==========================================================
+// SIDE WALL VERTICAL STUDS
+// ==========================================================
+
+positions.forEach((stud, i) => {
+
+const sx =
+internalStartX +
+stud.start * scale;
+
+const wallHeightAtCentre =
+low +
+rise *
+stud.centre /
+internalLength;
+
+const topY =
+baseY -
+wallHeightAtCentre * scale +
+topRailDepthPx;
+
+const bottomY =
+baseY -
+studWidthPx;
+
+const height =
+bottomY - topY;
+
+
+// Side stud is drawn using its WIDTH in the elevation.
+// Its DEPTH is the wall thickness and is stated in the
+// dimensions / cutting list.
+
+d += `
+
+<rect
+x="${sx}"
+y="${topY}"
+width="${studWidthPx}"
+height="${height}"
+fill="${colour}"
+stroke="${outline}"
+/>
+
+`;
+
+
+// Stud number
+
+if (studWidthPx > 16) {
+
+d += `
+
+<text
+x="${sx + studWidthPx/2}"
+y="${(topY + bottomY)/2}"
+text-anchor="middle"
+dominant-baseline="middle"
+font-size="11"
+fill="#382514"
+>
+${i + 1}
+</text>
+
+`;
+
+}
+
+});
+
+
+// ==========================================================
+// OVERALL LENGTH DIMENSION
+// ==========================================================
+
+const overallDimY =
+baseY + 28;
+
+d += `
+
+<line
+x1="${x}"
+y1="${overallDimY}"
+x2="${x+overallWidth}"
+y2="${overallDimY}"
+stroke="#222"
+stroke-width="1.5"
+/>
+
+<line
+x1="${x}"
+y1="${overallDimY-6}"
+x2="${x}"
+y2="${overallDimY+6}"
+stroke="#222"
+/>
+
+<line
+x1="${x+overallWidth}"
+y1="${overallDimY-6}"
+x2="${x+overallWidth}"
+y2="${overallDimY+6}"
+stroke="#222"
+/>
+
+<text
+x="${x+overallWidth/2}"
+y="${overallDimY+20}"
+text-anchor="middle"
+font-size="14"
+font-weight="bold"
+>
+${overallLength.toFixed(2)} mm overall
+</text>
+
+`;
+
+
+// ==========================================================
+// FRONT WALL DEPTH DIMENSION
+// ==========================================================
+
+const frontDimY =
+lowY - 25;
+
+d += `
+
+<line
+x1="${x}"
+y1="${frontDimY}"
+x2="${internalStartX}"
+y2="${frontDimY}"
+stroke="#222"
+stroke-width="1.3"
+/>
+
+<line
+x1="${x}"
+y1="${frontDimY-5}"
+x2="${x}"
+y2="${frontDimY+5}"
+stroke="#222"
+/>
+
+<line
+x1="${internalStartX}"
+y1="${frontDimY-5}"
+x2="${internalStartX}"
+y2="${frontDimY+5}"
+stroke="#222"
+/>
+
+<text
+x="${x+frontDepthPx/2}"
+y="${frontDimY-8}"
+text-anchor="middle"
+font-size="11"
+font-weight="bold"
+>
+Front wall ${frontWallDepth} mm
+</text>
+
+`;
+
+
+// ==========================================================
+// REAR WALL DEPTH DIMENSION
+// ==========================================================
+
+const rearDimY =
+highY - 25;
+
+d += `
+
+<line
+x1="${internalEndX}"
+y1="${rearDimY}"
+x2="${internalEndX+rearDepthPx}"
+y2="${rearDimY}"
+stroke="#222"
+stroke-width="1.3"
+/>
+
+<line
+x1="${internalEndX}"
+y1="${rearDimY-5}"
+x2="${internalEndX}"
+y2="${rearDimY+5}"
+stroke="#222"
+/>
+
+<line
+x1="${internalEndX+rearDepthPx}"
+y1="${rearDimY-5}"
+x2="${internalEndX+rearDepthPx}"
+y2="${rearDimY+5}"
+stroke="#222"
+/>
+
+<text
+x="${internalEndX+rearDepthPx/2}"
+y="${rearDimY-8}"
+text-anchor="middle"
+font-size="11"
+font-weight="bold"
+>
+Rear wall ${rearWallDepth} mm
+</text>
+
+`;
+
+
+// ==========================================================
+// INTERNAL SIDE WALL LENGTH
+// ==========================================================
+
+const internalDimY =
+baseY + 60;
+
+d += `
+
+<line
+x1="${internalStartX}"
+y1="${internalDimY}"
+x2="${internalEndX}"
+y2="${internalDimY}"
+stroke="#555"
+stroke-width="1.2"
+/>
+
+<line
+x1="${internalStartX}"
+y1="${internalDimY-5}"
+x2="${internalStartX}"
+y2="${internalDimY+5}"
+stroke="#555"
+/>
+
+<line
+x1="${internalEndX}"
+y1="${internalDimY-5}"
+x2="${internalEndX}"
+y2="${internalDimY+5}"
+stroke="#555"
+/>
+
+<text
+x="${internalStartX+internalWidth/2}"
+y="${internalDimY+16}"
+text-anchor="middle"
+font-size="12"
+font-weight="bold"
+fill="#444"
+>
+Internal side wall ${internalLength.toFixed(2)} mm
+</text>
+
+`;
+
+
+// ==========================================================
+// LOW HEIGHT
+// ==========================================================
+
+d += `
+
+<text
+x="${x-42}"
+y="${(baseY+lowY)/2}"
+text-anchor="middle"
+font-size="12"
+transform="rotate(-90 ${x-42} ${(baseY+lowY)/2})"
+>
+${low} mm
+</text>
+
+`;
+
+
+// ==========================================================
+// HIGH HEIGHT
+// ==========================================================
+
+d += `
+
+<text
+x="${internalEndX+rearDepthPx+42}"
+y="${(baseY+highY)/2}"
+text-anchor="middle"
+font-size="12"
+transform="rotate(-90 ${internalEndX+rearDepthPx+42} ${(baseY+highY)/2})"
+>
+${high} mm
+</text>
+
+`;
+
+
+// ==========================================================
+// PENT ANGLE
+// ==========================================================
+
+d += `
+
+<text
+x="${internalStartX+internalWidth/2}"
+y="${Math.min(lowY,highY)-48}"
+text-anchor="middle"
+font-size="13"
+font-weight="bold"
+>
+${Math.abs(angle*180/Math.PI).toFixed(2)}° pent angle
+</text>
+
+`;
+
+
+// ==========================================================
+// SIDE STUD DIMENSIONS
+// ==========================================================
+
+d += `
+
+<text
+x="${internalStartX+internalWidth/2}"
+y="${H-36}"
+text-anchor="middle"
+font-size="12"
+fill="#444"
+>
+Side studs: ${sideStudDepth} mm depth × ${sideStudWidth} mm width
+</text>
+
+`;
+
+
+// ==========================================================
+// DESCRIPTION
+// ==========================================================
+
+d += `
+
+<text
+x="${W/2}"
+y="${H-14}"
+text-anchor="middle"
+font-size="11"
+fill="#444"
+>
+Side wall fits between front and rear wall studs - all measurements in mm
+</text>
+
+`;
+
+
+// ----------------------------------------------------------
+// SVG SETTINGS
+// ----------------------------------------------------------
+
+svg.setAttribute(
+"viewBox",
+`0 0 ${W} ${H}`
+);
+
+svg.setAttribute(
+"preserveAspectRatio",
+"xMidYMid meet"
+);
+
+svg.innerHTML = d;
+
+}
+
+
+// ==========================================================
+// INDEPENDENT ROOF JOIST CALCULATOR
+// JOISTS RUN FRONT TO BACK.
+// JOISTS ARE SPACED ACROSS THE ROOF WIDTH.
+// ==========================================================
+
+function calculateRoof() {
+
+const length=Number(document.getElementById("roofLength").value);
+const width=Number(document.getElementById("roofWidth").value);
+const frontHeight=Number(document.getElementById("roofFrontHeight").value);
+const rearHeight=Number(document.getElementById("roofRearHeight").value);
+const thickness=Number(document.getElementById("roofThickness").value);
+const count=Number(document.getElementById("roofJoistCount").value);
+const front=Number(document.getElementById("frontOverhang").value);
+const rear=Number(document.getElementById("rearOverhang").value);
+
+if(!Number.isFinite(length)||!Number.isFinite(width)||
+!Number.isFinite(frontHeight)||!Number.isFinite(rearHeight)||
+!Number.isFinite(thickness)||!Number.isFinite(front)||
+!Number.isFinite(rear)||!Number.isInteger(count)||
+length<=0||width<=0||frontHeight<=0||rearHeight<=0||
+thickness<=0||front<0||rear<0||count<2) {
+alert("Please enter valid roof measurements, roof heights, overhangs and at least two joists.");
+return;
+}
+
+if(width < thickness*count) {
+alert("The roof width is too small for the selected number and thickness of joists.");
+return;
+}
+
+const heightDifference=rearHeight-frontHeight;
+const rise=Math.abs(heightDifference);
+const roofAngleRadians=Math.atan(heightDifference/length);
+const roofAngleDegrees=Math.abs(roofAngleRadians*180/Math.PI);
+
+const totalHorizontalLength=length+front+rear;
+const totalHeightDifference=heightDifference/length*totalHorizontalLength;
+
+const slopingJoistLength=Math.sqrt(
+totalHorizontalLength*totalHorizontalLength+
+totalHeightDifference*totalHeightDifference
+);
+
+const clearGap=(width-(thickness*count))/(count-1);
+
+const positions=[];
+
+for(let i=0;i<count;i++) {
+const start=i*(thickness+clearGap);
+
+positions.push({
+number:i+1,
+start:start,
+centre:start+thickness/2,
+gap:i===count-1?0:clearGap
+});
+}
+
+const totalInfill=(count-1)*2;
+
+document.getElementById("roofSummary").innerHTML=`
+<strong>Horizontal roof length between walls:</strong> ${length.toFixed(2)} mm<br>
+<strong>Overall roof width:</strong> ${width.toFixed(2)} mm<br>
+<strong>Front wall roof height:</strong> ${frontHeight.toFixed(2)} mm<br>
+<strong>Rear wall roof height:</strong> ${rearHeight.toFixed(2)} mm<br>
+<strong>Roof height difference:</strong> ${rise.toFixed(2)} mm<br>
+<strong>Roof pitch angle:</strong> ${roofAngleDegrees.toFixed(2)} degrees<br>
+<strong>Front overhang:</strong> ${front.toFixed(2)} mm horizontal<br>
+<strong>Rear overhang:</strong> ${rear.toFixed(2)} mm horizontal<br>
+<strong>Total horizontal front-to-back length:</strong> ${totalHorizontalLength.toFixed(2)} mm<br>
+<strong>Calculated sloping joist cut length:</strong> ${slopingJoistLength.toFixed(2)} mm<br>
+<strong>Roof joist timber thickness:</strong> ${thickness.toFixed(2)} mm<br>
+<strong>Number of roof joists:</strong> ${count}<br>
+<strong>Clear gap between joists across width:</strong> ${clearGap.toFixed(2)} mm<br>
+<strong>Front infill pieces over front wall line:</strong> ${count-1}<br>
+<strong>Rear infill pieces over rear wall line:</strong> ${count-1}<br>
+<strong>Total infill pieces:</strong> ${totalInfill}
+`;
+
+const table=document.getElementById("roofJoistTable");
+table.innerHTML="";
+
+positions.forEach(p=>{
+const row=document.createElement("tr");
+row.innerHTML=`
+<td>${p.number}</td>
+<td>${p.start.toFixed(2)}</td>
+<td>${slopingJoistLength.toFixed(2)}</td>
+<td>${p.gap.toFixed(2)}</td>`;
+table.appendChild(row);
+});
+
+
+// ROOF CUTTING LIST
+
+let rows=`
+<tr>
+<td>${count}</td>
+<td>Front-to-Back Roof Joists</td>
+<td>${slopingJoistLength.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+<td>Front to rear</td>
+</tr>
+
+<tr>
+<td>${count-1}</td>
+<td>Front Infill Timber</td>
+<td>${clearGap.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+<td>Centred over front wall line</td>
+</tr>
+
+<tr>
+<td>${count-1}</td>
+<td>Rear Infill Timber</td>
+<td>${clearGap.toFixed(2)} mm</td>
+<td>${thickness.toFixed(2)} mm</td>
+<td>Centred over rear wall line</td>
+</tr>
+`;
+
+document.getElementById("roofCuttingTable").innerHTML=rows;
+
+drawRoofDiagram(
+length,width,thickness,front,rear,
+positions,clearGap,slopingJoistLength,
+roofAngleDegrees,frontHeight,rearHeight
+);
+
+document.getElementById("roofResults").style.display="block";
+}
+
+
+// ==========================================================
+// ROOF DIAGRAM
+// ==========================================================
+
+function drawRoofDiagram(
+length,width,thickness,front,rear,
+positions,gap,slopingLength,angleDegrees,
+frontHeight,rearHeight
+) {
+
+const svg=document.getElementById("roofDiagram");
+
+const W=760,H=570;
+const left=95,right=125,top=95,bottom=115;
+
+const totalFrontBack=length+front+rear;
+
+const scale=Math.min(
+(W-left-right)/width,
+(H-top-bottom)/totalFrontBack
+);
+const drawingWidth=width*scale;
+const drawingLength=totalFrontBack*scale;
+const timber=thickness*scale;
+
+const x=left;
+const y=top;
+const endX=x+drawingWidth;
+const endY=y+drawingLength;
+
+const frontWallY=y+front*scale;
+const rearWallY=frontWallY+length*scale;
+
+const colour="#bd8950";
+const outline="#80572d";
+
+let d="";
+
+d+=`<rect x="${x}" y="${y}" width="${drawingWidth}" height="${drawingLength}" fill="#fafafa" stroke="#777" stroke-width="1.5"/>`;
+
+d+=`<line x1="${x-12}" y1="${frontWallY}" x2="${endX+12}" y2="${frontWallY}" stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>`;
+
+d+=`<line x1="${x-12}" y1="${rearWallY}" x2="${endX+12}" y2="${rearWallY}" stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>`;
+
+positions.forEach((p,i)=>{
+
+const joistX=x+p.start*scale;
+
+d+=`<rect x="${joistX}" y="${y}" width="${timber}" height="${drawingLength}" fill="${colour}" stroke="${outline}" stroke-width="1"/>`;
+
+if(timber>17) {
+d+=`<text x="${joistX+timber/2}" y="${y+drawingLength/2}" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#382514">${i+1}</text>`;
+}
+
+});
+
+for(let i=0;i<positions.length-1;i++){
+
+const blockX=x+(positions[i].start+thickness)*scale;
+const blockWidth=gap*scale;
+
+d+=`<rect x="${blockX}" y="${frontWallY-timber/2}" width="${blockWidth}" height="${timber}" fill="${colour}" stroke="${outline}" stroke-width="1"/>`;
+
+d+=`<rect x="${blockX}" y="${rearWallY-timber/2}" width="${blockWidth}" height="${timber}" fill="${colour}" stroke="${outline}" stroke-width="1"/>`;
+
+}
+
+d+=`<line x1="${x-12}" y1="${frontWallY}" x2="${endX+12}" y2="${frontWallY}" stroke="#222" stroke-width="1.5" stroke-dasharray="6 4"/>`;
+
+d+=`<line x1="${x-12}" y1="${rearWallY}" x2="${endX+12}" y2="${rearWallY}" stroke="#222" stroke-width="1.5" stroke-dasharray="6 4"/>`;
+
+d+=`<text x="${x+drawingWidth/2}" y="${y-17}" text-anchor="middle" font-size="13" font-weight="bold">FRONT</text>`;
+
+d+=`<text x="${x+drawingWidth/2}" y="${endY+20}" text-anchor="middle" font-size="13" font-weight="bold">REAR</text>`;
+
+d+=`<text x="${endX+15}" y="${frontWallY+4}" text-anchor="start" font-size="11" font-weight="bold">FRONT WALL</text>`;
+
+d+=`<text x="${endX+15}" y="${rearWallY+4}" text-anchor="start" font-size="11" font-weight="bold">REAR WALL</text>`;
+
+d+=`<text x="${x+drawingWidth/2}" y="${y+drawingLength/2}" text-anchor="middle" font-size="13" font-weight="bold" fill="#382514" opacity="0.8">JOISTS RUN FRONT TO BACK</text>`;
+
+const widthDimY=endY+45;
+
+d+=`<line x1="${x}" y1="${widthDimY}" x2="${endX}" y2="${widthDimY}" stroke="#222" stroke-width="1.5"/>
+<line x1="${x}" y1="${widthDimY-6}" x2="${x}" y2="${widthDimY+6}" stroke="#222"/>
+<line x1="${endX}" y1="${widthDimY-6}" x2="${endX}" y2="${widthDimY+6}" stroke="#222"/>
+<text x="${x+drawingWidth/2}" y="${widthDimY+18}" text-anchor="middle" font-size="12" font-weight="bold">${width.toFixed(2)} mm overall width</text>`;
+
+d+=`<text x="${x-12}" y="${y+front*scale/2}" text-anchor="end" font-size="11">Front OH ${front} mm</text>`;
+
+d+=`<text x="${x-12}" y="${rearWallY+rear*scale/2}" text-anchor="end" font-size="11">Rear OH ${rear} mm</text>`;
+
+d+=`<text x="${x-42}" y="${y+drawingLength/2}" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="bold" transform="rotate(-90 ${x-42} ${y+drawingLength/2})">${totalFrontBack.toFixed(2)} mm horizontal</text>`;
+
+d+=`<text x="${W/2}" y="${H-35}" text-anchor="middle" font-size="13" font-weight="bold">Sloping joist cut length: ${slopingLength.toFixed(2)} mm</text>`;
+
+d+=`<text x="${W/2}" y="${H-13}" text-anchor="middle" font-size="12" fill="#444">Roof pitch: ${angleDegrees.toFixed(2)}° | Front height: ${frontHeight} mm | Rear height: ${rearHeight} mm</text>`;
+
+svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+svg.innerHTML=d;
+
+}
+
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
+<title>Timber Craft Works - Shed Front Wall Calculator</title>
+
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: Arial, Helvetica, sans-serif;
+background: #f2f2f2;
+color: #222;
+line-height: 1.5;
+}
+
+header {
+background: #000;
+color: #fff;
+text-align: center;
+padding: 25px 15px;
+}
+
+header h1 {
+font-size: clamp(25px, 5vw, 42px);
+letter-spacing: 2px;
+}
+
+header p {
+margin-top: 6px;
+font-size: 15px;
+}
+
+.container {
+max-width: 1150px;
+margin: 25px auto;
+padding: 0 15px;
+}
+
+.calculator {
+background: #fff;
+padding: 22px;
+border-radius: 8px;
+box-shadow: 0 2px 10px rgba(0,0,0,.1);
+margin-bottom: 22px;
+}
+
+h2 {
+font-size: 21px;
+margin-bottom: 15px;
+border-bottom: 2px solid #111;
+padding-bottom: 8px;
+}
+
+h3 {
+font-size: 17px;
+margin: 18px 0 10px;
+}
+
+.input-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+gap: 14px;
+}
+
+.field label {
+display: block;
+font-weight: bold;
+font-size: 14px;
+margin-bottom: 5px;
+}
+
+.field input,
+.field select {
+width: 100%;
+padding: 11px;
+border: 1px solid #bbb;
+border-radius: 5px;
+font-size: 16px;
+background: #fff;
+}
+
+.field input:focus,
+.field select:focus {
+outline: 2px solid #555;
+}
+
+button {
+background: #000;
+color: #fff;
+border: none;
+border-radius: 5px;
+padding: 13px 24px;
+font-size: 16px;
+font-weight: bold;
+cursor: pointer;
+margin-top: 18px;
+}
+
+button:hover {
+background: #333;
+}
+
+.note {
+background: #f2f2f2;
+padding: 12px;
+border-left: 4px solid #555;
+margin: 12px 0;
+font-size: 14px;
+}
+
+.error {
+display: none;
+background: #ffe5e5;
+color: #900;
+border: 1px solid #d99;
+padding: 12px;
+border-radius: 5px;
+margin-top: 15px;
+}
+
+.results {
+display: none;
+}
+
+.diagram-wrap {
+width: 100%;
+overflow-x: auto;
+border: 1px solid #ccc;
+background: #fafafa;
+padding: 10px;
+}
+
+#wallDiagram {
+display: block;
+width: 100%;
+min-width: 650px;
+height: auto;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 10px;
+font-size: 14px;
+}
+
+th {
+background: #111;
+color: #fff;
+padding: 10px 8px;
+text-align: left;
+}
+
+td {
+padding: 9px 8px;
+border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+background: #f5f5f5;
+}
+
+.table-wrap {
+overflow-x: auto;
+}
+
+.total-row {
+font-weight: bold;
+background: #e5e5e5 !important;
+}
+
+footer {
+background: #000;
+color: #fff;
+text-align: center;
+padding: 20px 10px;
+margin-top: 35px;
+font-size: 14px;
+}
+
+@media(max-width:600px) {
+.calculator {
+padding: 15px;
+}
+
+table {
+font-size: 12px;
+}
+
+th, td {
+padding: 7px 5px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>TIMBER CRAFT WORKS</h1>
+<p>Shed Front Wall Calculator</p>
+</header>
+
+<div class="container">
+
+<section class="calculator">
+<h2>Wall Dimensions</h2>
+
+<div class="input-grid">
+<div class="field">
+<label for="wallLength">Overall Wall Length (mm)</label>
+<input type="number" id="wallLength" value="3000" min="1">
+</div>
+
+<div class="field">
+<label for="wallHeight">Overall Wall Height (mm)</label>
+<input type="number" id="wallHeight" value="2100" min="1">
+</div>
+
+<div class="field">
+<label for="timber">Timber Thickness (mm)</label>
+<input type="number" id="timber" value="50" min="1">
+</div>
+
+<div class="field">
+<label for="studCount">Main Wall Studs (Including End Studs)</label>
+<input type="number" id="studCount" value="7" min="2" step="1">
+</div>
+</div>
+</section>
+
+<section class="calculator">
+<h2>Door Settings</h2>
+
+<div class="input-grid">
+<div class="field">
+<label for="doorType">Door Type</label>
+<select id="doorType">
+<option value="Single">Single Door</option>
+<option value="Double">Double Door</option>
+</select>
+</div>
+
+<div class="field">
+<label for="doorWidth">Clear Door Width (mm)</label>
+<input type="number" id="doorWidth" value="900" min="1">
+</div>
+
+<div class="field">
+<label for="doorHeight">Clear Door Height (mm)</label>
+<input type="number" id="doorHeight" value="1900" min="1">
+</div>
+
+<div class="field">
+<label for="doorSide">Door Position Measured From</label>
+<select id="doorSide">
+<option value="left">Left Side</option>
+<option value="right">Right Side</option>
+</select>
+</div>
+
+<div class="field">
+<label for="doorOffset">Door Frame Offset From Selected Side (mm)</label>
+<input type="number" id="doorOffset" value="300" min="0">
+</div>
+</div>
+
+<div class="note">
+Door width is the clear opening between the inside faces of the two door frame studs.
+The frame therefore occupies the clear width plus two timber thicknesses.
+</div>
+</section>
+
+<section class="calculator">
+<h2>Window Settings</h2>
+
+<div class="input-grid">
+<div class="field">
+<label for="windowEnabled">Include Window?</label>
+<select id="windowEnabled">
+<option value="no">No Window</option>
+<option value="yes">Yes</option>
+</select>
+</div>
+
+<div class="field">
+<label for="windowWidth">Clear Window Width (mm)</label>
+<input type="number" id="windowWidth" value="600" min="1">
+</div>
+
+<div class="field">
+<label for="windowHeight">Clear Window Height (mm)</label>
+<input type="number" id="windowHeight" value="600" min="1">
+</div>
+
+<div class="field">
+<label for="windowSill">Sill Height Above Top of Bottom Rail (mm)</label>
+<input type="number" id="windowSill" value="900" min="0">
+</div>
+
+<div class="field">
+<label for="windowSide">Window Position Measured From</label>
+<select id="windowSide">
+<option value="left">Left Side</option>
+<option value="right">Right Side</option>
+</select>
+</div>
+
+<div class="field">
+<label for="windowOffset">Window Frame Offset From Selected Side (mm)</label>
+<input type="number" id="windowOffset" value="1700" min="0">
+</div>
+</div>
+
+<div class="note">
+Window width and height are clear opening dimensions. The sill measurement is taken
+upwards from the top surface of the bottom rail.
+</div>
+
+<button type="button" onclick="calculateWall()">Calculate Front Wall</button>
+<div id="error" class="error"></div>
+</section>
+
+<div id="results" class="results">
+
+<section class="calculator">
+<h2>Front Wall Diagram</h2>
+<div class="note">
+The drawing is a front elevation. Timber positions and dimensions are calculated
+in millimetres. The drawing is scaled to fit the page.
+</div>
+<div class="diagram-wrap">
+<svg id="wallDiagram" viewBox="0 0 1000 650"
+xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+</section>
+
+<section class="calculator">
+<h2>Timber Starting Positions</h2>
+<p>All horizontal positions are measured from the left-hand edge of the wall.
+All vertical positions are measured upwards from the bottom of the wall.</p>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Starting Position X (mm)</th>
+<th>Starting Position Y (mm)</th>
+<th>Cut Length (mm)</th>
+<th>Quantity</th>
+</tr>
+</thead>
+<tbody id="positionRows"></tbody>
+</table>
+</div>
+</section>
+
+<section class="calculator">
+<h2>Vertical Stud Gap Measurements</h2>
+
+<div class="note">
+Gaps are numbered from left to right across the wall.
+
+Starting and finishing positions are measured from the left-hand edge of the wall.
+
+Clear gaps are measured horizontally between the actual outside faces of vertical timber.
+
+Each horizontal timber footprint is counted once. Where vertical members line up or
+overlap in the front elevation, their shared width is not counted twice.
+
+There are no height measurements in this section.
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Gap</th>
+<th>Starting Position (mm)</th>
+<th>Finishing Position (mm)</th>
+<th>Clear Gap (mm)</th>
+</tr>
+</thead>
+<tbody id="gapRows"></tbody>
+</table>
+</div>
+
+<h3>Wall Width Check</h3>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Total Timber Width (mm)</th>
+<th>Total Clear Gaps (mm)</th>
+<th>Combined Width (mm)</th>
+<th>Wall Width (mm)</th>
+</tr>
+</thead>
+<tbody id="gapTotals"></tbody>
+</table>
+</div>
+</section>
+
+<section class="calculator">
+<h2>Cutting List</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Timber Component</th>
+<th>Cut Length (mm)</th>
+<th>Quantity</th>
+</tr>
+</thead>
+<tbody id="cutRows"></tbody>
+</table>
+</div>
+</section>
+
+</div>
+</div>
+
+<footer>
+Timber Craft Works | Shed Building Calculators
+</footer>
+
+<script>
+function calculateWall() {
+
+const L = Number(document.getElementById("wallLength").value);
+const H = Number(document.getElementById("wallHeight").value);
+const t = Number(document.getElementById("timber").value);
+const studCount = Math.floor(Number(document.getElementById("studCount").value));
+
+const doorWidth = Number(document.getElementById("doorWidth").value);
+const doorHeight = Number(document.getElementById("doorHeight").value);
+const doorOffset = Number(document.getElementById("doorOffset").value);
+const doorSide = document.getElementById("doorSide").value;
+
+const windowEnabled = document.getElementById("windowEnabled").value === "yes";
+const windowWidth = Number(document.getElementById("windowWidth").value);
+const windowHeight = Number(document.getElementById("windowHeight").value);
+const windowSill = Number(document.getElementById("windowSill").value);
+const windowOffset = Number(document.getElementById("windowOffset").value);
+const windowSide = document.getElementById("windowSide").value;
+
+const errorBox = document.getElementById("error");
+const results = document.getElementById("results");
+
+errorBox.style.display = "none";
+errorBox.textContent = "";
+results.style.display = "none";
+
+function fail(message) {
+errorBox.textContent = message;
+errorBox.style.display = "block";
+errorBox.scrollIntoView({behavior:"smooth", block:"center"});
+return;
+}
+
+const values = [L,H,t,studCount,doorWidth,doorHeight,doorOffset];
+
+if (windowEnabled) {
+values.push(windowWidth,windowHeight,windowSill,windowOffset);
+}
+
+if (values.some(v => !Number.isFinite(v))) {
+return fail("Please enter valid numbers in all required fields.");
+}
+
+if (L <= 0 || H <= 0 || t <= 0 || studCount < 2) {
+return fail("Wall dimensions and timber thickness must be positive. Main studs must be at least 2.");
+}
+
+if (!Number.isInteger(studCount)) {
+return fail("Main wall stud count must be a whole number.");
+}
+
+if (H <= 2*t || L <= 2*t) {
+return fail("Wall dimensions must be greater than twice the timber thickness.");
+}
+
+if (doorWidth <= 0 || doorHeight <= 0 || doorOffset < 0) {
+return fail("Please enter valid door dimensions and offset.");
+}
+
+const verticalLength = H - 2*t;
+const doorOuterWidth = doorWidth + 2*t;
+
+let doorStart = doorSide === "left"
+? doorOffset
+: L - doorOffset - doorOuterWidth;
+
+let doorEnd = doorStart + doorOuterWidth;
+
+if (doorStart < t || doorEnd > L-t) {
+return fail("The door frame does not fit within the wall. Check the door offset and width.");
+}
+
+const doorHeaderBottom = t + doorHeight;
+const doorHeaderTop = doorHeaderBottom + t;
+const doorCrippleLength = H - t - doorHeaderTop;
+
+if (doorCrippleLength < 0) {
+return fail("The door is too tall to leave room for its header and top framing.");
+}
+
+let windowStart = null;
+let windowEnd = null;
+let windowHeaderBottom = null;
+let windowHeaderTop = null;
+let windowTopHeaderBottom = null;
+let windowTopHeaderTop = null;
+let windowTopCrippleLength = null;
+
+const openings = [{
+name: "Door",
+start: doorStart,
+end: doorEnd
+}];
+
+if (windowEnabled) {
+
+if (windowWidth <= 0 || windowHeight <= 0 ||
+windowSill < 0 || windowOffset < 0) {
+return fail("Please enter valid window dimensions, sill height and offset.");
+}
+
+const windowOuterWidth = windowWidth + 2*t;
+
+windowStart = windowSide === "left"
+? windowOffset
+: L - windowOffset - windowOuterWidth;
+
+windowEnd = windowStart + windowOuterWidth;
+
+if (windowStart < t || windowEnd > L-t) {
+return fail("The window frame does not fit within the wall. Check the window offset and width.");
+}
+
+if (!(windowEnd <= doorStart || windowStart >= doorEnd)) {
+return fail("The door and window frames overlap. Change their positions.");
+}
+
+windowHeaderBottom = t + windowSill;
+windowHeaderTop = windowHeaderBottom + t;
+
+windowTopHeaderBottom = windowHeaderTop + windowHeight;
+windowTopHeaderTop = windowTopHeaderBottom + t;
+
+windowTopCrippleLength = H - t - windowTopHeaderTop;
+
+if (windowTopCrippleLength < 0) {
+return fail("The window is too high for the wall. Check the sill and window height.");
+}
+
+openings.push({
+name: "Window",
+start: windowStart,
+end: windowEnd
+});
+}
+
+// MEMBERS
+
+const members = [];
+
+function addMember(name, x, y, length, quantity=1, width=t, height=t) {
+members.push({
+name,
+x,
+y,
+length,
+quantity,
+width,
+height
+});
+}
+
+// FULL WIDTH RAILS
+
+addMember("Bottom rail", 0, 0, L, 1, L, t);
+addMember("Top rail", 0, H-t, L, 1, L, t);
+
+// MAIN WALL STUDS
+
+const mainStudPositions = [0, L-t];
+
+const blocked = openings.map(o => ({
+start: o.start,
+end: o.end
+}));
+
+const freeIntervals = [];
+let cursor = t;
+
+blocked.sort((a,b) => a.start-b.start);
+
+for (const b of blocked) {
+
+if (b.start - cursor >= t) {
+freeIntervals.push([cursor, b.start-t]);
+}
+
+cursor = Math.max(cursor, b.end);
+}
+
+if (L-t-cursor >= t) {
+freeIntervals.push([cursor, L-2*t]);
+}
+
+const availableLength = freeIntervals.reduce(
+(sum, interval) => sum + Math.max(0, interval[1]-interval[0]),
+0
+);
+
+const internalCount = studCount-2;
+
+if (internalCount > 0 && availableLength < internalCount*t) {
+return fail("There is not enough solid wall space for the requested number of main studs. Reduce the stud count or change the openings.");
+}
+
+const chosen = [];
+
+for (let i=0; i<internalCount; i++) {
+
+const target = availableLength*(i+1)/(internalCount+1);
+
+let running = 0;
+let x = null;
+
+for (const interval of freeIntervals) {
+
+const intervalLength = Math.max(0, interval[1]-interval[0]);
+
+if (target <= running+intervalLength) {
+x = interval[0]+(target-running);
+break;
+}
+
+running += intervalLength;
+}
+
+if (x === null && freeIntervals.length) {
+x = freeIntervals[freeIntervals.length-1][1];
+}
+
+if (x !== null) {
+
+const candidates = [x];
+
+for (const interval of freeIntervals) {
+candidates.push(interval[0],interval[1]);
+}
+
+candidates.sort((a,b) => Math.abs(a-x)-Math.abs(b-x));
+
+const valid = candidates.find(candidate =>
+freeIntervals.some(interval =>
+candidate >= interval[0]-0.001 &&
+candidate <= interval[1]+0.001
+) &&
+!mainStudPositions.concat(chosen).some(
+p => Math.abs(p-candidate)<t
+)
+);
+
+if (valid === undefined) {
+return fail("The requested main studs cannot be spaced in the remaining solid wall sections. Reduce the stud count.");
+}
+
+chosen.push(valid);
+}
+}
+
+chosen.sort((a,b) => a-b);
+
+for (const x of mainStudPositions.concat(chosen).sort((a,b)=>a-b)) {
+addMember("Main wall stud", x, t, verticalLength);
+}
+
+// DOOR FRAME
+
+const doorLeftX = doorStart;
+const doorRightX = doorStart+t+doorWidth;
+
+addMember("Door left frame stud", doorLeftX, t, verticalLength);
+addMember("Door right frame stud", doorRightX, t, verticalLength);
+
+addMember("Door header", doorStart+t, doorHeaderBottom,
+doorWidth, 1, doorWidth, t);
+
+// DOOR TOP CRIPPLES
+
+if (doorCrippleLength > 0) {
+
+for (let i=1; i<=2; i++) {
+
+const x = doorStart+t+doorWidth*i/3-t/2;
+
+addMember("Door top cripple "+i,
+x, doorHeaderTop, doorCrippleLength);
+
+}
+}
+
+// WINDOW FRAME
+
+if (windowEnabled) {
+
+const windowLeftX = windowStart;
+const windowRightX = windowStart+t+windowWidth;
+
+addMember("Window left frame stud", windowLeftX, t, verticalLength);
+addMember("Window right frame stud", windowRightX, t, verticalLength);
+
+addMember("Window bottom member",
+windowStart+t, windowHeaderBottom,
+windowWidth, 1, windowWidth, t);
+
+addMember("Window top member",
+windowStart+t, windowTopHeaderBottom,
+windowWidth, 1, windowWidth, t);
+
+// WINDOW BOTTOM CRIPPLES
+
+if (windowSill > 0) {
+
+for (let i=1; i<=2; i++) {
+
+const x = windowStart+t+windowWidth*i/3-t/2;
+
+addMember("Window bottom cripple "+i,
+x, t, windowSill);
+
+}
+}
+
+// WINDOW TOP CRIPPLES
+
+if (windowTopCrippleLength > 0) {
+
+for (let i=1; i<=2; i++) {
+
+const x = windowStart+t+windowWidth*i/3-t/2;
+
+addMember("Window top cripple "+i,
+x, windowTopHeaderTop, windowTopCrippleLength);
+
+}
+}
+}
+
+// CHECK MEMBER HEIGHTS
+
+if (members.some(m => m.y < 0 || m.y+m.height > H+0.001)) {
+return fail("One or more framing members extend beyond the wall. Check the dimensions.");
+}
+
+// STARTING POSITIONS TABLE
+
+const positionRows = document.getElementById("positionRows");
+positionRows.innerHTML = "";
+
+members.forEach(m => {
+
+const tr = document.createElement("tr");
+
+tr.innerHTML = `
+<td>${m.name}</td>
+<td>${m.x.toFixed(1)}</td>
+<td>${m.y.toFixed(1)}</td>
+<td>${m.length.toFixed(1)}</td>
+<td>${m.quantity}</td>
+`;
+
+positionRows.appendChild(tr);
+
+});
+
+// ==================================================
+// CORRECTED HORIZONTAL GAP CALCULATION
+//
+// 1. Collect every vertical timber footprint.
+// 2. Count overlapping/identical positions only once.
+// 3. Combine touching or overlapping footprints.
+// 4. Measure only the actual clear horizontal gaps.
+// 5. Include the gaps at both wall edges.
+// 6. Verify timber + gaps = overall wall length.
+// ==================================================
+
+const gapRows = document.getElementById("gapRows");
+const gapTotals = document.getElementById("gapTotals");
+
+gapRows.innerHTML = "";
+gapTotals.innerHTML = "";
+
+// Collect vertical members only.
+// Horizontal rails and headers are excluded.
+
+const verticalStuds = members.filter(m =>
+/stud|cripple/i.test(m.name) &&
+m.length > 0 &&
+m.width > 0
+);
+
+if (verticalStuds.length === 0) {
+return fail("No vertical studs were found for the gap calculation.");
+}
+
+// Each vertical timber occupies a horizontal interval.
+// Its actual width is used, not its centre position.
+
+const timberIntervals = verticalStuds
+.map(m => ({
+start: Math.max(0,m.x),
+end: Math.min(L,m.x+m.width)
+}))
+.filter(m => m.end > m.start+0.001)
+.sort((a,b) => a.start-b.start);
+
+// Combine overlapping and touching timber footprints.
+// This prevents double-counting where two members
+// share the same horizontal position.
+
+const timberRuns = [];
+
+timberIntervals.forEach(interval => {
+
+const last = timberRuns[timberRuns.length-1];
+
+if (!last || interval.start > last.end+0.001) {
+
+timberRuns.push({
+start: interval.start,
+end: interval.end
+});
+
+} else {
+
+last.end = Math.max(last.end,interval.end);
+
+}
+
+});
+
+// Measure timber width using the combined physical footprints.
+
+let timberWidth = 0;
+
+timberRuns.forEach(run => {
+timberWidth += run.end-run.start;
+});
+
+// Measure all clear gaps from left to right.
+
+let gapNumber = 0;
+let clearGapTotal = 0;
+let previousEnd = 0;
+
+function addGap(start,end) {
+
+const gap = end-start;
+
+if (gap > 0.001) {
+
+gapNumber++;
+clearGapTotal += gap;
+
+const tr = document.createElement("tr");
+
+tr.innerHTML = `
+<td>Gap ${gapNumber}</td>
+<td>${start.toFixed(1)}</td>
+<td>${end.toFixed(1)}</td>
+<td>${gap.toFixed(1)}</td>
+`;
+
+gapRows.appendChild(tr);
+
+}
+
+}
+
+// Gap between left wall edge and first timber.
+
+timberRuns.forEach(run => {
+
+// Clear space before this timber run.
+
+addGap(previousEnd,run.start);
+
+// Move to the outside face of this timber run.
+
+previousEnd = run.end;
+
+});
+
+// Final gap between last timber and right wall edge.
+
+addGap(previousEnd,L);
+
+// Show message if no clear gaps exist.
+
+if (gapNumber === 0) {
+
+gapRows.innerHTML =
+'<tr><td colspan="4">No clear gaps found.</td></tr>';
+
+}
+
+// WALL WIDTH CHECK
+
+const combinedWidth = timberWidth+clearGapTotal;
+const difference = L-combinedWidth;
+
+const totalRow = document.createElement("tr");
+
+totalRow.innerHTML = `
+<td>${timberWidth.toFixed(1)}</td>
+<td>${clearGapTotal.toFixed(1)}</td>
+<td>${combinedWidth.toFixed(1)}</td>
+<td>${L.toFixed(1)}</td>
+`;
+
+gapTotals.appendChild(totalRow);
+
+// The total must equal the overall wall width.
+
+if (Math.abs(difference)>0.01) {
+
+return fail(
+"Wall width check failed. Timber and clear gaps differ from the overall wall width by "+
+difference.toFixed(2)+" mm."
+);
+
+}
+
+// CUTTING LIST
+
+const cutGroups = new Map();
+
+members.forEach(m => {
+
+const key = m.name+"|"+Math.round(m.length);
+
+if (!cutGroups.has(key)) {
+
+cutGroups.set(key,{
+name:m.name,
+length:Math.round(m.length),
+quantity:0
+});
+
+}
+
+cutGroups.get(key).quantity += m.quantity;
+
+});
+
+const cutRows = document.getElementById("cutRows");
+cutRows.innerHTML = "";
+
+cutGroups.forEach(item => {
+
+const tr = document.createElement("tr");
+
+tr.innerHTML = `
+<td>${item.name}</td>
+<td>${item.length}</td>
+<td>${item.quantity}</td>
+`;
+
+cutRows.appendChild(tr);
+
+});
+
+// DRAWING
+
+drawDiagram(
+L,H,t,members,
+doorStart,doorEnd,doorWidth,doorHeight,
+windowEnabled,windowStart,windowEnd,
+windowWidth,windowHeight,
+windowHeaderBottom,windowTopHeaderBottom
+);
+
+results.style.display = "block";
+results.scrollIntoView({behavior:"smooth",block:"start"});
+
+}
+
+function drawDiagram(L,H,t,members,doorStart,doorEnd,doorWidth,doorHeight,
+windowEnabled,windowStart,windowEnd,windowWidth,windowHeight,
+windowBottomY,windowTopY) {
+
+const svg = document.getElementById("wallDiagram");
+const ns = "http://www.w3.org/2000/svg";
+
+while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+const left = 65;
+const top = 55;
+const drawWidth = 850;
+const drawHeight = 490;
+
+const scale = Math.min(drawWidth/L,drawHeight/H);
+
+const wallW = L*scale;
+const wallH = H*scale;
+const wallBottom = top+wallH;
+
+function el(tag,attrs,parent=svg) {
+
+const node = document.createElementNS(ns,tag);
+
+Object.entries(attrs).forEach(([k,v]) =>
+node.setAttribute(k,v)
+);
+
+parent.appendChild(node);
+
+return node;
+}
+
+function rect(x,y,w,h,fill="#bd8950",stroke="#80572d",sw=1.5) {
+
+el("rect",{
+x:left+x*scale,
+y:wallBottom-(y+h)*scale,
+width:w*scale,
+height:h*scale,
+fill,
+stroke,
+"stroke-width":sw
+});
+
+}
+
+function text(x,y,value,size=12,anchor="middle",fill="#222") {
+
+const node = el("text",{
+x:left+x*scale,
+y:wallBottom-y*scale,
+"font-size":size,
+"text-anchor":anchor,
+fill,
+"font-family":"Arial"
+});
+
+node.textContent = value;
+
+}
+
+// WALL OUTLINE
+
+el("rect",{
+x:left,
+y:top,
+width:wallW,
+height:wallH,
+fill:"#fff",
+stroke:"#222",
+"stroke-width":2
+});
+
+// DRAW ALL FRAMING MEMBERS
+
+members.forEach(m => {
+
+const isHorizontal = m.height===t && m.width>t;
+
+if (isHorizontal) {
+rect(m.x,m.y,m.width,m.height);
+} else {
+rect(m.x,m.y,m.width,m.length);
+}
+
+});
+
+// DOOR OPENING
+
+rect(
+doorStart+t,t,doorWidth,doorHeight,
+"#f8f8f8","#555",1
+);
+
+text(
+doorStart+t+doorWidth/2,
+t+doorHeight/2,
+"DOOR",14
+);
+
+// WINDOW OPENING
+
+if (windowEnabled) {
+
+const clearBottom = windowBottomY+t;
+
+rect(
+windowStart+t,clearBottom,
+windowWidth,windowHeight,
+"#e8f0f5","#555",1
+);
+
+text(
+windowStart+t+windowWidth/2,
+clearBottom+windowHeight/2,
+"WINDOW",13
+);
+
+}
+
+// REDRAW TIMBER ON TOP OF OPENINGS
+
+members.forEach(m => {
+
+const isHorizontal = m.height===t && m.width>t;
+
+if (isHorizontal) {
+rect(m.x,m.y,m.width,m.height);
+} else {
+rect(m.x,m.y,m.width,m.length);
+}
+
+});
+
+// OVERALL LENGTH DIMENSION
+
+el("line",{
+x1:left,
+y1:wallBottom+28,
+x2:left+wallW,
+y2:wallBottom+28,
+stroke:"#222",
+"stroke-width":1
+});
+
+el("line",{
+x1:left,
+y1:wallBottom+22,
+x2:left,
+y2:wallBottom+34,
+stroke:"#222"
+});
+
+el("line",{
+x1:left+wallW,
+y1:wallBottom+22,
+x2:left+wallW,
+y2:wallBottom+34,
+stroke:"#222"
+});
+
+const lengthLabel = el("text",{
+x:left+wallW/2,
+y:wallBottom+47,
+"text-anchor":"middle",
+"font-size":14,
+"font-family":"Arial",
+fill:"#222"
+});
+
+lengthLabel.textContent = "Overall length: "+L+" mm";
+
+// OVERALL HEIGHT DIMENSION
+
+const heightLabel = el("text",{
+x:left-12,
+y:top+wallH/2,
+"text-anchor":"middle",
+"font-size":14,
+"font-family":"Arial",
+fill:"#222",
+transform:`rotate(-90 ${left-12} ${top+wallH/2})`
+});
+
+heightLabel.textContent = "Overall height: "+H+" mm";
+
+// DRAWING TITLE
+
+const title = el("text",{
+x:left+wallW/2,
+y:25,
+"text-anchor":"middle",
+"font-size":16,
+"font-weight":"bold",
+"font-family":"Arial",
+fill:"#222"
+});
+
+title.textContent = "FRONT WALL ELEVATION";
+
+}
+
+</script>
+
+</body>
+</html>
+
+
+
+
+  
